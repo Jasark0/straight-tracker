@@ -1,3 +1,12 @@
+/* Page CSS */
+.page-box{
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 15vh);
+  margin-top: 18vh;
+}
+
+
 /*Title CSS*/
 
 .title-box {
@@ -26,9 +35,7 @@
 
 .names-selection-message{
   display: flex;
-  margin-top: 10vh;
   justify-content: center;
-  width: 100vw;
 }
 
 .names-message{

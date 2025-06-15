@@ -3,14 +3,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100vw;
-    padding-top: 16vh;
+    
+    min-height: calc(100vh - 16vh);
+    margin-top: 14vh;
 }
 
 .sign-up-box {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 30px;
     width: 60vh;
     border: 1px solid #ccc;

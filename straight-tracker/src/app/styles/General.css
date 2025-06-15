@@ -1,5 +1,7 @@
-body{
+html, body{
   background-color: hsl(57, 29%, 85%);
   overflow: hidden;
+  overflow-x: hidden;
   height: 100%;
+  width: 100%;
 }
