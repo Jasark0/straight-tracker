@@ -1,0 +1,132 @@
+/*Title CSS*/
+
+.title-box {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15vh;
+  background-color: hsl(74, 56%, 80%);
+  left: 0;
+  right: 0;
+  top: 0;
+  border-bottom: 3px solid black;
+}
+
+.title-name{
+  color: black;
+  font-size: 30px;
+  font-family: 'Exo 2';
+  letter-spacing: 3px;
+  word-spacing: 20px;
+}
+
+
+/*Message CSS*/
+
+.names-selection-message{
+  display: flex;
+  margin-top: 10vh;
+  justify-content: center;
+  width: 100vw;
+}
+
+.names-message{
+  color: black;
+  font-size: 25px;
+  letter-spacing: 2px;
+  font-family: 'Exo 2';
+}
+
+
+/*Input CSS*/
+
+.input-names-box{ 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-left: 50px;
+  padding-right: 50px;
+  height: 50vh;
+  align-items: center;
+  column-gap: 20vh;
+}
+
+.input-names-box1, .input-names-box2{
+  color: black;
+  font-family: 'Exo 2';
+  background-color: hsl(60, 57%, 95%);
+  height: 30vh;
+  border: 3px solid black;
+  border-radius: 75px;
+  text-align: center;
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+.input-names{
+  color: black;
+  font-family: 'Exo 2';
+  text-align: center;
+  font-size: 35px;
+  letter-spacing: 2px;
+}
+
+.input-names-box1::placeholder, .input-names-box2::placeholder{
+  color: black;
+  font-family: 'Exo 2';
+  text-align: center;
+  font-size: 30px;
+  letter-spacing: 2px;
+  color: hsl(0, 0%, 75%);
+}
+
+.input-names-box1:hover{
+  box-shadow: 0 0 10px #8ab1f0;  
+  background-color: rgb(226, 243, 238);
+  transition: 0.3s ease;
+}
+
+.input-names-box1:focus{
+  border: 1px solid black;
+  outline: none;
+  box-shadow: 0 0 20px #98b6e7; 
+  background-color: rgb(194, 221, 231);
+  transition: 0.2s ease;
+}
+
+.input-names-box2:hover{
+  box-shadow: 0 0 10px #f14a29;
+  background-color: rgb(245, 236, 235);
+  transition: 0.3s ease;
+}
+
+.input-names-box2:focus{
+  border: 1px solid black;
+  outline: none;
+  box-shadow: 0 0 20px #f14a29; 
+  background-color: rgb(251, 220, 220);
+  transition: 0.2s ease;
+}
+
+/*Next-Button CSS*/
+
+.next-button-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.next-button{
+  padding: 20px 50px;
+  border-radius: 30px;
+  font-size: 20px;
+  border: none;
+  background-color:hsl(144, 100%, 80%);
+  cursor: pointer;
+  color:hsl(0, 6%, 20%);
+  transition: background-color 0.15s;
+}
+
+.next-button:hover{
+  background-color: hsl(144, 100%, 88%);
+}

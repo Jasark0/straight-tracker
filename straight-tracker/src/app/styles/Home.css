@@ -1,0 +1,81 @@
+/*Title CSS*/
+
+.logo-box{
+  display: flex;
+  cursor: pointer;
+}
+
+.logo-css{
+  display: flex;
+  padding: 2vh;
+  width: 16vh;
+}
+
+.home-title-box {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 16vh;
+  background-color: hsl(198, 55%, 75%);
+  left: 0;
+  right: 0;
+  top: 0;
+  border-bottom: 1px solid black;
+}
+
+.home-title-name{
+  color: rgb(49, 49, 49);
+  font-size: 5vh;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-weight: 900;
+}
+
+.login-box{
+  display: flex;
+  gap: 2vw;
+  padding-right: 10vh;
+}
+
+.sign-in-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2vh 2.5vw; 
+  font-size: 2.5vh;
+  color: rgb(82, 83, 196);
+  background-color: rgb(179, 195, 255);
+  border: 1px solid black;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sign-up-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5vh 2vw; 
+  font-size: 2.5vh;
+  color: rgb(65, 45, 45);
+  background-color: rgb(255, 255, 255);
+  border: 1px solid black;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sign-in-css:hover{
+  outline: none;
+  background-color: rgb(207, 247, 248);
+  transition: 0.15s ease;
+}
+
+.sign-up-css:hover{
+  outline: none;
+  background-color: rgb(90, 255, 145);
+  color: rgb(0, 0, 0);
+  transition: 0.15s ease;
+}
+
+.sign-in-css:focus, .sign-up-css:focus{
+  outline: none;
+}
