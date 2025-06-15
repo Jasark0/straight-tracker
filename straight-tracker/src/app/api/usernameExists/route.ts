@@ -11,13 +11,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ available: false, error: 'Invalid username' }, { status: 400 })
   }
 
-  
   const { data } = await supabase
     .from('user')
     .select('username')
     .eq('username', username.toLowerCase())
     .maybeSingle()
 
-  console.log(data);
   return NextResponse.json({ available: !data })
 }
