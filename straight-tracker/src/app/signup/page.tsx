@@ -27,7 +27,8 @@ const Signup: React.FC = () => {
         }
 
         setError('');
-        console.log("Sign up submitted");
+
+        //try-catch to sign up
     };
     
 
