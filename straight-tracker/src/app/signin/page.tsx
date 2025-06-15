@@ -75,31 +75,19 @@ const Signup: React.FC = () => {
             </div>
 
             <div className="sign-up-box">
-                <p className="title-text-css">Create an Account</p>
+                <p className="title-text-css">Sign in to Straight Tracker</p>
                 <form onSubmit={handleSignup}>
                     <div className="form-group">
-                        <label>Username</label>
+                        <label>Username/Email</label>
                         <input type="text" placeholder="Your name" required pattern="^[A-Za-z0-9_]+$" title="Username can only contain letters, numbers, and underscores"
                         value={username} onChange={(e) => setUsername(e.target.value)}/>
-                    </div>
-                    {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
-                    {usernameAvailable === true && <p className="username-taken-css">Username is available.</p>}
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="Email address" required />
                     </div>
                     <div className="form-group">
                         <label>Password</label>
                         <input type="password" placeholder="Password" value={password} 
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required />
                     </div>
-                    <div className="form-group">
-                        <label>Confirm Password</label>
-                        <input type="password" placeholder="Enter your password again" value={confirmPassword} 
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}required />
-                    </div>
-                    {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="submit-btn">Sign Up</button>
+                    <button type="submit" className="submit-btn">Sign In</button>
                 </form>
                 <p className="or-css">
                         or

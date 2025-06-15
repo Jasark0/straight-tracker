@@ -42,7 +42,6 @@ const Signup: React.FC = () => {
         try{
             const res = await fetch(`/api/usernameExists?username=${encodeURIComponent(name)}`);
             const data = await res.json();
-            console.log("something");
             setUsernameAvailable(data.available);
         }
         catch (err){
@@ -83,7 +82,6 @@ const Signup: React.FC = () => {
                         value={username} onChange={(e) => setUsername(e.target.value)}/>
                     </div>
                     {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
-                    {usernameAvailable === true && <p className="username-taken-css">Username is available.</p>}
                     <div className="form-group">
                         <label>Email</label>
                         <input type="email" placeholder="Email address" required />
@@ -102,7 +100,7 @@ const Signup: React.FC = () => {
                     <button type="submit" className="submit-btn">Sign Up</button>
                 </form>
                 <p className="or-css">
-                        or
+                    or
                 </p>
                 <img src="google.png" className="google-css"></img>
             </div>
