@@ -58,7 +58,7 @@ const Signup: React.FC = () => {
 
         const handler = setTimeout(() => {
             checkUsernameAvailability(username);
-        }, 500);
+        }, 300);
 
         return () => clearTimeout(handler);
     }, [username]);
@@ -79,7 +79,7 @@ const Signup: React.FC = () => {
                 <form onSubmit={handleSignup}>
                     <div className="form-group">
                         <label>Username</label>
-                        <input type="text" placeholder="Your name" required pattern="^[A-Za-z0-9_]+$" title="Username can only contain letters, numbers, and underscores"
+                        <input type="text" placeholder="Your username" required pattern="^[A-Za-z0-9_]+$" title="Username can only contain letters, numbers, and underscores. No spaces."
                         value={username} onChange={(e) => setUsername(e.target.value)}/>
                     </div>
                     {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
