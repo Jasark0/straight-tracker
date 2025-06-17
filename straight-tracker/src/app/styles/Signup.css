@@ -50,8 +50,14 @@
 
 .username-taken-css{
     color: red;
-    font-size: 10px;
+    font-size: 12px;
 }
+
+.email-taken-css{
+    color: red;
+    font-size: 12px;
+}
+
 .error-message {
     display: flex;
     color: red;

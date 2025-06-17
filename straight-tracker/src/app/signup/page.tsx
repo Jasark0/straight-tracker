@@ -16,16 +16,9 @@ const Signup: React.FC = () => {
         password: '',
         confirmPassword: ''
     });
-
+    const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
+    const [emailAvailable, setEmailAvailable] = useState <boolean|null>(null);
     const [error, setError] = useState('');
-
-    const homePage = () => {
-        router.push('/');
-    }
-
-    const signinPage = () => {
-        router.push('/signin');
-    }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prevFormData => {
@@ -71,8 +64,51 @@ const Signup: React.FC = () => {
         }
     }
 
-    const [username, setUsername] = useState('');
-    const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
+    useEffect(() => {
+        const username = formData.username;
+
+        if (!username) {
+            setUsernameAvailable(null);
+            return;
+        }
+
+        const handler = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/usernameExists?username=${encodeURIComponent(username)}`);
+                const json = await res.json();
+                setUsernameAvailable(json.available);
+            } catch {
+                setUsernameAvailable(null);
+            } 
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [formData.username]);
+
+    useEffect(() => {
+        const email = formData.email;
+
+        if (!email) {
+            setUsernameAvailable(null);
+            return;
+        }
+
+        const handler = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/emailExists?email=${encodeURIComponent(email)}`);
+                const json = await res.json();
+                setEmailAvailable(json.available);
+            } catch {
+                setEmailAvailable(null);
+            } 
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [formData.email]);
+
+    const homePage = () => {
+        router.push('/');
+    }
 
     return (
         <div className="page-box">
@@ -93,8 +129,8 @@ const Signup: React.FC = () => {
                         <input type="text" 
                         placeholder="Your username" 
                         required 
-                        pattern="^[A-Za-z0-9_]+$" 
-                        title="Username can only contain letters, numbers, and underscores. No spaces."
+                        pattern="^[A-Za-z0-9_]{3,}$"
+                        title="Username must be at least 3 characters and can only contain letters, numbers, and underscores. No spaces."
                         name="username"
                         onChange= {handleChange}/>
                     </div>
@@ -108,6 +144,7 @@ const Signup: React.FC = () => {
                         name="email"
                         onChange={handleChange} />
                     </div>
+                    {emailAvailable === false && <p className="email-taken-css">Email is used.</p>}
                     <div className="form-group">
                         <label>Password</label>
                         <input 
@@ -122,7 +159,9 @@ const Signup: React.FC = () => {
                         type="password" 
                         placeholder="Enter your password again" 
                         required
+                        minLength={8}
                         name="confirmPassword"
+                        title="Password must be at least 8 characters."
                         onChange={handleChange} />
                     </div>
                     {error && <p className="error-message">{error}</p>}
@@ -133,7 +172,6 @@ const Signup: React.FC = () => {
                 </p>
                 <img src="google.png" className="google-css"></img>
             </div>
-
         </div>
     )
 }
