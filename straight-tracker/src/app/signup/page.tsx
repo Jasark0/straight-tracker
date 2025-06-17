@@ -18,9 +18,6 @@ const Signup: React.FC = () => {
     });
 
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    console.log(formData);
 
     const homePage = () => {
         router.push('/');
@@ -41,75 +38,41 @@ const Signup: React.FC = () => {
     
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
         setError('');
 
-        // 1. Confirm Password Check
-        if (formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword){
             setError('Passwords do not match.');
             return;
         }
 
-        setLoading(true);
-
         try {
-            const {data, error } = await supabase.auth.signUp({
-                email: formData.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        username: formData.username
-                    }
-                }
-    
-            })
-            if (error) { throw error;}
+            const res = await fetch('/api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password,
+                    username: formData.username
+                })
+            });
 
-            const {data: profiles, error: profileError } = await supabase
-                .from('profiles')
-                .insert([
-                    {
-                        id: data.user?.id,
-                        username: formData.username,
-                        email: formData.email,
-                        created_at: new Date().toISOString()
-                    }
-                ])
-                .select();
-            if (profileError) { throw profileError; }
-            
-            alert ("Check your email for the confirmation link.");
-        } catch (error) {
-            alert ("signup.tsx: " + error);
+            const result = await res.json();
+
+            if (!res.ok) {
+                setError(result.error || 'Something went wrong.');
+                return;
+            }
+
+            alert(result.message);
+        } catch (err) {
+            setError('Something went wrong. Try again.');
         }
     }
 
     const [username, setUsername] = useState('');
     const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
-    
-    // async function checkUsernameAvailability(name: string){
-    //     try{
-    //         const res = await fetch(`/api/usernameExists?username=${encodeURIComponent(name)}`);
-    //         const data = await res.json();
-    //         setUsernameAvailable(data.available);
-    //     }
-    //     catch (err){
-    //         setUsernameAvailable(null);
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if (username === ''){
-    //         setUsernameAvailable(null);
-    //         return;
-    //     }
-
-    //     const handler = setTimeout(() => {
-    //         checkUsernameAvailability(username);
-    //     }, 300);
-
-    //     return () => clearTimeout(handler);
-    // }, [username]);
 
     return (
         <div className="page-box">
