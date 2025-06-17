@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { supabase} from '../../client'
 
 import "../styles/General.css"
 import "../styles/Home.css"
@@ -9,7 +10,14 @@ import "../styles/Signup.css"
 
 const Signup: React.FC = () => {
     const router = useRouter();
-    
+
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    })
+
+    console.log(formData);
+
     const homePage = () => {
         router.push('/');
     }
@@ -18,16 +26,34 @@ const Signup: React.FC = () => {
     //     router.push('/signin');
     // }
 
-    const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        setFormData(prevFormData => {
+            return {
+                ...prevFormData,
+                [event.target.name]: event.target.value
+            };
+        });
+    };
+
+    
+
+    const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (password !== confirmPassword){
-            setError("Passwords do not match.");
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: formData.email,
+                password: formData.password,
+            })
+            if (error) throw error;
+            console.log(data);
+            
+            router.push('/tracker');
+        } catch (error) {
+            alert(error +"\n");
             return;
         }
-
-        setError('');
-        console.log("Sign up submitted");
     };
     
 
@@ -79,13 +105,22 @@ const Signup: React.FC = () => {
                 <form onSubmit={handleSignup}>
                     <div className="form-group">
                         <label>Username/Email</label>
-                        <input type="text" placeholder="Your name" required pattern="^[A-Za-z0-9_]+$" title="Username can only contain letters, numbers, and underscores"
-                        value={username} onChange={(e) => setUsername(e.target.value)}/>
+                        <input
+                            type="text"
+                            placeholder="Your email"
+                            required
+                            name="email"
+                            onChange={handleChange}
+                        />
                     </div>
                     <div className="form-group">
                         <label>Password</label>
-                        <input type="password" placeholder="Password" value={password} 
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required />
+                        <input 
+                        type="password" 
+                        placeholder="Password" 
+                        name="password"
+                        onChange={handleChange}
+                        required />
                     </div>
                     <button type="submit" className="submit-btn">Sign In</button>
                 </form>
