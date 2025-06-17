@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
+import { supabase } from '../../client'
 import React, { useEffect, useState } from 'react'
-
 import "../styles/General.css"
 import "../styles/Home.css"
 import "../styles/Signup.css"
@@ -10,32 +10,66 @@ import "../styles/Signup.css"
 const Signup: React.FC = () => {
     const router = useRouter();
     
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    console.log(formData);
+
     const homePage = () => {
         router.push('/');
     }
 
-    // const signinPage = () => {
-    //     router.push('/signin');
-    // }
+    const signinPage = () => {
+        router.push('/signin');
+    }
 
-    const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData(prevFormData => {
+            return {
+                ...prevFormData,
+                [event.target.name]: event.target.value
+            };
+        });
+    };
+    
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
-        if (password !== confirmPassword){
-            setError("Passwords do not match.");
-            return;
-        }
 
         setError('');
 
-        //try-catch to sign up
-    };
-    
+        // 1. Confirm Password Check
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
 
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+        setLoading(true);
+
+        try {
+            const {data, error } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        username: formData.username
+                    }
+                }
     
+            })
+            if (error) { throw error;}
+            alert ("Check your email for the confirmation link.");
+        } catch (error) {
+            alert ("signup.tsx: " + error);
+        }
+    }
+
     const [username, setUsername] = useState('');
     const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
     
@@ -76,26 +110,43 @@ const Signup: React.FC = () => {
 
             <div className="sign-up-box">
                 <p className="title-text-css">Create an Account</p>
-                <form onSubmit={handleSignup}>
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Username</label>
-                        <input type="text" placeholder="Your username" required pattern="^[A-Za-z0-9_]+$" title="Username can only contain letters, numbers, and underscores. No spaces."
-                        value={username} onChange={(e) => setUsername(e.target.value)}/>
+                        <input type="text" 
+                        placeholder="Your username" 
+                        required 
+                        pattern="^[A-Za-z0-9_]+$" 
+                        title="Username can only contain letters, numbers, and underscores. No spaces."
+                        name="username"
+                        onChange= {handleChange}/>
                     </div>
                     {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
                     <div className="form-group">
                         <label>Email</label>
-                        <input type="email" placeholder="Email address" required />
+                        <input 
+                        type="email" 
+                        placeholder="Email address" 
+                        required 
+                        name="email"
+                        onChange={handleChange} />
                     </div>
                     <div className="form-group">
                         <label>Password</label>
-                        <input type="password" placeholder="Password" value={password} 
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} required />
+                        <input 
+                        type="password" 
+                        placeholder="Password" 
+                        name="password"
+                        onChange={handleChange} />
                     </div>
                     <div className="form-group">
                         <label>Confirm Password</label>
-                        <input type="password" placeholder="Enter your password again" value={confirmPassword} 
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}required />
+                        <input 
+                        type="password" 
+                        placeholder="Enter your password again" 
+                        required
+                        name="confirmPassword"
+                        onChange={handleChange} />
                     </div>
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" className="submit-btn">Sign Up</button>
