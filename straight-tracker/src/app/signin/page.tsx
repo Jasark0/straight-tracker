@@ -8,23 +8,13 @@ import "../styles/General.css"
 import "../styles/Home.css"
 import "../styles/Signup.css"
 
-const Signup: React.FC = () => {
+const Signin: React.FC = () => {
     const router = useRouter();
 
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     })
-
-    console.log(formData);
-
-    const homePage = () => {
-        router.push('/');
-    }
-
-    // const signinPage = () => {
-    //     router.push('/signin');
-    // }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
@@ -35,9 +25,7 @@ const Signup: React.FC = () => {
             };
         });
     };
-
     
-
     const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -55,39 +43,13 @@ const Signup: React.FC = () => {
             return;
         }
     };
-    
 
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    
-    const [username, setUsername] = useState('');
-    const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
-    
-    async function checkUsernameAvailability(name: string){
-        try{
-            const res = await fetch(`/api/usernameExists?username=${encodeURIComponent(name)}`);
-            const data = await res.json();
-            console.log("something");
-            setUsernameAvailable(data.available);
-        }
-        catch (err){
-            setUsernameAvailable(null);
-        }
+    const homePage = () => {
+        router.push('/');
     }
-
-    useEffect(() => {
-        if (username === ''){
-            setUsernameAvailable(null);
-            return;
-        }
-
-        const handler = setTimeout(() => {
-            checkUsernameAvailability(username);
-        }, 500);
-
-        return () => clearTimeout(handler);
-    }, [username]);
+    const signUpPage = () => {
+        router.push('/signup');
+    }
 
     return (
         <div className="page-box">
@@ -124,8 +86,11 @@ const Signup: React.FC = () => {
                     </div>
                     <button type="submit" className="submit-btn">Sign In</button>
                 </form>
+                <p className="already-text-css" onClick={signUpPage}>
+                    Don't have an account?
+                </p>
                 <p className="or-css">
-                        or
+                    or
                 </p>
                 <img src="google.png" className="google-css"></img>
             </div>
@@ -134,4 +99,4 @@ const Signup: React.FC = () => {
     )
 }
 
-export default Signup
+export default Signin

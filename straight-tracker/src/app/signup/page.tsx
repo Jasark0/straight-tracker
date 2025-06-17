@@ -109,6 +109,9 @@ const Signup: React.FC = () => {
     const homePage = () => {
         router.push('/');
     }
+    const signInPage = () => {
+        router.push('/signin');
+    }
 
     return (
         <div className="page-box">
@@ -167,6 +170,9 @@ const Signup: React.FC = () => {
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" className="submit-btn">Sign Up</button>
                 </form>
+                <p className="already-text-css" onClick={signInPage}>
+                    Already have an account?
+                </p>
                 <p className="or-css">
                     or
                 </p>

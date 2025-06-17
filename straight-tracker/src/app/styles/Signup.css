@@ -88,6 +88,19 @@
     color: rgb(122, 122, 122);
 }
 
+.already-text-css{
+    display: flex;
+    text-align: center;
+    color: rgb(78, 78, 255);
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.already-text-css:hover {
+    color: rgb(40, 40, 200);
+    text-decoration: underline;
+}
+
 .google-css {
     width: 80px;
     height: 80px;

@@ -1,3 +1,12 @@
-.something{
-    color: black;
+.dont-text-css{
+    display: flex;
+    text-align: center;
+    color: rgb(78, 78, 255);
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.dont-text-css:hover {
+    color: rgb(40, 40, 200);
+    text-decoration: underline;
 }
