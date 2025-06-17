@@ -64,6 +64,20 @@ const Signup: React.FC = () => {
     
             })
             if (error) { throw error;}
+
+            const {data: profiles, error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                    {
+                        id: data.user?.id,
+                        username: formData.username,
+                        email: formData.email,
+                        created_at: new Date().toISOString()
+                    }
+                ])
+                .select();
+            if (profileError) { throw profileError; }
+            
             alert ("Check your email for the confirmation link.");
         } catch (error) {
             alert ("signup.tsx: " + error);
