@@ -39,29 +39,29 @@ const Signup: React.FC = () => {
     const [username, setUsername] = useState('');
     const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
     
-    async function checkUsernameAvailability(name: string){
-        try{
-            const res = await fetch(`/api/usernameExists?username=${encodeURIComponent(name)}`);
-            const data = await res.json();
-            setUsernameAvailable(data.available);
-        }
-        catch (err){
-            setUsernameAvailable(null);
-        }
-    }
+    // async function checkUsernameAvailability(name: string){
+    //     try{
+    //         const res = await fetch(`/api/usernameExists?username=${encodeURIComponent(name)}`);
+    //         const data = await res.json();
+    //         setUsernameAvailable(data.available);
+    //     }
+    //     catch (err){
+    //         setUsernameAvailable(null);
+    //     }
+    // }
 
-    useEffect(() => {
-        if (username === ''){
-            setUsernameAvailable(null);
-            return;
-        }
+    // useEffect(() => {
+    //     if (username === ''){
+    //         setUsernameAvailable(null);
+    //         return;
+    //     }
 
-        const handler = setTimeout(() => {
-            checkUsernameAvailability(username);
-        }, 300);
+    //     const handler = setTimeout(() => {
+    //         checkUsernameAvailability(username);
+    //     }, 300);
 
-        return () => clearTimeout(handler);
-    }, [username]);
+    //     return () => clearTimeout(handler);
+    // }, [username]);
 
     return (
         <div className="page-box">
