@@ -36,10 +36,6 @@ const Signin: React.FC = () => {
                 }
             });
     
-            if (data.url) {
-                redirect(data.url);
-                return;
-            }
     
             if (error) {
                 setError(error.message);

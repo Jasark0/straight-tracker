@@ -6,13 +6,10 @@ export async function GET() {
   const cookieStore = cookies();
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
-  // This is Step 1 from the Supabase docs:
-  // https://supabase.com/docs/guides/auth/social-login/auth-google#sign-in-with-oauth
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // This is the URL where Google will redirect the user back to after they sign in.
-      // It MUST point to your callback API route.
+      // CRITICAL: This MUST point to your backend callback route.
       redirectTo: `${new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')}/api/auth/callback`,
     },
   });
@@ -21,6 +18,6 @@ export async function GET() {
     return NextResponse.json({ error: 'Could not authenticate user' }, { status: 500 });
   }
 
-  // The API route returns the URL that the client will redirect to.
+  // This route returns the special URL for the client to redirect to.
   return NextResponse.json({ url: data.url });
 }

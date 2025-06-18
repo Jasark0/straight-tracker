@@ -28,26 +28,21 @@ const Signup: React.FC = () => {
             };
         });
     };
-    
+
     async function handleSignUpWithGoogle() {
-    
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/api/auth/callback`,
+        try {
+            const res = await fetch('/api/googleAuth');
+            const data = await res.json();
+
+            if (!res.ok || !data.url) {
+                setError(data.error || 'Could not authenticate user.');
+                return;
             }
-        });
 
-        if (data.url) {
-            redirect(data.url);
-            return;
+            window.location.href = data.url;
+        } catch (error) {
+            setError('Something went wrong. Please try again.');
         }
-
-        if (error) {
-            setError(error.message);
-            return;
-        }
-
     }
     
     async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
