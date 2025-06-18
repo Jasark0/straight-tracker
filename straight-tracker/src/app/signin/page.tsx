@@ -12,9 +12,10 @@ const Signin: React.FC = () => {
     const router = useRouter();
 
     const [formData, setFormData] = useState({
-        email: '',
+        identifier: '',
         password: ''
     })
+    const [error, setError] = useState('');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
@@ -26,21 +27,32 @@ const Signin: React.FC = () => {
         });
     };
     
-    const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+    async function handleSignin(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        setError('');
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: formData.email,
-                password: formData.password,
-            })
-            if (error) throw error;
-            console.log(data);
-            
-            router.push('/tracker');
-        } catch (error) {
-            alert(error +"\n");
-            return;
+            const res = await fetch('/api/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    identifier: formData.identifier,
+                    password: formData.password
+                })
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                setError(result.error || 'Something went wrong.');
+                return;
+            }
+
+            router.push('/history');
+        } catch (err) {
+            setError('Something went wrong. Try again.');
         }
     };
 
@@ -64,14 +76,14 @@ const Signin: React.FC = () => {
 
             <div className="sign-up-box">
                 <p className="title-text-css">Sign in to Straight Tracker</p>
-                <form onSubmit={handleSignup}>
+                <form onSubmit={handleSignin}>
                     <div className="form-group">
                         <label>Username/Email</label>
                         <input
                             type="text"
                             placeholder="Your email"
                             required
-                            name="email"
+                            name="identifier"
                             onChange={handleChange}
                         />
                     </div>

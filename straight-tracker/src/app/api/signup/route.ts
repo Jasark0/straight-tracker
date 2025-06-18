@@ -9,9 +9,7 @@ export async function POST(req: Request) {
       email,
       password,
       options: {
-        data: {
-          username
-        }
+        emailRedirectTo: 'http://localhost:3000/signin'
       }
     });
 
@@ -39,10 +37,6 @@ export async function POST(req: Request) {
   } catch (err: any) {
     return NextResponse.json({ error: 'Unexpected error occurred.' }, { status: 500 });
   }
-}
-
-export function GET() {
-  return NextResponse.json({ error: 'Method Not Allowed' }, { status: 405 });
 }
 
 

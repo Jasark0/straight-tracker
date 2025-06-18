@@ -29,7 +29,7 @@ const Signup: React.FC = () => {
         });
     };
     
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError('');
 
@@ -59,6 +59,7 @@ const Signup: React.FC = () => {
             }
 
             alert(result.message);
+            router.push('/signin');
         } catch (err) {
             setError('Something went wrong. Try again.');
         }
@@ -126,7 +127,7 @@ const Signup: React.FC = () => {
 
             <div className="sign-up-box">
                 <p className="title-text-css">Create an Account</p>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSignUp}>
                     <div className="form-group">
                         <label>Username</label>
                         <input type="text" 

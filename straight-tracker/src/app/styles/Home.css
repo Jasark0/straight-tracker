@@ -1,16 +1,5 @@
 /*Title CSS*/
 
-.logo-box{
-  display: flex;
-  cursor: pointer;
-}
-
-.logo-css{
-  display: flex;
-  padding: 2vh;
-  width: 16vh;
-}
-
 .home-title-box {
   position: fixed;
   display: flex;
@@ -22,6 +11,17 @@
   right: 0;
   top: 0;
   border-bottom: 1px solid black;
+}
+
+.logo-box{
+  display: flex;
+  cursor: pointer;
+}
+
+.logo-css{
+  display: flex;
+  padding: 2vh;
+  width: 16vh;
 }
 
 .home-title-name{
