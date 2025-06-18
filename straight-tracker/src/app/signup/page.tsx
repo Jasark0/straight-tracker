@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { supabase } from '../../client'
 import React, { useEffect, useState } from 'react'
 import "../styles/General.css"
@@ -28,6 +28,27 @@ const Signup: React.FC = () => {
             };
         });
     };
+    
+    async function handleSignUpWithGoogle() {
+    
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/api/auth/callback`,
+            }
+        });
+
+        if (data.url) {
+            redirect(data.url);
+            return;
+        }
+
+        if (error) {
+            setError(error.message);
+            return;
+        }
+
+    }
     
     async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -177,7 +198,7 @@ const Signup: React.FC = () => {
                 <p className="or-css">
                     or
                 </p>
-                <img src="google.png" className="google-css"></img>
+                <img src="google.png" className="google-css" onClick={handleSignUpWithGoogle}></img>
             </div>
         </div>
     )
