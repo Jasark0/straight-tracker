@@ -9,7 +9,11 @@ export async function POST(req: Request) {
       email,
       password,
       options: {
+        data: {
+          display_name: username,
+        },
         emailRedirectTo: 'http://localhost:3000/signin'
+
       }
     });
 
@@ -32,6 +36,7 @@ export async function POST(req: Request) {
     if (profileError) {
       return NextResponse.json({ error: profileError.message }, { status: 400 });
     }
+
 
     return NextResponse.json({ message: 'Check your email for the confirmation link.' });
   } catch (err: any) {
