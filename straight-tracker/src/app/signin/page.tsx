@@ -28,23 +28,21 @@ const Signin: React.FC = () => {
     };
 
     async function handleSignUpWithGoogle() {
-        
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: `${window.location.origin}/api/auth/callback`,
-                }
-            });
-    
-    
-            if (error) {
-                setError(error.message);
+        try {
+            const res = await fetch('/api/googleAuth');
+            const data = await res.json();
+
+            if (!res.ok || !data.url) {
+                setError(data.error || 'Could not authenticate user.');
                 return;
             }
-    
+
+            window.location.href = data.url;
+        } catch (error) {
+            setError('Something went wrong. Please try again.');
         }
-        
-    
+    }
+
     async function handleSignin(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError('');
