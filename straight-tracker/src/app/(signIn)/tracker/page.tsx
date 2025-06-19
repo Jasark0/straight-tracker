@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import "../styles/General.css"
-import "../styles/Select.css"
-import "../styles/Tracker.css"
+import "@/src/app/styles/General.css"
+import "@/src/app/styles/Select.css"
+import "@/src/app/styles/Tracker.css"
 
 const Tracker: React.FC = () => {
     return (

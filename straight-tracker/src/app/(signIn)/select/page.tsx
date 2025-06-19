@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import "../styles/General.css"
-import "../styles/Select.css"
+import "@/src/app/styles/General.css"
+import "@/src/app/styles/Select.css"
 
 const Select: React.FC = () => {
     const router = useRouter();

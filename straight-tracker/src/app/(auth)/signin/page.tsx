@@ -2,11 +2,13 @@
 
 import { redirect, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { supabase} from '../../client'
+import { supabase} from '../../../client'
 
-import "../styles/General.css"
-import "../styles/Home.css"
-import "../styles/Signup.css"
+import "@/src/app/styles/General.css"
+import "@/src/app/styles/Home.css"
+import "@/src/app/styles/Signup.css"
+import { signIn, signInWithGoogle } from '@/actions/auth';
+import Header from '@/src/components/Header';
 
 const Signin: React.FC = () => {
     const router = useRouter();
@@ -15,7 +17,24 @@ const Signin: React.FC = () => {
         identifier: '',
         password: ''
     })
-    const [error, setError] = useState('');
+
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        const formData = new FormData(event.currentTarget);
+        const result = await signIn(formData);
+
+        if ( result.status === "success") {
+            router.push("/");
+        } else {
+            setError(result.status);
+        }
+    }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
@@ -70,29 +89,19 @@ const Signin: React.FC = () => {
         } catch (err) {
             setError('Something went wrong. Try again.');
         }
-    };
+    };    
 
-    const homePage = () => {
-        router.push('/');
-    }
     const signUpPage = () => {
         router.push('/signup');
     }
 
     return (
         <div className="page-box">
-            <div className="home-title-box">
-                <div className="logo-box" onClick={homePage}>
-                    <img src="/straight-tracker-logo.png" className="logo-css"></img>
-                    <p className="home-title-name">
-                        Straight Tracker
-                    </p>
-                </div>
-            </div>
+            <Header />
 
             <div className="sign-up-box">
                 <p className="title-text-css">Sign in to Straight Tracker</p>
-                <form onSubmit={handleSignin}>
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Username/Email</label>
                         <input
@@ -112,6 +121,7 @@ const Signin: React.FC = () => {
                         onChange={handleChange}
                         required />
                     </div>
+                    {error && <p className="error-message">{error}</p>}
                     <button type="submit" className="submit-btn">Sign In</button>
                 </form>
                 <p className="already-text-css" onClick={signUpPage}>
@@ -120,7 +130,7 @@ const Signin: React.FC = () => {
                 <p className="or-css">
                     or
                 </p>
-                <img src="google.png" className="google-css" onClick={handleSignUpWithGoogle}></img>
+                <img src="google.png" className="google-css" onClick={signInWithGoogle}></img>
             </div>
 
         </div>

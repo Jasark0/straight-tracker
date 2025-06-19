@@ -1,11 +1,13 @@
 "use client";
 
 import { redirect, useRouter } from 'next/navigation'
-import { supabase } from '../../client'
+import { supabase } from '../../../client'
 import React, { useEffect, useState } from 'react'
-import "../styles/General.css"
-import "../styles/Home.css"
-import "../styles/Signup.css"
+import "@/src/app/styles/General.css"
+import "@/src/app/styles/Home.css"
+import "@/src/app/styles/Signup.css"
+import { signInWithGoogle, signUp } from '@/actions/auth';
+import Header from '@/src/components/Header';
 
 const Signup: React.FC = () => {
     const router = useRouter();
@@ -18,7 +20,25 @@ const Signup: React.FC = () => {
     });
     const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
     const [emailAvailable, setEmailAvailable] = useState <boolean|null>(null);
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        const formData = new FormData(event.currentTarget);
+        const result = await signUp(formData);
+
+        if ( result.status === "success") {
+            router.push("/signin");
+        } else {
+            setError(result.status);
+        }
+
+        setLoading(false);
+    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prevFormData => {
@@ -28,58 +48,6 @@ const Signup: React.FC = () => {
             };
         });
     };
-
-    async function handleSignUpWithGoogle() {
-        try {
-            const res = await fetch('/api/googleAuth');
-            const data = await res.json();
-
-            if (!res.ok || !data.url) {
-                setError(data.error || 'Could not authenticate user.');
-                return;
-            }
-
-            window.location.href = data.url;
-        } catch (error) {
-            setError('Something went wrong. Please try again.');
-        }
-    }
-    
-    async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setError('');
-
-        if (formData.password !== formData.confirmPassword){
-            setError('Passwords do not match.');
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: formData.email,
-                    password: formData.password,
-                    username: formData.username
-                })
-            });
-
-            const result = await res.json();
-
-            if (!res.ok) {
-                setError(result.error || 'Something went wrong.');
-                return;
-            }
-
-            alert(result.message);
-            router.push('/signin');
-        } catch (err) {
-            setError('Something went wrong. Try again.');
-        }
-    }
 
     useEffect(() => {
         const username = formData.username;
@@ -130,20 +98,17 @@ const Signup: React.FC = () => {
         router.push('/signin');
     }
 
+    const forgotPasswordPage = () => {
+        router.push('/forgotpassword');
+    }
+
     return (
         <div className="page-box">
-            <div className="home-title-box">
-                <div className="logo-box" onClick={homePage}>
-                    <img src="/straight-tracker-logo.png" className="logo-css"></img>
-                    <p className="home-title-name">
-                        Straight Tracker
-                    </p>
-                </div>
-            </div>
+            <Header/>
 
             <div className="sign-up-box">
                 <p className="title-text-css">Create an Account</p>
-                <form onSubmit={handleSignUp}>
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Username</label>
                         <input type="text" 
@@ -152,7 +117,8 @@ const Signup: React.FC = () => {
                         pattern="^[A-Za-z0-9_]{3,}$"
                         title="Username must be at least 3 characters and can only contain letters, numbers, and underscores. No spaces."
                         name="username"
-                        onChange= {handleChange}/>
+                        onChange={handleChange}
+                        />
                     </div>
                     {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
                     <div className="form-group">
@@ -162,7 +128,8 @@ const Signup: React.FC = () => {
                         placeholder="Email address" 
                         required 
                         name="email"
-                        onChange={handleChange} />
+                        onChange={handleChange}
+                        />
                     </div>
                     {emailAvailable === false && <p className="email-taken-css">Email is used.</p>}
                     <div className="form-group">
@@ -171,7 +138,8 @@ const Signup: React.FC = () => {
                         type="password" 
                         placeholder="Password" 
                         name="password"
-                        onChange={handleChange} />
+                        onChange={handleChange}
+                        />
                     </div>
                     <div className="form-group">
                         <label>Confirm Password</label>
@@ -182,7 +150,8 @@ const Signup: React.FC = () => {
                         minLength={8}
                         name="confirmPassword"
                         title="Password must be at least 8 characters."
-                        onChange={handleChange} />
+                        onChange={handleChange}
+                        />
                     </div>
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" className="submit-btn">Sign Up</button>
@@ -190,10 +159,13 @@ const Signup: React.FC = () => {
                 <p className="already-text-css" onClick={signInPage}>
                     Already have an account?
                 </p>
+                <p className="already-text-css" onClick={forgotPasswordPage}>
+                    Forgot Password?
+                </p>
                 <p className="or-css">
                     or
                 </p>
-                <img src="google.png" className="google-css" onClick={handleSignUpWithGoogle}></img>
+                <img src="google.png" className="google-css" onClick={signInWithGoogle}></img>
             </div>
         </div>
     )
