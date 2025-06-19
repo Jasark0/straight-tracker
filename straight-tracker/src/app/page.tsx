@@ -10,11 +10,13 @@ import { getUserSession, signOut } from '@/actions/auth';
 export default function Home() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       const session = await getUserSession();
       setUser(session?.user);
+      setIsLoading(false);
     };
     fetchUser();
   }, []);
@@ -45,29 +47,33 @@ export default function Home() {
   };
 
   return (
-    <div className="home-title-box">
-        <div className="logo-box" onClick={homePage}>
-            <img src="/straight-tracker-logo.png" className="logo-css"></img>
-            <p className="home-title-name">
-                Straight Tracker
-            </p>
-        </div>
-        <div className="login-box">
-          {user ? (
-            <button className="sign-up-css" onClick={handleSignOut}>
-                Sign out
-            </button>
-          ) : (
-            <>
-              <button className="sign-in-css" onClick={signinPage}>
-                  Sign in
+    <div className="page-box">
+      <div className="home-title-box">
+          <div className="logo-box" onClick={homePage}>
+              <img src="/straight-tracker-logo.png" className="logo-css"></img>
+              <p className="home-title-name">
+                  Straight Tracker
+              </p>
+          </div>
+          <div className="login-box">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : user ? (
+              <button className="sign-up-css" onClick={handleSignOut}>
+                  Sign out
               </button>
-              <button className="sign-up-css" onClick={signupPage}>
-                  Sign up
-              </button>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <button className="sign-in-css" onClick={signinPage}>
+                    Sign in
+                </button>
+                <button className="sign-up-css" onClick={signupPage}>
+                    Sign up
+                </button>
+              </>
+            )}
+          </div>
+      </div>
     </div>
   );
 }
