@@ -98,9 +98,7 @@ const Signup: React.FC = () => {
         router.push('/signin');
     }
 
-    const forgotPasswordPage = () => {
-        router.push('/forgotpassword');
-    }
+
 
     return (
         <div className="page-box">
@@ -158,9 +156,6 @@ const Signup: React.FC = () => {
                 </form>
                 <p className="already-text-css" onClick={signInPage}>
                     Already have an account?
-                </p>
-                <p className="already-text-css" onClick={forgotPasswordPage}>
-                    Forgot Password?
                 </p>
                 <p className="or-css">
                     or
