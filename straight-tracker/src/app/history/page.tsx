@@ -1,9 +1,12 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import React from 'react';
+import React, { useEffect, useState } from 'react'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import "../styles/General.css"
+import "../styles/Home.css"
 import "../styles/History.css"
 
 export default function History() {
@@ -14,8 +17,36 @@ export default function History() {
     }
 
     return (
-        <h1>
-            History Page
-        </h1>
+        <div className="history-page-box">
+            <div className="home-title-box">
+                <div className="logo-box" onClick={homePage}>
+                <img src="/straight-tracker-logo.png" className="logo-css"></img>
+                <p className="home-title-name">
+                    Straight Tracker
+                </p>
+                </div>
+            </div>
+            <div className="history-box">
+                <button className="new-game">+ New Game</button>
+
+                <div className="search-row-box">
+                    <div className="search-input-wrapper">
+                        <span className="search-icon">🔍</span>
+                        <input className="search-input" placeholder="Search game name" />
+                    </div>
+                    <button className="icon-button">
+                        📅
+                    </button>
+                    <button className="icon-button">
+                        ⬇️
+                    </button>
+                </div>
+
+                <div className="display-history-box">
+                    <div className="history-placeholder-box">
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
