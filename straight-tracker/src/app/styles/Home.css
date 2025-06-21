@@ -1,6 +1,10 @@
+.page-box{
+  display: flex;
+}
+
 /*Title CSS*/
 
-.home-title-box {
+.home-title-box{
   position: fixed;
   display: flex;
   align-items: center;
@@ -35,6 +39,11 @@
   display: flex;
   gap: 2vw;
   padding-right: 10vh;
+}
+
+.header-buttons-box{
+  display: flex;
+  gap: 5vh;
 }
 
 .sign-in-css{
