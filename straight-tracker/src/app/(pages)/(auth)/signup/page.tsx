@@ -1,7 +1,6 @@
 "use client";
 
 import { redirect, useRouter } from 'next/navigation'
-import { supabase } from '../../../client'
 import React, { useEffect, useState } from 'react'
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"

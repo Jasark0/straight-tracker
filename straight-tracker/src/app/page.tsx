@@ -33,6 +33,10 @@ export default function Home() {
       router.push('signup');
   }
 
+  const handleHistory = async () => {
+    router.push('/history');
+  }
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -59,9 +63,14 @@ export default function Home() {
             {isLoading ? (
               <div>Loading...</div>
             ) : user ? (
-              <button className="sign-up-css" onClick={handleSignOut}>
+              <div className="header-buttons-box">
+                <button className="sign-up-css" onClick={handleHistory}>
+                  History Page
+                </button>
+                <button className="sign-up-css" onClick={handleSignOut}>
                   Sign out
-              </button>
+                </button>
+              </div>
             ) : (
               <>
                 <button className="sign-in-css" onClick={signinPage}>
