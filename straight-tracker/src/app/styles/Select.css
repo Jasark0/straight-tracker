@@ -7,31 +7,14 @@
 }
 
 
-/*Title CSS*/
+/*Message CSS*/
 
-.title-box {
-  position: fixed;
+.tracker-title-css{
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 15vh;
-  background-color: hsl(74, 56%, 80%);
-  left: 0;
-  right: 0;
-  top: 0;
-  border-bottom: 3px solid black;
+  font-size: 2.5rem;
 }
-
-.title-name{
-  color: black;
-  font-size: 30px;
-  font-family: 'Exo 2';
-  letter-spacing: 3px;
-  word-spacing: 20px;
-}
-
-
-/*Message CSS*/
 
 .names-selection-message{
   display: flex;

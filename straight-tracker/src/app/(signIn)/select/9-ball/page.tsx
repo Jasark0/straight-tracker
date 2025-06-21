@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import Header from '@/src/components/Header';
+
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Select.css"
 
@@ -33,11 +35,7 @@ const Select: React.FC = () => {
 
     return (
         <div className='page-box'>
-            <div className="title-box">
-                <p className="title-name">
-                    Straight Pool - Score Tracker
-                </p>
-            </div>
+            <Header></Header>
 
             <div className="names-selection-message">
                 <p className="names-message">

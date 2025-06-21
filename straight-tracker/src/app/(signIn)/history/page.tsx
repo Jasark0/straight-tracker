@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import Header from '@/src/components/Header';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/History.css"
@@ -27,19 +28,19 @@ export default function History() {
 
     const selectPage = () => {
         if (selectedGame === "8 Ball"){
-            router.push('/'); //Change to /select/8-ball
+            router.push('/select/8-ball');
         }
         else if (selectedGame === "9 ball"){
-            router.push('/'); //Change to /select/9-ball
+            router.push('/select/9-ball'); 
         }
         else if (selectedGame === "10 ball"){
-            router.push('/'); //Change to /select/10-ball
+            router.push('/select/10-ball');
         }
         else if (selectedGame === "Straight Pool (14.1 Continuous)"){
-            router.push('/'); //Change to /select/straight-pool
+            router.push('/select/straight-pool'); 
         }
         else if (selectedGame === "Snooker"){
-            router.push('/'); //Change to /select/snooker
+            router.push('/select/snooker'); 
         }
     }
 
@@ -49,14 +50,8 @@ export default function History() {
 
     return (
         <div className="history-page-box">
-            <div className={`home-title-box ${showModal ? "blurred" : ""}`}>
-                <div className="logo-box" onClick={homePage}>
-                <img src="/straight-tracker-logo.png" className="logo-css"></img>
-                <p className="home-title-name">
-                    Straight Tracker
-                </p>
-                </div>
-            </div>
+            <Header className={`home-title-box ${showModal ? "blurred" : ""}`}>
+            </Header>
             <div className={`history-box ${showModal ? "blurred" : ""}`}>
                 <button className="new-game" onClick={() => setShowModal(true)}>+ New Game</button>
 
