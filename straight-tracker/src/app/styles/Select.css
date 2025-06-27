@@ -3,120 +3,157 @@
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 15vh);
-  margin-top: 18vh;
-}
-
-
-/*Message CSS*/
-
-.tracker-title-css{
-  display: flex;
+  margin-top: 15vh;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+}
+
+.select-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  width: 50%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tracker-title-css{
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 2vh;
+}
+
+.names-selection-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 15vh;
+  margin-bottom: 5vh;
 }
 
 .names-selection-message{
-  display: flex;
-  justify-content: center;
+  margin-bottom: 1vh;
 }
 
 .names-message{
-  color: black;
-  font-size: 25px;
-  letter-spacing: 2px;
-  font-family: 'Exo 2';
+  font-size: 1.1rem;
 }
 
-
-/*Input CSS*/
-
-.input-names-box{ 
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding-left: 50px;
-  padding-right: 50px;
-  height: 50vh;
-  align-items: center;
-  column-gap: 20vh;
-}
-
-.input-names-box1, .input-names-box2{
-  color: black;
-  font-family: 'Exo 2';
-  background-color: hsl(60, 57%, 95%);
-  height: 30vh;
-  border: 3px solid black;
-  border-radius: 75px;
-  text-align: center;
-  font-size: 40px;
-  letter-spacing: 2px;
-}
-
-.input-names{
-  color: black;
-  font-family: 'Exo 2';
-  text-align: center;
-  font-size: 35px;
-  letter-spacing: 2px;
-}
-
-.input-names-box1::placeholder, .input-names-box2::placeholder{
-  color: black;
-  font-family: 'Exo 2';
-  text-align: center;
-  font-size: 30px;
-  letter-spacing: 2px;
-  color: hsl(0, 0%, 75%);
-}
-
-.input-names-box1:hover{
-  box-shadow: 0 0 10px #8ab1f0;  
-  background-color: rgb(226, 243, 238);
-  transition: 0.3s ease;
-}
-
-.input-names-box1:focus{
-  border: 1px solid black;
-  outline: none;
-  box-shadow: 0 0 20px #98b6e7; 
-  background-color: rgb(194, 221, 231);
-  transition: 0.2s ease;
-}
-
-.input-names-box2:hover{
-  box-shadow: 0 0 10px #f14a29;
-  background-color: rgb(245, 236, 235);
-  transition: 0.3s ease;
-}
-
-.input-names-box2:focus{
-  border: 1px solid black;
-  outline: none;
-  box-shadow: 0 0 20px #f14a29; 
-  background-color: rgb(251, 220, 220);
-  transition: 0.2s ease;
-}
-
-/*Next-Button CSS*/
-
-.next-button-box{
+.player-names{
   display: flex;
-  align-items: center;
+  flex-direction: column;
+}
+
+.player-names-label{
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.player-names-input{
+  display: flex;
+  width: 30vh;
+  height: 7vh;
+  border: 1px solid #dcdcdc;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  font-size: 1.75rem;
+  transition: 0.2s ease;
+  text-align: center;
+}
+
+.player-names-input:hover{
+  background-color: #e2e2e2;
+}
+
+.player-names-input::placeholder{
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.race-sets-box {
+  display: flex;
+  flex-direction: row;
+  gap: 10vh;
   justify-content: center;
+  margin-bottom: 20px;
 }
 
-.next-button{
-  padding: 20px 50px;
-  border-radius: 30px;
-  font-size: 20px;
-  border: none;
-  background-color:hsl(144, 100%, 80%);
-  cursor: pointer;
-  color:hsl(0, 6%, 20%);
-  transition: background-color 0.15s;
+.race-box, .sets-box {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
-.next-button:hover{
-  background-color: hsl(144, 100%, 88%);
+.race-label, .sets-label {
+  font-weight: 500;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.race-input, .sets-input {
+  width: 10vh;
+  height: 4.5vh;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  padding: 1vh 2vh;
+  background-color: #f1f1f1;
+  transition: 0.2s ease;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.race-input:hover, .sets-input:hover {
+  background-color: #cccccc;
+}
+
+.break-box{
+  margin-bottom: 2vh;
+}
+
+.break-label{
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.break-format-box{
+  display: flex;
+  gap: 5vh;
+}
+
+.break-format-text{
+  display: flex;
+  font-size: 1.25rem;
+}
+
+.lag-box{
+  margin-bottom: 2vh;
+}
+.lag-label{
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.break-method-box{
+  display: flex;
+  gap: 5vh;
+}
+
+.submit-button{
+  padding: 1vh;
+  border-radius: 5px;
+  border: 1px solid #969696;
+  transition: 0.2s ease;
+}
+
+.submit-button:hover{
+  border: 1px solid #6b6b6b;
+  background-color: #b9fff9;
 }

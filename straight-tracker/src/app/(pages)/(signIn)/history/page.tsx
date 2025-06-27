@@ -6,9 +6,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import Header from '@/src/components/Header';
-import "@/src/app/styles/General.css"
-import "@/src/app/styles/Home.css"
-import "@/src/app/styles/History.css"
 
 export default function History() {
     const router = useRouter();
