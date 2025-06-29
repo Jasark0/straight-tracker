@@ -26,12 +26,52 @@ const Tracker: React.FC = () => {
             </p>
                 
             <div className="score-box">
-                <div className="">
+                <div className="player1-box">
+                    <p className="player1-text">
+                        Jason
+                    </p>
 
+                    <div className="player1-score-box">
+                        <p className="player1-score">
+                            0
+                        </p>
+                        <button className="player1-increment">
+                            +
+                        </button>
+                    </div>
+
+                    <div className="player1-sets-box">
+                        <p className="player1-set">
+                            0
+                        </p>
+                        <p className="player1-set-text">
+                            Sets
+                        </p>
+                    </div>
                 </div>
 
-                <div>
+                <div className="player2-box">
+                    <p className="player2-text">
+                        John
+                    </p>
 
+                    <div className="player1-score-box">
+                        <p className="player2-score">
+                            0
+                        </p>
+                        <button className="player2-increment">
+                            +
+                        </button>
+                    </div>
+
+                    <div className="player2-sets-box">
+                        <p className="player2-set">
+                            0
+                        </p>
+                        <p className="player2-set-text"> 
+                            Sets
+                        </p>
+                    </div>
                 </div>
             </div>
             

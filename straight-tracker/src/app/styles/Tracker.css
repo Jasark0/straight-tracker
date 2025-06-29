@@ -1,3 +1,10 @@
+.main-box{
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 15vh);
+  margin-top: 18vh;
+}
+
 /* Race CSS */
 
 .race-text-box{
@@ -27,3 +34,104 @@
 
 /* Score Box */
 
+.score-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40vh;
+}
+
+.player1-text, .player2-text{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    margin-top: 0;
+    margin-bottom: 5vh;
+}
+
+.player1-score-box, .player2-score-box{
+    display: flex;
+    flex-direction: row;
+    gap: 3vh;
+    align-items: center;
+}
+
+.player1-score{
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-size: 12rem;
+    color: hsl(6, 93%, 71%);
+}
+
+.player2-score{
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-size: 12rem;
+    color: hsl(250, 100%, 65%);
+}
+
+.player1-increment, .player2-increment{
+    display: flex;
+    height: 60px;
+    width: 60px;
+    border: 1px solid black;
+    border-radius: 43px;
+    font-size: 25px;
+    background-color:antiquewhite;
+    color: rgb(50, 50, 50);
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.player1-increment:hover, .player2-increment:hover{
+  border: 1px solid black;
+  background-color: rgb(240, 228, 212);
+  box-shadow: 0 0 5px rgb(234, 205, 167);
+  transition: 0.3s ease;
+}
+
+.player1-increment:focus, .player2-increment:focus{
+  outline: none;
+  border: 1px solid black;
+  box-shadow: 0 0 5px rgb(234, 205, 167);
+}
+
+.player1-increment:active, .player2-increment:active{
+  box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
+  background-color: rgb(242, 224, 200);;
+  top: 5px;
+  left: 5px;
+  border: 1px solid black;
+  transition: 0ms;
+}
+
+.player1-sets-box, .player2-sets-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2vh;
+}
+
+.player1-set{
+    display: flex;
+    font-size: 4rem;
+    color: hsl(6, 93%, 71%);
+    margin-top: 0;
+}
+
+.player2-set{
+    display: flex;
+    font-size: 4rem;
+    color: hsl(250, 100%, 65%);
+    margin-top: 0;
+}
+
+.player1-set-text, .player2-set-text{
+    display: flex;
+    font-size: 2rem;
+    margin-top: 2vh;
+}
