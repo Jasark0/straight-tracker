@@ -27,10 +27,10 @@ export default function History() {
         if (selectedGame === "8 Ball"){
             router.push('/select/8-ball');
         }
-        else if (selectedGame === "9 ball"){
+        else if (selectedGame === "9 Ball"){
             router.push('/select/9-ball'); 
         }
-        else if (selectedGame === "10 ball"){
+        else if (selectedGame === "10 Ball"){
             router.push('/select/10-ball');
         }
         else if (selectedGame === "Straight Pool (14.1 Continuous)"){
