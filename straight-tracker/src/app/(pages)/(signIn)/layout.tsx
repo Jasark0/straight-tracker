@@ -5,6 +5,7 @@ import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Select.css"
 import "@/src/app/styles/History.css"
 import "@/src/app/styles/Tracker.css"
+import "@/src/app/styles/S-Tracker.css"
 
 export default async function AuthLayout({
   children,

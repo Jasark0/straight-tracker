@@ -26,6 +26,7 @@ const Select: React.FC = () => {
         };
 
         console.log("Match Config:", config);
+        router.push('/tracker/8-ball');
     };
 
     return (

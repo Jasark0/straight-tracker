@@ -7,7 +7,7 @@ import Header from '@/src/components/Header';
 
 const Tracker: React.FC = () => {
     return (
-        <div className="main-box">
+        <div className="s-main-box">
             <Header></Header>
             
             <div className="remaining-balls-container">
@@ -22,17 +22,17 @@ const Tracker: React.FC = () => {
                 </p>
             </div>
             
-            <div className="player-boxes">
-                <div className="player1-box">
-                    <p id = "player1" className="player1-name">Jason</p>
-                    <div className="score-box">
-                        <button className="decrement-button">-</button>
-                        <p className="player1-score">0</p>
-                        <div className="increment-box">
-                            <button className="increment-button">+</button>
-                            <button className="increment-button">+2</button>
+            <div className="s-player-boxes">
+                <div className="s-player1-box">
+                    <p id = "player1" className="s-player1-name">Jason</p>
+                    <div className="s-score-box">
+                        <button className="s-decrement-button">-</button>
+                        <p className="s-player1-score">0</p>
+                        <div className="s-increment-box">
+                            <button className="s-increment-button">+</button>
+                            <button className="s-increment-button">+2</button>
                             <div className="CR-box">
-                                <button className="increment-button">CR</button>
+                                <button className="s-increment-button">CR</button>
                                 <button className="CR-icon">i</button>
                             </div>
                         </div>
@@ -57,15 +57,15 @@ const Tracker: React.FC = () => {
                 </div>
                 
         
-                <div className="player2-box">
-                    <p id = "player2" className="player2-name">John</p>
-                    <div className="score-box">
-                        <button className="decrement-button">-</button>
-                        <p className="player2-score">0</p>
-                        <div className="increment-box">
-                            <button className="increment-button">+</button>
-                            <button className="increment-button">+2</button>
-                            <button className="increment-button">CR</button>
+                <div className="s-player2-box">
+                    <p id = "player2" className="s-player2-name">John</p>
+                    <div className="s-score-box">
+                        <button className="s-decrement-button">-</button>
+                        <p className="s-player2-score">0</p>
+                        <div className="s-increment-box">
+                            <button className="s-increment-button">+</button>
+                            <button className="s-increment-button">+2</button>
+                            <button className="s-increment-button">CR</button>
                         </div>     
                     </div>
 
