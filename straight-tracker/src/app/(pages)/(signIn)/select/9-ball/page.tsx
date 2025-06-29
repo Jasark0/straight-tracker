@@ -26,7 +26,7 @@ const Select: React.FC = () => {
         };
 
         console.log("Match Config:", config);
-        router.push('/tracker/8-ball');
+        router.push('/tracker/9-ball');
     };
 
     return (
