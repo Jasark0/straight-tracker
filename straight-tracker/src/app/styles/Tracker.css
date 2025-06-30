@@ -1,123 +1,106 @@
-/* Main CSS */
-
 .main-box{
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 15vh);
-  margin-top: 25vh;
+  margin-top: 18vh;
 }
 
+/* Race CSS */
 
-/* Hamburger Icon CSS */
-
-.hamburger-style{
-  display: block;
-  position: absolute;
-  width: 8vh;
-  height: 7.5vh;
-  left: 3.5vh;
-  padding-left: 0.25vh;
-  background-color: hsl(74, 56%, 80%);
-  border: 1.75px solid black;
-  border-radius: 10px;
+.race-text-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5vh;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    height: 10vh;
 }
 
-
-/* Remaining Balls CSS */
-
-.remaining-balls-container{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  width: 100vw;
+.race-text{
+    display: flex;
+    justify-content: center;
+    font-size: 3rem;
 }
 
-.remaining-balls-style{
-  color: black;
-  font-size: 2.75rem;
-  font-family: 'Exo 2';
-  letter-spacing: 0.05rem;
-  word-spacing: 2px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+.set-text{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 0;
 }
 
-.rack-number{
-  color: black;
-  font-size: 20px;
-  font-family: 'Exo 2';
-}
-
-
-/* Player Stats CSS */
-
-.player-boxes{
-  color: black;
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
-  align-items: center;
-  justify-content: center;
-}
-
-.player1-box, .player2-box{
-  display: grid;
-  align-items: center;
-  justify-content: center;
-}
-
-.player1-name, .player2-name{
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  font-size: 60px;
-  font-family: 'Exo 2';
-  margin-top: -10vh;
-  letter-spacing: 2px;
-}
+/* Score Box */
 
 .score-box{
-  display: grid;
-  grid-template-columns: 1fr 2fr auto;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40vh;
 }
 
-.increment-box{
-  display: grid;
-  grid-template-rows: repeat(3, auto);
-  row-gap: 10px;
+.player1-text, .player2-text{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    margin-top: 0;
+    margin-bottom: 5vh;
 }
 
-.decrement-button, .increment-button{
-  display: flex;
-  height: 85px;
-  width: 85px;
-  border: 1px solid black;
-  border-radius: 43px;
-  font-size: 25px;
-  background-color:antiquewhite;
-  color: rgb(50, 50, 50);
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+.player1-score-box, .player2-score-box{
+    display: flex;
+    flex-direction: row;
+    gap: 3vh;
+    align-items: center;
 }
 
-.decrement-button:hover, .increment-button:hover{
+.player1-score{
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-size: 12rem;
+    color: hsl(6, 93%, 71%);
+}
+
+.player2-score{
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-size: 12rem;
+    color: hsl(250, 100%, 65%);
+}
+
+.player1-increment, .player2-increment{
+    display: flex;
+    height: 60px;
+    width: 60px;
+    border: 1px solid black;
+    border-radius: 43px;
+    font-size: 25px;
+    background-color:antiquewhite;
+    color: rgb(50, 50, 50);
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.player1-increment:hover, .player2-increment:hover{
   border: 1px solid black;
   background-color: rgb(240, 228, 212);
   box-shadow: 0 0 5px rgb(234, 205, 167);
   transition: 0.3s ease;
 }
 
-.decrement-button:focus, .increment-button:focus{
+.player1-increment:focus, .player2-increment:focus{
   outline: none;
   border: 1px solid black;
   box-shadow: 0 0 5px rgb(234, 205, 167);
 }
 
-.decrement-button:active, .increment-button:active{
+.player1-increment:active, .player2-increment:active{
   box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
   background-color: rgb(242, 224, 200);;
   top: 5px;
@@ -126,135 +109,29 @@
   transition: 0ms;
 }
 
-.CR-box{
-  display: inline-flex;
-  gap: 2vh;
+.player1-sets-box, .player2-sets-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2vh;
 }
 
-.CR-icon{
-  border: none;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 12px;
-  cursor: pointer;
-  position: relative;
-  margin-top: 2.5vh;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  background-color: black;
-  color: white;
-  align-items: center;
+.player1-set{
+    display: flex;
+    font-size: 4rem;
+    color: hsl(6, 93%, 71%);
+    margin-top: 0;
 }
 
-.CR-icon:hover{
-  border: 1px solid black;
-  background-color: rgb(64, 63, 61);
-  transition: 0.15s ease;
+.player2-set{
+    display: flex;
+    font-size: 4rem;
+    color: hsl(250, 100%, 65%);
+    margin-top: 0;
 }
 
-.CR-icon:hover::after{
-  opacity: 1;
-}
-
-.CR-icon::after {
-  content: "CR (Clear Rack): Player clears current rack moving onto next rack.";
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgb(38, 38, 38);
-  color: white;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.CR-icon:focus{
-  outline: none;
-}
-
-.player1-score{
-  display: flex;
-  justify-content: center;
-  margin-top: 0;
-  font-size: 125px;
-  color: hsl(6, 93%, 71%);
-}
-
-.player2-score{
-  display: flex;
-  justify-content: center;
-  margin-top: 0;
-  font-size: 125px;
-  color: hsl(250, 100%, 65%);
-}
-
-.high-style{
-  margin-top: 2vh;
-  font-size: 25px;
-  font-family: 'exo 2';
-  text-align: center;
-}
-
-
-/* Arrow Image CSS */
-
-.image-style{
-  width: 150px;
-  display: block;
-  margin: auto;
-}
-
-.player-turn-text-style{
-  font-family: 'Exo 2';
-  text-align: center;
-  font-size: 30px;
-  margin-top: 30px;
-}
-
-.player-swap-text-style{
-  font-family: 'Exo 2';
-  text-align: center;
-  font-size: 20px;
-}
-
-
-/* Undo CSS */
-
-.undo-box{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.undo-style{
-  background-color: rgb(32, 32, 32);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 10px 20px;
-  transition: 0.15s ease;
-}
-
-.undo-style:hover{
-  background-color: rgb(63, 63, 63);
-}
-
-.undo-style:focus{
-  outline: none;
-}
-
-.undo-style:active{
-  background-color: rgb(85, 85, 85);
-  outline: none;
-  border: none;
-  transition: 0.15s ease;
+.player1-set-text, .player2-set-text{
+    display: flex;
+    font-size: 2rem;
+    margin-top: 2vh;
 }
