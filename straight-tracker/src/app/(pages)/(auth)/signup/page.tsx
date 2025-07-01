@@ -115,7 +115,7 @@ const Signup: React.FC = () => {
                         title="Username must be at least 3 characters and can only contain letters, numbers, and underscores. No spaces."
                         name="username"
                         onChange={handleChange}
-                        />
+                    />
                     </div>
                     {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
                     <div className="form-group">
