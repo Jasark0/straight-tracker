@@ -8,6 +8,7 @@ import Header from '@/src/components/Header';
 const Select: React.FC = () => {
     const router = useRouter();
 
+    const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState(5);
@@ -17,6 +18,7 @@ const Select: React.FC = () => {
 
     const handleSubmit = () => {
         const config = {
+            gameName,
             player1,
             player2,
             raceTo,
@@ -33,7 +35,10 @@ const Select: React.FC = () => {
         <div className="page-box">
             <Header/>
             <div className="select-box">
-                <p className="tracker-title-css">Welcome to 9-Ball Score Tracker</p>
+                <p className="game-name-message">What would your legendary 9-ball game name be today?</p>
+                <input className="game-name-input" type="text" placeholder="Game name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
+                
+                <img src="/divider.png" className="divider-css"></img>
 
                 <div className="names-selection-message">
                     <p className="names-message">Players, Type Your Names.</p>

@@ -10,15 +10,17 @@ const Tracker: React.FC = () => {
         <div className="main-box">
             <Header></Header>
             <div className="race-text-box">
-                <p className="race-text">
-                    Race to 10
-                </p>
-                <p className="race-text">
-                    -
-                </p>
-                <p className="race-text">
-                    Race to 5 sets
-                </p>
+                <div className="hamburger-container">
+                    <img src="/hamburger-menu.png" className="hamburger-icon" />
+                    <div className="dropdown-menu">
+                        <div className="dropdown-item">Edit Score</div>
+                        <div className="dropdown-item">Go to History</div>
+                    </div>
+                </div>
+
+                <p className="race-text">Race to 10</p>
+                <p className="race-text">-</p>
+                <p className="race-text">Race to 5 sets</p>
             </div>
 
             <p className="set-text">

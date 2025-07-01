@@ -1,4 +1,5 @@
 /* Page CSS */
+
 .page-box{
   display: flex;
   flex-direction: column;
@@ -7,6 +8,7 @@
   align-items: center;
   justify-content: center;
 }
+
 
 .select-box{
   display: flex;
@@ -35,10 +37,15 @@
   margin-bottom: 5vh;
 }
 
-.names-selection-message{
+.game-name-message, .names-selection-message{
+  font-size: 1.5rem;
   margin-bottom: 1vh;
 }
 
+.divider-css{
+  opacity: 80%;
+  width: 50vh;
+}
 .names-message{
   font-size: 1.1rem;
 }
@@ -51,6 +58,19 @@
 .player-names-label{
   font-weight: 500;
   font-size: 1.5rem;
+}
+
+.game-name-input{
+  display: flex;
+  width: 80vh;
+  height: 7vh;
+  border: 1px solid #dcdcdc;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  font-size: 1.75rem;
+  transition: 0.2s ease;
+  text-align: center;
 }
 
 .player-names-input{
@@ -66,11 +86,11 @@
   text-align: center;
 }
 
-.player-names-input:hover{
+.game-name-input:hover, .player-names-input:hover{
   background-color: #e2e2e2;
 }
 
-.player-names-input::placeholder{
+.game-name-input::placeholder, .player-names-input::placeholder{
   font-size: 1rem;
   color: #aaa;
 }
@@ -147,7 +167,7 @@
 }
 
 .submit-button{
-  padding: 1vh;
+  padding: 2vh 3vh;
   border-radius: 5px;
   border: 1px solid #969696;
   transition: 0.2s ease;
