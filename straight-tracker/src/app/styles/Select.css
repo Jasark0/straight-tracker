@@ -7,6 +7,7 @@
   margin-top: 15vh;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
 }
 
 
@@ -40,7 +41,8 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 15vh;
+  flex-wrap: wrap;
+  gap: 10vh;
   margin-bottom: 5vh;
 }
 
@@ -69,7 +71,9 @@
 
 .game-name-input{
   display: flex;
-  width: 80vh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   height: 7vh;
   border: 1px solid #dcdcdc;
   color: #333;
@@ -97,7 +101,13 @@
   background-color: #e2e2e2;
 }
 
-.game-name-input::placeholder, .player-names-input::placeholder{
+.game-name-input::placeholder{
+  font-size: 1rem;
+  color: #aaa;
+  word-spacing: 0.5vh;
+}
+
+.player-names-input::placeholder{
   font-size: 1rem;
   color: #aaa;
 }
@@ -163,6 +173,7 @@
 .lag-box{
   margin-bottom: 2vh;
 }
+
 .lag-label{
   display: flex;
   justify-content: center;
@@ -172,6 +183,33 @@
 .break-method-box{
   display: flex;
   gap: 5vh;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.lag-buttons {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 1rem 0;
 }
 
 .submit-button{

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { getUserSession } from '@/actions/auth';
 
 import Header from '@/src/components/Header';
 
@@ -13,15 +14,68 @@ const Select: React.FC = () => {
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
     const [sets, setSets] = useState('1');
+    const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
+    const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
 
-    const [breakOrder, setBreakOrder] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
-    const [lagWinner, setLagWinner] = useState<'random' | 'lag'>('random');
+    const [lagPopup, setLagPopup] = useState(false);
+    const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [user, setUser] = useState<any>(null);
+    
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        router.push('/tracker/8-ball');
+        if (breakMethod === 'lag'){
+            setLagPopup(true);
+            return;
+        }
+        
+        await submitMatch(null);
     };
+
+    const submitMatch = async (finalLagWinner: string|null) => {
+        try {
+            const res = await fetch('/api/createMatch8', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: user.email,
+                    gameName,
+                    player1,
+                    player2,
+                    raceTo,
+                    sets,
+                    breakFormat,
+                    lagWinner: finalLagWinner,
+                }),
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error('API error:', errorData.error);
+                return;
+            }
+
+            const result = await res.json();
+            console.log('Match created:', result);
+
+            router.push('/tracker/8-ball');
+        } catch (err) {
+            console.error('Unexpected error:', err);
+        }
+    }
+
+    useEffect(() => {
+        const fetchUser = async () => {
+          const session = await getUserSession();
+          setUser(session?.user);
+        };
+        fetchUser();
+    }, []);
+
+
 
     return (
         <div className="page-box">
@@ -56,7 +110,7 @@ const Select: React.FC = () => {
                                 className="race-input"
                                 type="text"
                                 inputMode="numeric"
-                                pattern="^[2-9][0-9]*$"
+                                pattern="^[1-9][0-9]*$"
                                 value={raceTo}
                                 onChange={(e) => {
                                 const val = e.target.value;
@@ -65,7 +119,7 @@ const Select: React.FC = () => {
                                 }
                                 }}
                                 required
-                                title="Please enter a number greater than 1."
+                                title="Please enter a number greater than 0."
                             />
 
                         </div>
@@ -95,12 +149,12 @@ const Select: React.FC = () => {
                         <label className="break-label">Break Format:</label>
                         <div className="break-format-box">
                             <label className="break-format-text">
-                                <input type="radio" name="break" value="Winner Breaks" checked={breakOrder === "Winner Breaks"} 
-                                onChange={() => setBreakOrder("Winner Breaks")} /> Winner Breaks 
+                                <input type="radio" name="break" value="Winner Breaks" checked={breakFormat === "Winner Breaks"} 
+                                onChange={() => setBreakFormat("Winner Breaks")} /> Winner Breaks 
                             </label>
                             <label className="break-format-text">
-                                <input type="radio" name="break" value="Alternate Breaks" checked={breakOrder === "Alternate Breaks"} 
-                                onChange={() => setBreakOrder("Alternate Breaks")} /> Alternate Breaks
+                                <input type="radio" name="break" value="Alternate Breaks" checked={breakFormat === "Alternate Breaks"} 
+                                onChange={() => setBreakFormat("Alternate Breaks")} /> Alternate Breaks
                             </label>
                         </div>
                     </div>
@@ -109,17 +163,44 @@ const Select: React.FC = () => {
                         <label className="lag-label">Who breaks first?</label>
                         <div className="break-method-box">
                             <label>
-                                <input type="radio" name="breakMethod" value="random" checked={lagWinner === 'random'}
-                                onChange={() => setLagWinner('random')}/>
+                                <input type="radio" name="breakMethod" value="random" checked={breakMethod === 'random'}
+                                onChange={() => setBreakMethod('random')}/>
                                 Randomize
                             </label>
                             <label>
-                                <input type="radio" name="breakMethod" value="lag" checked={lagWinner === 'lag'}
-                                onChange={() => setLagWinner('lag')}/>
+                                <input type="radio" name="breakMethod" value="lag" checked={breakMethod === 'lag'}
+                                onChange={() => setBreakMethod('lag')}/>
                                 Lag for Break
                             </label>
                         </div>
                     </div>
+                    
+                    {lagPopup && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                        <h3>Players, lag for break at this time.</h3>
+                        <p>Pick a lag winner:</p>
+                        <div className="lag-buttons">
+                            <button onClick={() => setLagWinnerSelected('player1')}>
+                            {player1}
+                            </button>
+                            <button onClick={() => setLagWinnerSelected('player2')}>
+                            {player2}
+                            </button>
+                        </div>
+                        <button
+                            disabled={!lagWinnerSelected}
+                            onClick={() => {
+                            setLagPopup(false);
+                            const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
+                            submitMatch(lagName);
+                            }}
+                        >
+                            Continue
+                        </button>
+                        </div>
+                    </div>
+                    )}
 
                     <button type="submit" className="submit-button">Start Match</button>
                 </form>
