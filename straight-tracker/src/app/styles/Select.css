@@ -147,7 +147,7 @@
 }
 
 .race-input:hover, .sets-input:hover {
-  background-color: #cccccc;
+  background-color: #e2e2e2;
 }
 
 .break-box{
@@ -185,7 +185,7 @@
   gap: 5vh;
 }
 
-.modal-overlay {
+.modal-overlay{
   position: fixed;
   top: 0;
   left: 0;
@@ -198,18 +198,68 @@
   z-index: 1000;
 }
 
-.modal-content {
+.blurred {
+  filter: blur(4px);
+}
+
+.modal-content{
   background: white;
   padding: 2rem;
   border-radius: 10px;
   text-align: center;
 }
 
-.lag-buttons {
+.lag-text{
+  font-size: 1.75rem;
+}
+
+.lag-winner-text{
+  font-size: 1.25rem;
+}
+
+.lag-button-box{
   display: flex;
-  gap: 2rem;
+  gap: 7vh;
   justify-content: center;
-  margin: 1rem 0;
+  margin-bottom: 5vh;
+}
+
+.player1-lag-button{
+  display: flex;
+  padding: 2vh 4vh;
+  border-radius: 5px;
+  border: 1px solid #333;
+  font-size: 1.25rem;
+  transition: 0.2s ease;
+}
+
+.player2-lag-button{
+  display: flex;
+  padding: 2vh 4vh;
+  border-radius: 5px;
+  border: 1px solid #333;
+  font-size: 1.25rem;
+  transition: 0.2s ease;
+}
+
+.player1-lag-button:hover{
+  border: 1px solid #6b6b6b;
+  background-color: hsl(6, 75%, 78%);
+}
+
+.player2-lag-button:hover{
+  border: 1px solid #6b6b6b;
+  background-color: hsl(241, 72%, 67%);
+}
+
+.active-red {
+  background-color: hsl(6, 93%, 71%);
+  color: white;
+}
+
+.active-blue {
+  background-color: hsl(250, 100%, 65%);
+  color: white;
 }
 
 .submit-button{
@@ -220,6 +270,18 @@
 }
 
 .submit-button:hover{
+  border: 1px solid #6b6b6b;
+  background-color: #b9fff9;
+}
+
+.continue-button{
+  padding: 1.5vh 3vh;
+  border-radius: 5px;
+  border: 1px solid #969696;
+  transition: 0.2s ease;
+}
+
+.continue-button:hover{
   border: 1px solid #6b6b6b;
   background-color: #b9fff9;
 }

@@ -27,13 +27,33 @@ export async function POST(req: Request) {
 
     const username = profile.username;
 
+    let finalGameName = gameName;
+    
+    if (!finalGameName) {
+        const { count, error: countError } = await supabase
+        .from('matches')
+        .select('match_id', { count: 'exact' })
+        .eq('username', username)
+        .eq('game_type', 0);
+
+        if (countError) {
+            return NextResponse.json({ error: 'Failed to count 8 Ball matches' }, { status: 500 });
+        }
+
+        let safeCount = 0;
+        if (count !== null){
+            safeCount = count;
+        }
+        finalGameName = `8 Ball - Match ${safeCount + 1}`;
+    }
+
     const { data: matchData, error: matchError } = await supabase
     .from('matches')
     .insert([
         {
             username,
             game_type: 0,
-            game_name: gameName,
+            game_name: finalGameName,
         },
     ])
     .select(); 

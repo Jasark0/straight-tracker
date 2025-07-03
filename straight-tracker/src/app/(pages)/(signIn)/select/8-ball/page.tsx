@@ -79,8 +79,8 @@ const Select: React.FC = () => {
 
     return (
         <div className="page-box">
-            <Header/>
-            <div className="select-box">
+            <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
+            <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
                     <p className="game-name-message">What would your legendary 8-ball game name be today?</p>
                     <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
@@ -174,37 +174,35 @@ const Select: React.FC = () => {
                             </label>
                         </div>
                     </div>
-                    
-                    {lagPopup && (
-                    <div className="modal-overlay">
-                        <div className="modal-content">
-                        <h3>Players, lag for break at this time.</h3>
-                        <p>Pick a lag winner:</p>
-                        <div className="lag-buttons">
-                            <button onClick={() => setLagWinnerSelected('player1')}>
-                            {player1}
-                            </button>
-                            <button onClick={() => setLagWinnerSelected('player2')}>
-                            {player2}
-                            </button>
-                        </div>
-                        <button
-                            disabled={!lagWinnerSelected}
-                            onClick={() => {
-                            setLagPopup(false);
-                            const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                            submitMatch(lagName);
-                            }}
-                        >
-                            Continue
-                        </button>
-                        </div>
-                    </div>
-                    )}
 
                     <button type="submit" className="submit-button">Start Match</button>
                 </form>
             </div>
+
+            {lagPopup && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                    <p className="lag-text">Players, lag for break at this time.</p>
+                    <p className="lag-winner-text">Pick a lag winner:</p>
+                    <div className="lag-button-box">
+                        <button className={`player1-lag-button ${lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
+                        {player1 || 'player1'}
+                        </button>
+                        <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
+                        {player2 || 'player2'}
+                        </button>
+                    </div>
+                    <button className="continue-button" disabled={!lagWinnerSelected} onClick={() => {
+                        setLagPopup(false);
+                        const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
+                        submitMatch(lagName);
+                        }}
+                    >
+                        Continue
+                    </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
