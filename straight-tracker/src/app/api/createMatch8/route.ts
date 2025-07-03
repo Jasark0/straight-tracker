@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../client'
+import { getUserSession } from '@/actions/auth';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-        email,
         gameName,
         player1,
         player2,
@@ -14,6 +16,11 @@ export async function POST(req: Request) {
         breakFormat,
         lagWinner,
     } = body;
+
+    const session = await getUserSession();
+    const user = session?.user;
+
+    const email = user?.email;
 
     const { data: profile, error: profileError } = await supabase
         .from('profiles')

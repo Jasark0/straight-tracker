@@ -41,7 +41,6 @@ const Select: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: user.email,
                     gameName,
                     player1,
                     player2,
@@ -66,16 +65,6 @@ const Select: React.FC = () => {
             console.error('Unexpected error:', err);
         }
     }
-
-    useEffect(() => {
-        const fetchUser = async () => {
-          const session = await getUserSession();
-          setUser(session?.user);
-        };
-        fetchUser();
-    }, []);
-
-
 
     return (
         <div className="page-box">

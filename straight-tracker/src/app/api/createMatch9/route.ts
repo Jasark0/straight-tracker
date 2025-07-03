@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../client'
+import { getUserSession } from '@/actions/auth';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-        email,
         gameName,
         player1,
         player2,
@@ -14,6 +16,11 @@ export async function POST(req: Request) {
         breakFormat,
         lagWinner,
     } = body;
+
+    const session = await getUserSession();
+    const user = session?.user;
+
+    const email = user?.email;
 
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -37,7 +44,7 @@ export async function POST(req: Request) {
         .eq('game_type', 1);
 
         if (countError) {
-            return NextResponse.json({ error: 'Failed to count 8 Ball matches' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to count 9 Ball matches' }, { status: 500 });
         }
 
         let safeCount = 0;
@@ -62,9 +69,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
     }
 
+    const finalPlayer1 = player1?.trim() ? player1 : "Player1";
+    const finalPlayer2 = player2?.trim() ? player2 : "Player2";
+
+
     const match_id = matchData[0].match_id;
     const breakFormatInt = breakFormat === "Winner Breaks" ? 0 : breakFormat === "Alternate Breaks" ? 1 : null;
-    const selectedLagWinner = lagWinner !== null ? lagWinner : (Math.random() < 0.5 ? player1 : player2);
+    const selectedLagWinner = lagWinner?.trim() ? lagWinner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
 
     if (breakFormatInt === null) {
         return NextResponse.json({ error: 'Invalid break format' }, { status: 400 });
@@ -75,14 +86,14 @@ export async function POST(req: Request) {
     .insert([
         {
             match_id,
-            player1,
-            player2,
+            player1: finalPlayer1,
+            player2: finalPlayer2,
             race_to: parseInt(raceTo),
             sets: parseInt(sets),
             break_format: breakFormatInt,
             lag_winner: selectedLagWinner,
             winner: null,
-            to_break: player1,
+            to_break: finalPlayer1,
         },
     ]);
 

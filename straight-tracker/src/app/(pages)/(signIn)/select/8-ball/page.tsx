@@ -41,7 +41,6 @@ const Select: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: user.email,
                     gameName,
                     player1,
                     player2,

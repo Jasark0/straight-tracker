@@ -1,5 +1,9 @@
-import type { Metadata } from "next";
+'use client';
+
+import { useState } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,21 +15,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Straight Tracker",
-  description: "Your professional billiards score tracker.",
-  icons: '/straight-tracker-logo.svg',
-};
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <SessionContextProvider supabaseClient={supabaseClient}>
+          {children}
+        </SessionContextProvider>
       </body>
     </html>
   );
