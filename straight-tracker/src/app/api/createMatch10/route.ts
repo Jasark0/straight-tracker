@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         .eq('game_type', 2);
 
         if (countError) {
-            return NextResponse.json({ error: 'Failed to count 8 Ball matches' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to count 10 Ball matches' }, { status: 500 });
         }
 
         let safeCount = 0;
@@ -62,9 +62,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
     }
 
+    const finalPlayer1 = player1?.trim() ? player1 : "Player1";
+    const finalPlayer2 = player2?.trim() ? player2 : "Player2";
+
+
     const match_id = matchData[0].match_id;
     const breakFormatInt = breakFormat === "Winner Breaks" ? 0 : breakFormat === "Alternate Breaks" ? 1 : null;
-    const selectedLagWinner = lagWinner !== null ? lagWinner : (Math.random() < 0.5 ? player1 : player2);
+    const selectedLagWinner = lagWinner?.trim() ? lagWinner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
 
     if (breakFormatInt === null) {
         return NextResponse.json({ error: 'Invalid break format' }, { status: 400 });
@@ -75,14 +79,14 @@ export async function POST(req: Request) {
     .insert([
         {
             match_id,
-            player1,
-            player2,
+            player1: finalPlayer1,
+            player2: finalPlayer2,
             race_to: parseInt(raceTo),
             sets: parseInt(sets),
             break_format: breakFormatInt,
             lag_winner: selectedLagWinner,
             winner: null,
-            to_break: player1,
+            to_break: finalPlayer1,
         },
     ]);
 

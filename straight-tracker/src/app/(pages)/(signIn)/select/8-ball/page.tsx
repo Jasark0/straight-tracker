@@ -61,7 +61,7 @@ const Select: React.FC = () => {
             const result = await res.json();
             console.log('Match created:', result);
 
-            router.push('/tracker/8-ball');
+            router.push(`/tracker/8-ball?matchID=${result.match_id}`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }
@@ -180,26 +180,29 @@ const Select: React.FC = () => {
             </div>
 
             {lagPopup && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                    <p className="lag-text">Players, lag for break at this time.</p>
-                    <p className="lag-winner-text">Pick a lag winner:</p>
-                    <div className="lag-button-box">
-                        <button className={`player1-lag-button ${lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
-                        {player1 || 'player1'}
+                <div className="modal-overlay" onClick={() => { if (lagWinnerSelected) { setLagPopup(false); }}}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="lag-text">Players, lag for break at this time.</p>
+                        <p className="lag-winner-text">Pick a lag winner:</p>
+                        <div className="lag-button-box">
+                            <button className={`player1-lag-button ${ lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
+                                {player1 || 'Player1'}
+                            </button>
+                                
+                            <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
+                                {player2 || 'Player2'}
+                            </button>
+                        </div>
+
+                        <button className="continue-button" disabled={!lagWinnerSelected}
+                            onClick={() => {
+                                setLagPopup(false);
+                                const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
+                                submitMatch(lagName);
+                            }}
+                        >
+                            Continue
                         </button>
-                        <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
-                        {player2 || 'player2'}
-                        </button>
-                    </div>
-                    <button className="continue-button" disabled={!lagWinnerSelected} onClick={() => {
-                        setLagPopup(false);
-                        const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                        submitMatch(lagName);
-                        }}
-                    >
-                        Continue
-                    </button>
                     </div>
                 </div>
             )}

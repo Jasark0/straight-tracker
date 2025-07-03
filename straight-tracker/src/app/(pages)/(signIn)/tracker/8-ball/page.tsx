@@ -2,10 +2,21 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { getUserSession } from '@/actions/auth';
 
 import Header from '@/src/components/Header';
 
 const Tracker: React.FC = () => {
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const session = await getUserSession();
+            setUser(session?.user);
+        };
+        fetchUser();
+    }, []);
+    
     return (
         <div className="main-box">
             <Header></Header>
