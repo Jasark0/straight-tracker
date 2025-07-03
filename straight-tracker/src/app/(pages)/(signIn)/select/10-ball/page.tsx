@@ -114,7 +114,7 @@ const Select: React.FC = () => {
                         </div>
 
                         <div className="sets-box">
-                            <label className="sets-label">Sets:</label>
+                            <label className="sets-label">Race to Sets:</label>
                             <input
                                 className="sets-input"
                                 type="text"

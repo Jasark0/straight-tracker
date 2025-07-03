@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../client';
+import { getUserSession } from '@/actions/auth';
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const match_id = searchParams.get('matchID');
-    const email = searchParams.get('email'); 
+    const session = await getUserSession();
+    const user = session?.user;
+    const email = user?.email;
 
-    if (!match_id || !email) {
-        return NextResponse.json({ error: 'Missing matchID or email' }, { status: 400 });
-    }
-
-    // Get username from email
+    
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('username')
@@ -21,9 +20,9 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+
     const username = profile.username;
 
-    // Get match and ensure it belongs to user
     const { data: match, error: matchError } = await supabase
         .from('matches')
         .select('*')
@@ -32,8 +31,18 @@ export async function GET(req: Request) {
         .single();
 
     if (matchError || !match) {
-        return NextResponse.json({ error: 'Unauthorized or match not found' }, { status: 403 });
+        return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
 
-    return NextResponse.json({ match }, { status: 200 });
+    const { data: poolMatch, error: poolMatchError } = await supabase
+        .from('pool_matches')
+        .select('*')
+        .eq('match_id', match_id)
+        .maybeSingle(); 
+
+    if (poolMatchError) {
+        return NextResponse.json({ error: 'Error retrieving pool match data' }, { status: 500 });
+    }
+
+    return NextResponse.json({ match, poolMatch }, { status: 200 });
 }

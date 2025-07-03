@@ -150,6 +150,66 @@
   background-color: #e2e2e2;
 }
 
+.sets-info-box{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1vh;
+}
+
+.sets-icon {
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  text-align: center;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+
+.sets-icon:hover{
+  border: 1px solid black;
+  background-color: rgb(64, 63, 61);
+  transition: 0.15s ease;
+}
+
+.sets-icon:hover::after{
+  opacity: 1;
+}
+
+.sets-icon::after {
+  content: "e.g. 'Best of 3 sets': a player reaches 2 sets first wins.";
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgb(38, 38, 38);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.warning-css{
+  font-size: 0.75rem;
+  color:red;
+  letter-spacing: 0.05vh;
+}
+
 .break-box{
   margin-bottom: 2vh;
 }

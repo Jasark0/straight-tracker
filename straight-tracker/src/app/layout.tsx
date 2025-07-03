@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
-import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 
 const geistSans = Geist({
@@ -15,19 +14,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <SessionContextProvider supabaseClient={supabaseClient}>
-          {children}
-        </SessionContextProvider>
+        {children}
       </body>
     </html>
   );

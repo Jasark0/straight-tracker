@@ -14,6 +14,7 @@ const Select: React.FC = () => {
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
     const [sets, setSets] = useState('1');
+    const [oddWarning, setOddWarning] = useState('');
     const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
     const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
 
@@ -22,6 +23,30 @@ const Select: React.FC = () => {
 
     const [user, setUser] = useState<any>(null);
     
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (/^\d*$/.test(val)) {
+            if (val === ''){
+                setSets('');
+                setOddWarning('');
+            } 
+            else{
+                const num = parseInt(val, 10);
+                if (num <= 0){
+                    setOddWarning('Please enter a number greater than 0.');
+                } 
+                else if (num % 2 === 0){
+                    setOddWarning('Only odd numbers are allowed (1, 3, 5, ...).');
+                } 
+                else{
+                    setOddWarning('');
+                    setSets(val);
+                }
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -58,7 +83,6 @@ const Select: React.FC = () => {
             }
 
             const result = await res.json();
-            console.log('Match created:', result);
 
             router.push(`/tracker/8-ball?matchID=${result.match_id}`);
         } catch (err) {
@@ -120,26 +144,29 @@ const Select: React.FC = () => {
                                 required
                                 title="Please enter a number greater than 0."
                             />
-
                         </div>
 
                         <div className="sets-box">
-                            <label className="sets-label">Sets:</label>
-                            <input
-                                className="sets-input"
-                                type="text"
-                                inputMode="numeric"
-                                pattern="^[1-9][0-9]*$"
-                                value={sets}
-                                onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d*$/.test(val)) {
-                                    setSets(val);
-                                }
-                                }}
-                                required
-                                title="Please enter a number greater than 0."
-                            />
+                            <div className="sets-info-box">
+                                <label className="sets-label">Best of (Sets):</label>
+                                <button className="sets-icon">
+                                    i
+                                </button>
+                            </div>
+                            
+                            <div className="sets-info-box">
+                                <input
+                                    className="sets-input"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="^[1-9][0-9]*$"
+                                    value={sets}
+                                    onChange={handleChange}
+                                    required
+                                    title="Please enter a positive odd number."
+                                />
+                            </div>
+                            {oddWarning && <p className="warning-css">{oddWarning}</p>}
                         </div>
                     </div>
 
