@@ -81,7 +81,7 @@ const Select: React.FC = () => {
                     player1,
                     player2,
                     raceTo,
-                    sets,
+                    sets: sets ? parseInt(sets) : null,
                     breakFormat,
                     lagWinner: finalLagWinner,
                 }),

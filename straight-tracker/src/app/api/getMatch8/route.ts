@@ -38,11 +38,17 @@ export async function GET(req: Request) {
         .from('pool_matches')
         .select('*')
         .eq('match_id', match_id)
-        .maybeSingle(); 
+        .single(); 
 
     if (poolMatchError) {
         return NextResponse.json({ error: 'Error retrieving pool match data' }, { status: 500 });
     }
 
-    return NextResponse.json({ match, poolMatch }, { status: 200 });
+    const { data: matchSets, error: matchSetsError } = await supabase
+        .from('matches_sets')
+        .select('*')
+        .eq('match_id', match_id)
+        .single();
+
+    return NextResponse.json({ match, poolMatch, matchSets }, { status: 200 });
 }

@@ -91,6 +91,8 @@ export async function POST(req: Request) {
             lag_winner: selectedLagWinner,
             winner: null,
             to_break: finalPlayer1,
+            player1Score: 0,
+            player2Score: 0
         },
     ]);
 
