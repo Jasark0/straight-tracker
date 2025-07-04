@@ -1,6 +1,6 @@
 /* Page CSS */
 
-.page-box{
+.select-page-box{
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 15vh);
@@ -54,6 +54,7 @@
   opacity: 80%;
   width: 50vh;
 }
+
 .names-message{
   font-size: 1.1rem;
 }

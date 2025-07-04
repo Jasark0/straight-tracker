@@ -16,30 +16,83 @@ const Tracker: React.FC = () => {
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('');
-    const [sets, setSets] = useState('');
+    const [breakFormat, setBreakFormat] = useState(0);
     const [toBreak, setToBreak] = useState('');
-    const [player1Score, setPlayer1Score] = useState();
-    const [player2Score, setPlayer2Score] = useState();
+    const [player1Score, setPlayer1Score] = useState(0);
+    const [player2Score, setPlayer2Score] = useState(0);
+
+    const [sets, setSets] = useState('');
+    const [player1Set, setPlayer1Set] = useState();
+    const [player2Set, setPlayer2Set] = useState();
+
+    type Action = {
+        player: string;
+        prevScore: number;
+        toBreak: string;
+    };
+    const [actionHistory, setActionHistory] = useState<Action[]>([]);
 
     const [loading, setLoading] = useState(true);
-    const [a, seta] = useState('');
-
     const [error, setError] = useState('');
 
-    const testing = () => {
-        console.log(a);
-        console.log(toBreak);
-    }
 
-    // const incrementPlayer1 = () => {
-    //     setPlayer1Score(player1Score+1);
-    // }
+    const incrementPlayer1 = () => { //Increment player1 score, updates who to break
+        const prev = player1Score;
+        const currentToBreak = toBreak;
 
-    // const incrementPlayer2 = () => {
-    //     setPlayer2Score(player2Score+1);
-    // }
+        setPlayer1Score(prev + 1);
 
-    useEffect(() => {
+        if (breakFormat === 0) {
+            setToBreak(player1);
+        } else if (toBreak === player1) {
+            setToBreak(player2);
+        } else {
+            setToBreak(player1);
+        }
+
+        setActionHistory(history => [
+            ...history,
+            { player: 'player1', prevScore: prev, toBreak: currentToBreak },
+        ]);
+    };
+
+    const incrementPlayer2 = () => { //Increment player2 score, updates who to break
+        const prev = player2Score;
+        const currentToBreak = toBreak;
+
+        setPlayer2Score(prev + 1);
+
+        if (breakFormat === 0) {
+            setToBreak(player2);
+        } else if (toBreak === player1) {
+            setToBreak(player2);
+        } else {
+            setToBreak(player1);
+        }
+
+        setActionHistory(history => [
+            ...history,
+            { player: 'player2', prevScore: prev, toBreak: currentToBreak },
+        ]);
+    };
+
+    const handleUndo = () => { //Undo button logic
+        const lastAction = actionHistory[actionHistory.length - 1];
+
+        if (lastAction.player === 'player1') {
+            setPlayer1Score(lastAction.prevScore);
+        } else if (lastAction.player === 'player2') {
+            setPlayer2Score(lastAction.prevScore);
+        }
+
+        setToBreak(lastAction.toBreak);
+
+        setActionHistory(prev => prev.slice(0, -1));
+    };
+
+
+
+    useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
                 const res = await fetch(`/api/getMatch8?matchID=${matchID}`);
@@ -49,18 +102,19 @@ const Tracker: React.FC = () => {
                     router.push(json.redirect);
                     return;
                 }
-                
-                seta(json.poolMatch);
 
                 setGameName(json.match.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
                 setRaceTo(json.poolMatch.race_to);
+                setBreakFormat(json.poolMatch.break_format);
                 setToBreak(json.poolMatch.to_break);
                 setPlayer1Score(json.poolMatch.player1Score);
                 setPlayer2Score(json.poolMatch.player2Score);
 
                 setSets(json.matchSets.sets); //Load sets last: this prevents rendering inconsistencies.
+                setPlayer1Set(json.matchSets.player1Set);
+                setPlayer2Set(json.matchSets.player2Set);
             }
             catch (err){
                 setError('Error');
@@ -71,8 +125,75 @@ const Tracker: React.FC = () => {
         }
         fetchMatch();
     }, [matchID]);
+
+    useEffect(() => { //Updating database with scores every 30 seconds
+        if (!matchID) return;
+
+        const interval = setInterval(() => {
+            fetch('/api/updateMatch8', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    matchID,
+                    player1Score,
+                    player2Score,
+                    player1Set: player1Set,
+                    player2Set: player2Set,
+                }),
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Failed to update match:', data.error);
+                }
+            })
+            .catch(err => console.error('Error updating match:', err));
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
     
-    if (loading){
+
+    useEffect(() => { //Updates database on close or reload page
+        if (!matchID) return;
+
+        const saveMatch = () => {
+            const data = JSON.stringify({
+                matchID,
+                player1Score,
+                player2Score,
+                player1Set,
+                player2Set,
+            });
+
+            if (navigator.sendBeacon){
+                const blob = new Blob([data], { type: 'application/json' });
+                navigator.sendBeacon('/api/updateMatch8', blob);
+            } 
+            else {
+                fetch('/api/updateMatch8', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: data,
+                    keepalive: true, 
+                });
+            }
+        };
+
+        window.addEventListener('beforeunload', saveMatch);
+        window.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                saveMatch();
+            }
+        });
+
+        return () => {
+            window.removeEventListener('beforeunload', saveMatch);
+            window.removeEventListener('visibilitychange', saveMatch);
+        };
+    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
+
+    if (loading){ //Loading screen
         return (
             <div className="page-box">
                 <div className="loading-screen">
@@ -86,22 +207,24 @@ const Tracker: React.FC = () => {
         );
     }
 
+
     return (
-        <div className="page-box">
+        <div className="tracker-page-box">
             <Header></Header>
             <div className="tracker-box">
                 <div className="game-name-box">
-                <div className="hamburger-container">
-                    <img src="/hamburger-menu.png" className="hamburger-icon" />
-                    <div className="dropdown-menu">
-                        <div className="dropdown-item">Edit Score</div>
-                        <div className="dropdown-item">Go to History</div>
+                    <div className="hamburger-container">
+                        <img src="/hamburger-menu.png" className="hamburger-icon" />
+                        <div className="dropdown-menu">
+                            <div className="dropdown-item">Edit Score</div>
+                            <div className="dropdown-item">Go to History</div>
+                        </div>
                     </div>
+                    <p className="game-name-text">
+                        {gameName}
+                    </p>
                 </div>
-                <p className="game-name-text">
-                    {gameName}
-                </p>
-                </div>
+                
                 <div className="race-text-box">
                     <p className="race-text">Race to {raceTo}</p>
                     {sets && (
@@ -118,7 +241,7 @@ const Tracker: React.FC = () => {
                     </p>
                 )}
                 
-                <img src="/divider.png" className="divider-css"></img>
+                <img src="/divider.png" className="tracker-divider-css"></img>
 
                 <div className="to-break-box">
                     <p className="to-break-player-text">
@@ -141,7 +264,7 @@ const Tracker: React.FC = () => {
                             <p className="player1-score">
                                 {player1Score}
                             </p>
-                            <button className="player1-increment" onClick={testing}>
+                            <button className="player1-increment" onClick={incrementPlayer1}>
                                 +
                             </button>
                         </div>
@@ -167,7 +290,7 @@ const Tracker: React.FC = () => {
                             <p className="player2-score">
                                 {player2Score}
                             </p>
-                            <button className="player2-increment">
+                            <button className="player2-increment" onClick={incrementPlayer2}>
                                 +
                             </button>
                         </div>
@@ -186,8 +309,8 @@ const Tracker: React.FC = () => {
                 </div>
             
 
-                <div className="undo-box">
-                    <button className="undo-style">Undo</button>
+                <div className={sets ? 'undo-set-box' : 'undo-box'}>
+                    <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
                 </div>
             </div>
         </div>

@@ -112,7 +112,7 @@ const Select: React.FC = () => {
 
 
     return (
-        <div className="page-box">
+        <div className="select-page-box">
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>

@@ -1,3 +1,16 @@
+/* Page CSS */
+
+.tracker-page-box{
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 15vh);
+  padding-top: 15vh;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+
 /* Loading Screen */
 
 .loading-screen {
@@ -30,6 +43,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.game-name-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    height: 5vh;
+    position: relative;
 }
 
 .hamburger-container {
@@ -74,17 +98,6 @@
     display: flex;
 }
 
-.game-name-box{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 0;
-    margin-bottom: 0;
-    height: 5vh;
-    position: relative;
-}
-
 .game-name-text{
     font-size: 3rem;
     letter-spacing: 1px;
@@ -121,6 +134,15 @@
     font-size: 2rem;
     margin: 0;
 }
+
+
+/* Divider CSS */
+
+.tracker-divider-css{
+  opacity: 90%;
+  width: 80vh;
+}
+
 
 /* To Break */
 
@@ -245,4 +267,51 @@
     display: flex;
     font-size: 2rem;
     margin-top: 2vh;
+}
+
+/* Undo CSS */
+
+.undo-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.undo-set-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -10vh;
+}
+
+.undo-style{
+  background-color: rgb(32, 32, 32);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 2vh 4vh;
+  transition: 0.15s ease;
+}
+
+.undo-style:hover{
+  background-color: rgb(63, 63, 63);
+}
+
+.undo-style:focus{
+  outline: none;
+}
+
+.undo-style:active{
+  background-color: rgb(85, 85, 85);
+  outline: none;
+  border: none;
+  transition: 0.15s ease;
+}
+
+.undo-style:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
