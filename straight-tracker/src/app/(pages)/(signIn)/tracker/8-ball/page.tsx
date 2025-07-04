@@ -78,7 +78,7 @@ const Tracker: React.FC = () => {
                 <div className="score-box">
                     <div className="player1-box">
                         <p className="player1-text">
-                            Jason
+                            {player1}
                         </p>
 
                         <div className="player1-score-box">
@@ -102,7 +102,7 @@ const Tracker: React.FC = () => {
 
                     <div className="player2-box">
                         <p className="player2-text">
-                            John
+                            {player2}
                         </p>
 
                         <div className="player1-score-box">
