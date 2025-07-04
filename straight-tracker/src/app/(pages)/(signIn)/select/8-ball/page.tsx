@@ -13,7 +13,8 @@ const Select: React.FC = () => {
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
-    const [sets, setSets] = useState('1');
+    const [sets, setSets] = useState('');
+    const [enableSets, setEnableSets] = useState(false);
     const [oddWarning, setOddWarning] = useState('');
     const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
     const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
@@ -44,6 +45,16 @@ const Select: React.FC = () => {
                     setSets(val);
                 }
             }
+        }
+    };
+    
+    const handleToggleSets = (checked: boolean) => {
+        setEnableSets(checked);
+        if (checked){
+            setSets('3');
+        }   
+        else{
+            setSets('');
         }
     };
 
@@ -144,30 +155,39 @@ const Select: React.FC = () => {
                                 required
                                 title="Please enter a number greater than 0."
                             />
+                            <label className="sets-toggle-label">
+                            <input
+                                type="checkbox"
+                                checked={enableSets}
+                                onChange={(e) => handleToggleSets(e.target.checked)}
+                            />
+                                Enable Sets
+                            </label>
                         </div>
-
-                        <div className="sets-box">
+                        
+                        {enableSets && (
+                            <div className="sets-box">
                             <div className="sets-info-box">
                                 <label className="sets-label">Best of (Sets):</label>
-                                <button className="sets-icon">
-                                    i
-                                </button>
+                                <button className="sets-icon">i</button>
                             </div>
-                            
+
                             <div className="sets-info-box">
                                 <input
-                                    className="sets-input"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="^[1-9][0-9]*$"
-                                    value={sets}
-                                    onChange={handleChange}
-                                    required
-                                    title="Please enter a positive odd number."
+                                className="sets-input"
+                                type="text"
+                                inputMode="numeric"
+                                pattern="^[3-9][0-9]*$"
+                                value={sets}
+                                onChange={handleChange}
+                                required
+                                title="Please enter a positive odd number greater than or equal to 3."
                                 />
                             </div>
+
                             {oddWarning && <p className="warning-css">{oddWarning}</p>}
-                        </div>
+                            </div>
+                        )}
                     </div>
 
 

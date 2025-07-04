@@ -4,12 +4,11 @@
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 15vh);
-  margin-top: 15vh;
+  padding-top: 15vh;
   align-items: center;
   justify-content: center;
   overflow-y: auto;
 }
-
 
 .select-box{
   display: flex;
@@ -43,7 +42,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 10vh;
-  margin-bottom: 5vh;
+  margin-bottom: 1vh;
 }
 
 .game-name-message, .names-selection-message{
@@ -118,6 +117,23 @@
   gap: 10vh;
   justify-content: center;
   margin-bottom: 20px;
+}
+
+.sets-toggle-label {
+  font-size: 0.9rem;
+  margin-top: 10px;
+  display: flex;
+  gap: 1vh;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #333;
+  user-select: none;
+}
+
+.sets-toggle-label input[type="checkbox"] {
+  accent-color: #00d3c5;
+  cursor: pointer;
 }
 
 .race-box, .sets-box {

@@ -87,7 +87,6 @@ export async function POST(req: Request) {
             player1: finalPlayer1,
             player2: finalPlayer2,
             race_to: parseInt(raceTo),
-            sets: parseInt(sets),
             break_format: breakFormatInt,
             lag_winner: selectedLagWinner,
             winner: null,
@@ -98,6 +97,24 @@ export async function POST(req: Request) {
     if (poolError) {
         console.error('Pool match insert error:', poolError);
         return NextResponse.json({ error: 'Failed to create pool match' }, { status: 500 });
+    }
+
+    if (sets){
+        const { error: setsError } = await supabase
+        .from('matches_sets')
+        .insert([
+            {
+                match_id,
+                sets: parseInt(sets),
+                player1Set: 0,
+                player2Set: 0,
+            },
+        ]);
+
+        if (setsError) {
+            console.error('Sets insert error:', setsError);
+            return NextResponse.json({ error: 'Failed to create sets entry' }, { status: 500 });
+        }
     }
 
     return NextResponse.json({ success: true, match_id }, { status: 200 });
