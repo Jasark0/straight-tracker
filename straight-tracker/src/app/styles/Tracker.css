@@ -171,14 +171,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40vh;
+    gap: 60vh;
+    margin-top: -7vh;
 }
 
 .player1-text, .player2-text{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 5rem;
+    font-size: 4rem;
     margin-top: 0;
     margin-bottom: 5vh;
 }

@@ -15,20 +15,23 @@ const Tracker: React.FC = () => {
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
-    const [raceTo, setRaceTo] = useState('');
+    const [raceTo, setRaceTo] = useState<number>();
     const [breakFormat, setBreakFormat] = useState(0);
     const [toBreak, setToBreak] = useState('');
-    const [player1Score, setPlayer1Score] = useState(0);
-    const [player2Score, setPlayer2Score] = useState(0);
+    const [player1Score, setPlayer1Score] = useState<number>(0);
+    const [player2Score, setPlayer2Score] = useState<number>(0);
 
-    const [sets, setSets] = useState('');
-    const [player1Set, setPlayer1Set] = useState();
-    const [player2Set, setPlayer2Set] = useState();
+    const [sets, setSets] = useState<number>(); 
+    const raceSets = sets !== undefined ? Math.floor(sets / 2) + 1 : null; //Converts best of to race to (sets)
+    const [player1Set, setPlayer1Set] = useState<number>();
+    const [player2Set, setPlayer2Set] = useState<number>();
 
     type Action = {
         player: string;
         prevScore: number;
         toBreak: string;
+        prevSet?: number;
+        resetScore?: boolean;
     };
     const [actionHistory, setActionHistory] = useState<Action[]>([]);
 
@@ -50,10 +53,38 @@ const Tracker: React.FC = () => {
             setToBreak(player1);
         }
 
-        setActionHistory(history => [
-            ...history,
-            { player: 'player1', prevScore: prev, toBreak: currentToBreak },
-        ]);
+        if (sets !== undefined){
+            if (prev + 1 === raceTo && player1Set !== undefined){
+                const prevSet = player1Set;
+                setPlayer1Set(prevSet + 1);
+                
+                if (prevSet + 1 === raceSets){
+                    console.log(player1 + " Wins the Match!");
+                }
+
+                setPlayer1Score(0);
+            }
+        }
+        else{
+            if (prev + 1 === raceTo){
+                console.log(player1 + " Wins the Match!");
+            }
+        }
+
+        const isSetsMode = sets != undefined;
+
+        const action: Action = {
+            player: 'player1',
+            prevScore: prev,
+            toBreak: currentToBreak,
+        };
+
+        if (isSetsMode){
+            action.prevSet = player1Set;
+            action.resetScore = prev + 1 === raceTo;
+        }
+
+        setActionHistory(history => [...history, action]);
     };
 
     const incrementPlayer2 = () => { //Increment player2 score, updates who to break
@@ -64,33 +95,75 @@ const Tracker: React.FC = () => {
 
         if (breakFormat === 0) {
             setToBreak(player2);
-        } else if (toBreak === player1) {
-            setToBreak(player2);
-        } else {
+        } else if (toBreak === player2) {
             setToBreak(player1);
+        } else {
+            setToBreak(player2);
         }
 
-        setActionHistory(history => [
-            ...history,
-            { player: 'player2', prevScore: prev, toBreak: currentToBreak },
-        ]);
+        if (sets !== undefined){
+
+            if (prev + 1 === raceTo && player2Set !== undefined){
+                const prevSet = player2Set;
+                setPlayer2Set(prevSet + 1);
+                
+                if (prevSet + 1 === raceSets){
+                    console.log(player2 + " Wins the Match!");
+                }
+
+                setPlayer2Score(0);
+            }
+        }
+        else{
+            if (prev + 1 === raceTo){
+                console.log(player2 + " Wins the Match!");
+            }
+        }
+
+        const isSetsMode = sets != undefined;
+
+        const action: Action = {
+            player: 'player2',
+            prevScore: prev,
+            toBreak: currentToBreak,
+        };
+
+        if (isSetsMode){
+            action.prevSet = player2Set;
+            action.resetScore = prev + 1 === raceTo;
+        }
+
+        setActionHistory(history => [...history, action]);
     };
 
     const handleUndo = () => { //Undo button logic
         const lastAction = actionHistory[actionHistory.length - 1];
+        if (!lastAction) return;
 
         if (lastAction.player === 'player1') {
             setPlayer1Score(lastAction.prevScore);
-        } else if (lastAction.player === 'player2') {
+
+            if (sets !== undefined && lastAction.prevSet !== undefined) {
+                setPlayer1Set(lastAction.prevSet);
+            }
+            if (sets !== undefined && raceTo !== undefined && lastAction.resetScore) {
+                setPlayer1Score(raceTo - 1);
+            }
+        } 
+        else if (lastAction.player === 'player2') {
             setPlayer2Score(lastAction.prevScore);
+
+            if (sets !== undefined && lastAction.prevSet !== undefined) {
+                setPlayer2Set(lastAction.prevSet);
+            }
+            if (sets !== undefined && raceTo !== undefined && lastAction.resetScore) {
+                setPlayer2Score(raceTo - 1);
+            }
         }
 
         setToBreak(lastAction.toBreak);
-
         setActionHistory(prev => prev.slice(0, -1));
     };
-
-
 
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
@@ -106,13 +179,13 @@ const Tracker: React.FC = () => {
                 setGameName(json.match.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
-                setRaceTo(json.poolMatch.race_to);
+                setRaceTo(json.poolMatch.race_to || undefined);
                 setBreakFormat(json.poolMatch.break_format);
                 setToBreak(json.poolMatch.to_break);
                 setPlayer1Score(json.poolMatch.player1Score);
                 setPlayer2Score(json.poolMatch.player2Score);
 
-                setSets(json.matchSets.sets); //Load sets last: this prevents rendering inconsistencies.
+                setSets(json.matchSets.sets || undefined); //Load sets last: this prevents rendering inconsistencies.
                 setPlayer1Set(json.matchSets.player1Set);
                 setPlayer2Set(json.matchSets.player2Set);
             }
@@ -151,7 +224,7 @@ const Tracker: React.FC = () => {
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
+    }, [matchID]);
     
 
     useEffect(() => { //Updates database on close or reload page
@@ -180,18 +253,20 @@ const Tracker: React.FC = () => {
             }
         };
 
-        window.addEventListener('beforeunload', saveMatch);
-        window.addEventListener('visibilitychange', () => {
+        const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
-                saveMatch();
+            saveMatch();
             }
-        });
+        };
+
+        window.addEventListener('beforeunload', saveMatch);
+        window.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
             window.removeEventListener('beforeunload', saveMatch);
-            window.removeEventListener('visibilitychange', saveMatch);
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
+    }, [matchID]);
 
     if (loading){ //Loading screen
         return (
@@ -235,9 +310,11 @@ const Tracker: React.FC = () => {
                     )}
                 </div>
                 
-                {sets && (
+                {sets !== undefined && (
                     <p className="set-text">
-                        (Set 1)
+                        (Set {player1Set !== undefined && player2Set !== undefined
+                        ? player1Set + player2Set + 1
+                        : 1})
                     </p>
                 )}
                 
@@ -272,7 +349,7 @@ const Tracker: React.FC = () => {
                         {sets && (
                             <div className="player1-sets-box">
                                 <p className="player1-set">
-                                    0
+                                    {player1Set}
                                 </p>
                                 <p className="player1-set-text">
                                     Sets
@@ -286,7 +363,7 @@ const Tracker: React.FC = () => {
                             {player2}
                         </p>
 
-                        <div className="player1-score-box">
+                        <div className="player2-score-box">
                             <p className="player2-score">
                                 {player2Score}
                             </p>
@@ -298,7 +375,7 @@ const Tracker: React.FC = () => {
                         {sets && (
                             <div className="player2-sets-box">
                                 <p className="player2-set">
-                                    0
+                                    {player2Set}
                                 </p>
                                 <p className="player2-set-text"> 
                                     Sets
