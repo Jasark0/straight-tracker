@@ -237,7 +237,7 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
-                const res = await fetch(`/api/getMatch8?matchID=${matchID}`);
+                const res = await fetch(`/api/getPoolMatch?matchID=${matchID}`);
                 const json = await res.json();
                 
                 if (json.redirect) {
@@ -245,18 +245,19 @@ const Tracker: React.FC = () => {
                     return;
                 }
 
-                setGameName(json.match.game_name);
+                setGameName(json.poolMatch.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
-                setRaceTo(json.poolMatch.race_to || undefined);
+                setRaceTo(json.poolMatch.race_to);
                 setBreakFormat(json.poolMatch.break_format);
                 setToBreak(json.poolMatch.to_break);
-                setPlayer1Score(json.poolMatch.player1Score);
-                setPlayer2Score(json.poolMatch.player2Score);
+                
+                console.log(json.matchRace);
+                console.log(json.matchRace.player1Score);
+                setPlayer1Score(json.matchRace[0].player1Score);
+                setPlayer2Score(json.matchRace[0].player2Score);
 
                 setSets(json.matchSets.sets || undefined); //Load sets last: this prevents rendering inconsistencies.
-                setPlayer1Set(json.matchSets.player1Set);
-                setPlayer2Set(json.matchSets.player2Set);
             }
             catch (err){
                 setError('Error');
@@ -268,33 +269,33 @@ const Tracker: React.FC = () => {
         fetchMatch();
     }, [matchID]);
 
-    useEffect(() => { //Updating database with scores every 30 seconds
-        if (!matchID) return;
+    // useEffect(() => { //Updating database with scores every 30 seconds
+    //     if (!matchID) return;
 
-        const interval = setInterval(() => {
-            updatePoolMatch();
-        }, 30000);
+    //     const interval = setInterval(() => {
+    //         updatePoolMatch();
+    //     }, 30000);
 
-        return () => clearInterval(interval);
-    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
+    //     return () => clearInterval(interval);
+    // }, [matchID, player1Score, player2Score, player1Set, player2Set]);
     
-    useEffect(() => { //Updates database on close or reload page
-        if (!matchID) return;
+    // useEffect(() => { //Updates database on close or reload page
+    //     if (!matchID) return;
 
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'hidden') {
-                updatePoolMatch();
-            }
-        };
+    //     const handleVisibilityChange = () => {
+    //         if (document.visibilityState === 'hidden') {
+    //             updatePoolMatch();
+    //         }
+    //     };
 
-        window.addEventListener('beforeunload', updatePoolMatch);
-        window.addEventListener('visibilitychange', handleVisibilityChange);
+    //     window.addEventListener('beforeunload', updatePoolMatch);
+    //     window.addEventListener('visibilitychange', handleVisibilityChange);
 
-        return () => {
-            window.removeEventListener('beforeunload', updatePoolMatch);
-            window.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
+    //     return () => {
+    //         window.removeEventListener('beforeunload', updatePoolMatch);
+    //         window.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    // }, [matchID, player1Score, player2Score, player1Set, player2Set]);
 
     if (loading){ //Loading screen
         return (
