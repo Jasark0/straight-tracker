@@ -208,38 +208,3 @@
   text-align: center;
   font-size: 20px;
 }
-
-
-/* Undo CSS */
-
-.undo-box{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.undo-style{
-  background-color: rgb(32, 32, 32);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 10px 20px;
-  transition: 0.15s ease;
-}
-
-.undo-style:hover{
-  background-color: rgb(63, 63, 63);
-}
-
-.undo-style:focus{
-  outline: none;
-}
-
-.undo-style:active{
-  background-color: rgb(85, 85, 85);
-  outline: none;
-  border: none;
-  transition: 0.15s ease;
-}

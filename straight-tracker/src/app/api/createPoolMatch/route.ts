@@ -6,13 +6,14 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-        gameName,
+        game_type,
+        game_name,
         player1,
         player2,
-        raceTo,
+        race_to,
+        break_format,
+        lag_winner,
         sets,
-        breakFormat,
-        lagWinner,
     } = body;
 
     const session = await getUserSession();
@@ -32,11 +33,11 @@ export async function POST(req: Request) {
 
     const username = profile.username;
 
-    let finalGameName = gameName;
+    let finalGameName = game_name;
     
     if (!finalGameName) {
         const { count, error: countError } = await supabase
-        .from('matches')
+        .from('pool_matches')
         .select('match_id', { count: 'exact' })
         .eq('username', username)
         .eq('game_type', 0);
@@ -52,13 +53,25 @@ export async function POST(req: Request) {
         finalGameName = `8 Ball - Match ${safeCount + 1}`;
     }
 
+    const finalPlayer1 = player1?.trim() ? player1 : "Player1";
+    const finalPlayer2 = player2?.trim() ? player2 : "Player2";
+    const breakFormatInt = break_format === "Winner Breaks" ? 0 : break_format === "Alternate Breaks" ? 1 : null;
+    const selectedLagWinner = lag_winner?.trim() ? lag_winner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
+
     const { data: matchData, error: matchError } = await supabase
-    .from('matches')
+    .from('pool_matches')
     .insert([
         {
             username,
-            game_type: 0,
+            game_type: game_type,
             game_name: finalGameName,
+            player1: finalPlayer1,
+            player2: finalPlayer2,
+            race_to: parseInt(race_to),
+            break_format: breakFormatInt,
+            lag_winner: selectedLagWinner,
+            to_break: selectedLagWinner,
+            winner: null,
         },
     ])
     .select(); 
@@ -67,47 +80,32 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
     }
 
-    const finalPlayer1 = player1?.trim() ? player1 : "Player1";
-    const finalPlayer2 = player2?.trim() ? player2 : "Player2";
-
 
     const match_id = matchData[0].match_id;
-    const breakFormatInt = breakFormat === "Winner Breaks" ? 0 : breakFormat === "Alternate Breaks" ? 1 : null;
-    const selectedLagWinner = lagWinner?.trim() ? lagWinner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
-
-    if (breakFormatInt === null) {
-        return NextResponse.json({ error: 'Invalid break format' }, { status: 400 });
-    }
     
-    const { error: poolError } = await supabase
-    .from('pool_matches')
+    const { error: raceError } = await supabase
+    .from('pool_matches_race')
     .insert([
         {
             match_id,
-            player1: finalPlayer1,
-            player2: finalPlayer2,
-            race_to: parseInt(raceTo),
-            break_format: breakFormatInt,
-            lag_winner: selectedLagWinner,
-            winner: null,
-            to_break: finalPlayer1,
+            player1Score: 0,
+            player2Score: 0,
         },
     ]);
 
-    if (poolError) {
-        console.error('Pool match insert error:', poolError);
-        return NextResponse.json({ error: 'Failed to create pool match' }, { status: 500 });
+    if (raceError) {
+        console.error('Pool match race insert error:', raceError);
+        return NextResponse.json({ error: 'Failed to create pool match race' }, { status: 500 });
     }
+
 
     if (sets){
         const { error: setsError } = await supabase
-        .from('matches_sets')
+        .from('pool_matches_sets')
         .insert([
             {
                 match_id,
                 sets: parseInt(sets),
-                player1Set: 0,
-                player2Set: 0,
             },
         ]);
 

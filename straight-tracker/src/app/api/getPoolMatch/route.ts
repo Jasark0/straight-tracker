@@ -5,6 +5,11 @@ import { getUserSession } from '@/actions/auth';
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const match_id = searchParams.get('matchID');
+
+    if (!match_id) {
+        return NextResponse.json({ error: 'Missing match ID' }, { status: 400 });
+    }
+
     const session = await getUserSession();
     const user = session?.user;
     const email = user?.email;
@@ -23,26 +28,37 @@ export async function GET(req: Request) {
 
     const username = profile.username;
 
-    const { data: match, error: matchError } = await supabase
-        .from('matches')
+    const { data: poolMatch, error: matchError } = await supabase
+        .from('pool_matches')
         .select('*')
         .eq('match_id', match_id)
         .eq('username', username)
         .single();
 
-    if (matchError || !match) {
+    if (matchError || !poolMatch) {
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
 
-    const { data: poolMatch, error: poolMatchError } = await supabase
-        .from('pool_matches')
+    const { data: matchRace, error: matchRaceError } = await supabase
+        .from('pool_matches_race')
         .select('*')
         .eq('match_id', match_id)
-        .maybeSingle(); 
+        .order('id', { ascending: true })
 
-    if (poolMatchError) {
-        return NextResponse.json({ error: 'Error retrieving pool match data' }, { status: 500 });
+
+    if (matchRaceError) {
+        return NextResponse.json({ error: 'Error retrieving pool race data' }, { status: 500 });
     }
 
-    return NextResponse.json({ match, poolMatch }, { status: 200 });
+    const { data: matchSets, error: matchSetsError } = await supabase
+        .from('pool_matches_sets')
+        .select('*')
+        .eq('match_id', match_id)
+        .maybeSingle();
+    
+    if (matchSetsError) {
+        return NextResponse.json({ error: 'Error retrieving pool sets data' }, { status: 500 });
+    } 
+
+    return NextResponse.json({ poolMatch, matchRace, matchSets }, { status: 200 });
 }

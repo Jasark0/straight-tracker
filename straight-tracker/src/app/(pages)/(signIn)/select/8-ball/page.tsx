@@ -71,19 +71,20 @@ const Select: React.FC = () => {
 
     const submitMatch = async (finalLagWinner: string|null) => {
         try {
-            const res = await fetch('/api/createMatch8', {
+            const res = await fetch('/api/createPoolMatch', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    gameName,
-                    player1,
-                    player2,
-                    raceTo,
-                    sets,
-                    breakFormat,
-                    lagWinner: finalLagWinner,
+                    game_type: 0,
+                    game_name: gameName,
+                    player1: player1,
+                    player2: player2,
+                    race_to: raceTo,
+                    break_format: breakFormat,
+                    lag_winner: finalLagWinner,
+                    sets: sets ? parseInt(sets) : null,
                 }),
             });
 
@@ -112,7 +113,7 @@ const Select: React.FC = () => {
 
 
     return (
-        <div className="page-box">
+        <div className="select-page-box">
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
