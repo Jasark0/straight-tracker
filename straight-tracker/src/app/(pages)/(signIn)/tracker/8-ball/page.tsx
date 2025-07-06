@@ -20,34 +20,30 @@ const Tracker: React.FC = () => {
 
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchMatch = async () => {
-            try{
-                const res = await fetch(`/api/getMatch8?matchID=${matchID}`);
-                const json = await res.json();
+    // useEffect(() => {
+    //     const fetchMatch = async () => {
+    //         try{
+    //             const res = await fetch(`/api/getMatch8?matchID=${matchID}`);
+    //             const json = await res.json();
                 
-                if (json.redirect) {
-                    router.push(json.redirect);
-                    return;
-                }
+    //             if (json.redirect) {
+    //                 router.push(json.redirect);
+    //                 return;
+    //             }
                 
-                setGameName(json.match.game_name);
-                setPlayer1(json.poolMatch.player1);
-                setPlayer2(json.poolMatch.player2);
-                setRaceTo(json.poolMatch.race_to);
-                setSets(json.poolMatch.sets);
-            }
-            catch (err){
-                setError('Error');
-            };
-        }
-        fetchMatch();
-    }, [matchID]);
-    
-    const testing = () =>{
-        console.log(gameName);
-        console.log(player1 + " " + player2 + " " + raceTo + " " + sets);
-    }
+    //             setGameName(json.match.game_name);
+    //             setPlayer1(json.poolMatch.player1);
+    //             setPlayer2(json.poolMatch.player2);
+    //             setRaceTo(json.poolMatch.race_to);
+    //             setSets(json.poolMatch.sets);
+    //         }
+    //         catch (err){
+    //             setError('Error');
+    //         };
+    //     }
+    //     fetchMatch();
+    // }, [matchID]);
+
 
     return (
         <div className="page-box">
@@ -85,7 +81,7 @@ const Tracker: React.FC = () => {
                             <p className="player1-score">
                                 0
                             </p>
-                            <button className="player1-increment" onClick={testing}>
+                            <button className="player1-increment">
                                 +
                             </button>
                         </div>
