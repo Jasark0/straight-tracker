@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     const username = profile.username;
 
     const { data: poolMatch, error: matchError } = await supabase
-        .from('new_pool_matches')
+        .from('pool_matches')
         .select('*')
         .eq('match_id', match_id)
         .eq('username', username)
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
     }
 
     const { data: matchRace, error: matchRaceError } = await supabase
-        .from('new_pool_matches_race')
+        .from('pool_matches_race')
         .select('*')
         .eq('match_id', match_id)
         .order('id', { ascending: true })
@@ -51,10 +51,10 @@ export async function GET(req: Request) {
     }
 
     const { data: matchSets, error: matchSetsError } = await supabase
-        .from('new_pool_matches_sets')
+        .from('pool_matches_sets')
         .select('*')
         .eq('match_id', match_id)
-        .single();
+        .maybeSingle();
     
     if (matchSetsError) {
         return NextResponse.json({ error: 'Error retrieving pool sets data' }, { status: 500 });

@@ -15,8 +15,6 @@ export async function POST(req: Request) {
         .update({ winner })
         .eq('match_id', matchID);
 
-        
-
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
         }

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     
     if (!finalGameName) {
         const { count, error: countError } = await supabase
-        .from('new_pool_matches')
+        .from('pool_matches')
         .select('match_id', { count: 'exact' })
         .eq('username', username)
         .eq('game_type', 0);
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     const selectedLagWinner = lag_winner?.trim() ? lag_winner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
 
     const { data: matchData, error: matchError } = await supabase
-    .from('new_pool_matches')
+    .from('pool_matches')
     .insert([
         {
             username,
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     const match_id = matchData[0].match_id;
     
     const { error: raceError } = await supabase
-    .from('new_pool_matches_race')
+    .from('pool_matches_race')
     .insert([
         {
             match_id,
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
 
     if (sets){
         const { error: setsError } = await supabase
-        .from('new_pool_matches_sets')
+        .from('pool_matches_sets')
         .insert([
             {
                 match_id,
