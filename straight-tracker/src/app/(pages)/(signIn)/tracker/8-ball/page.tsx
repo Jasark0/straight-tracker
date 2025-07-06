@@ -275,24 +275,91 @@ const Tracker: React.FC = () => {
                     router.push(json.redirect);
                     return;
                 }
-                
-                setGameName(json.match.game_name);
+
+                setGameName(json.poolMatch.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
                 setRaceTo(json.poolMatch.race_to);
-                setSets(json.poolMatch.sets);
+                setBreakFormat(json.poolMatch.break_format);
+                setToBreak(json.poolMatch.to_break);
+                
+                const raceCount = json.matchRace.length;
+                setId(json.matchRace[raceCount-1].id);
+                setPlayer1Score(json.matchRace[raceCount-1].player1Score); 
+                setPlayer2Score(json.matchRace[raceCount-1].player2Score);
+
+                const setsEnabled = json.matchSets.sets !== undefined;
+
+                if (setsEnabled) {
+                    const p1SetWins = json.matchRace.filter((set: any) => set.player1Score === json.poolMatch.race_to).length;
+                    const p2SetWins = json.matchRace.filter((set: any) => set.player2Score === json.poolMatch.race_to).length;
+
+                    setPlayer1Set(p1SetWins);
+                    setPlayer2Set(p2SetWins);
+                } else {
+                    setPlayer1Set(undefined);
+                    setPlayer2Set(undefined);
+                } 
+                
+                setSets(json.matchSets.sets || undefined); //Load sets last: this prevents rendering inconsistencies.
             }
             catch (err){
                 setError('Error');
+            }
+            finally{
+                setLoading(false);
             };
         }
         fetchMatch();
     }, [matchID]);
+
+    useEffect(() => { //Updating database with scores every 30 seconds
+        if (!id) return;
+
+        const interval = setInterval(() => {
+            updatePoolMatch(player1Score, player2Score);
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [id, player1Score, player2Score]);
     
-    const testing = () =>{
-        console.log(gameName);
-        console.log(player1 + " " + player2 + " " + raceTo + " " + sets);
+    useEffect(() => {
+        if (!id) return;
+
+        const handleBeforeUnload = () => {
+            updatePoolMatch(player1Score, player2Score);
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                updatePoolMatch(player1Score, player2Score);
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [id, player1Score, player2Score]);
+
+
+    if (loading){ //Loading screen
+        return (
+            <div className="page-box">
+                <div className="loading-screen">
+                    <Header/>
+                    <div className="loading-content">
+                        <p>Loading match info...</p>
+                        <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
+                    </div>
+                </div>
+            </div>
+        );
     }
+
 
     return (
         <div className="tracker-page-box">
@@ -370,7 +437,7 @@ const Tracker: React.FC = () => {
                             <p className="player1-score">
                                 {player1Score}
                             </p>
-                            <button className="player1-increment" onClick={testing}>
+                            <button className="player1-increment" onClick={incrementPlayer1}>
                                 +
                             </button>
                         </div>
