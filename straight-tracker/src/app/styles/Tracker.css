@@ -1,13 +1,13 @@
 /* Page CSS */
 
 .tracker-page-box{
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 15vh);
-  padding-top: 15vh;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 15vh);
+    padding-top: 15vh;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
 }
 
 
@@ -105,7 +105,7 @@
     margin-bottom: 2vh;
 }
 
-/* Race CSS */
+/* Race & Sets CSS */
 
 .race-text-box {
     display: flex;
@@ -125,22 +125,30 @@
     justify-content: center;
     font-size: 2rem;
     margin: 0;
+    color: rgb(170, 0, 0);
 }
 
-.set-text{
+/* Rack CSS */
+
+.rack-box{
+    display: flex;
+    gap: 0.5vh;
+}
+
+.rack-text{
     display: flex;
     justify-content: center;
     text-align: center;
     font-size: 2rem;
     margin: 0;
+    color: rgb(0, 102, 255);
 }
 
 
 /* Divider CSS */
 
 .tracker-divider-css{
-  opacity: 90%;
-  width: 80vh;
+  width: 100%;
 }
 
 
@@ -222,25 +230,25 @@
 }
 
 .player1-increment:hover, .player2-increment:hover{
-  border: 1px solid black;
-  background-color: rgb(240, 228, 212);
-  box-shadow: 0 0 5px rgb(234, 205, 167);
-  transition: 0.3s ease;
+    border: 1px solid black;
+    background-color: rgb(240, 228, 212);
+    box-shadow: 0 0 5px rgb(234, 205, 167);
+    transition: 0.3s ease;
 }
 
 .player1-increment:focus, .player2-increment:focus{
-  outline: none;
-  border: 1px solid black;
-  box-shadow: 0 0 5px rgb(234, 205, 167);
+    outline: none;
+    border: 1px solid black;
+    box-shadow: 0 0 5px rgb(234, 205, 167);
 }
 
 .player1-increment:active, .player2-increment:active{
-  box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
-  background-color: rgb(242, 224, 200);;
-  top: 5px;
-  left: 5px;
-  border: 1px solid black;
-  transition: 0ms;
+    box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
+    background-color: rgb(242, 224, 200);;
+    top: 5px;
+    left: 5px;
+    border: 1px solid black;
+    transition: 0ms;
 }
 
 .player1-sets-box, .player2-sets-box{
@@ -273,46 +281,98 @@
 /* Undo CSS */
 
 .undo-box{
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .undo-set-box{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: -10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -10vh;
 }
 
 .undo-style{
-  background-color: rgb(32, 32, 32);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 2vh 4vh;
-  transition: 0.15s ease;
+    background-color: rgb(32, 32, 32);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 2vh 4vh;
+    transition: 0.15s ease;
 }
 
 .undo-style:hover{
-  background-color: rgb(63, 63, 63);
+    background-color: rgb(63, 63, 63);
 }
 
 .undo-style:focus{
-  outline: none;
+    outline: none;
 }
 
 .undo-style:active{
-  background-color: rgb(85, 85, 85);
-  outline: none;
-  border: none;
-  transition: 0.15s ease;
+    background-color: rgb(85, 85, 85);
+    outline: none;
+    border: none;
+    transition: 0.15s ease;
 }
 
-.undo-style:disabled {
-  background-color: #888;
-  cursor: not-allowed;
-  opacity: 0.6;
+.undo-style:disabled{
+    background-color: #888;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.winner-modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.winner-content-modal{
+  background-color: #fff;
+  padding: 8vh 12vh;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 90%;
+  width: 400px;
+  animation: fadeInScale 0.3s ease-out;
+}
+
+.winner-notice-text{
+    font-size: 2rem;
+}
+
+.winner-text{
+    font-size: 2.5rem;
+    color: red;
+}
+
+.winner-button-box{
+    display: flex;
+    gap: 6vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.winner-button{
+    padding: 2vh 3vh;
+    font-size: 1.25rem;
+    border-radius: 5px;
+    border: 1px solid #7c7c7c;
+    transition: 0.2s ease;
+}
+
+.winner-button:hover{
+    background-color: #cfcfcf;
 }

@@ -26,6 +26,8 @@ const Tracker: React.FC = () => {
     const [player1Set, setPlayer1Set] = useState<number>();
     const [player2Set, setPlayer2Set] = useState<number>();
 
+    const [winner, setWinner] = useState('');
+
     type Action = {
         player: string;
         prevScore: number;
@@ -59,7 +61,8 @@ const Tracker: React.FC = () => {
                 setPlayer1Set(prevSet + 1);
                 
                 if (prevSet + 1 === raceSets){
-                    console.log(player1 + " Wins the Match!");
+                    const winnerValue = player1;
+                    handleWinner(winnerValue);
                 }
 
                 setPlayer1Score(0);
@@ -67,7 +70,9 @@ const Tracker: React.FC = () => {
         }
         else{
             if (prev + 1 === raceTo){
-                console.log(player1 + " Wins the Match!");
+                setWinner(player1);
+                const winnerValue = player1;
+                handleWinner(winnerValue);
             }
         }
 
@@ -108,7 +113,8 @@ const Tracker: React.FC = () => {
                 setPlayer2Set(prevSet + 1);
                 
                 if (prevSet + 1 === raceSets){
-                    console.log(player2 + " Wins the Match!");
+                    const winnerValue = player2;
+                    handleWinner(winnerValue);
                 }
 
                 setPlayer2Score(0);
@@ -116,7 +122,8 @@ const Tracker: React.FC = () => {
         }
         else{
             if (prev + 1 === raceTo){
-                console.log(player2 + " Wins the Match!");
+                const winnerValue = player2;
+                handleWinner(winnerValue);
             }
         }
 
@@ -165,6 +172,68 @@ const Tracker: React.FC = () => {
         setActionHistory(prev => prev.slice(0, -1));
     };
 
+    const updatePoolMatch = async () => {
+        try {
+            const res = await fetch('/api/updatePoolMatch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    matchID,
+                    player1Score,
+                    player2Score,
+                    player1Set,
+                    player2Set,
+                }),
+            });
+
+            const data = await res.json();
+            if (data.error) {
+                console.error('Failed to update match:', data.error);
+            }
+        } catch (err) {
+            console.error('Error updating match:', err);
+        }
+    };
+
+    const handleWinner = async (winnerValue: string) => {
+        setWinner(winnerValue);
+        setLoading(true);
+        try{
+            await updatePoolMatch();
+
+            const res = await fetch('/api/updateWinner',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    matchID,
+                    winner: winnerValue,
+                }),
+            })
+
+            const data = await res.json();
+            if (!res.ok){
+                setError(data.error || 'Failed to update winner');
+            } 
+            else{
+                console.log('Success:', data.message);
+            }
+        } 
+        catch (err){
+            setError('Error contacting server');
+        } 
+        finally{
+            setLoading(false);
+        }
+    }
+
+    const handleExit = () => {
+        const winnerValue = winner;
+        handleWinner(winnerValue);
+        router.push('/history');
+    }
+
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
@@ -203,70 +272,29 @@ const Tracker: React.FC = () => {
         if (!matchID) return;
 
         const interval = setInterval(() => {
-            fetch('/api/updateMatch8', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    matchID,
-                    player1Score,
-                    player2Score,
-                    player1Set: player1Set,
-                    player2Set: player2Set,
-                }),
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    console.error('Failed to update match:', data.error);
-                }
-            })
-            .catch(err => console.error('Error updating match:', err));
+            updatePoolMatch();
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [matchID]);
+    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
     
-
     useEffect(() => { //Updates database on close or reload page
         if (!matchID) return;
 
-        const saveMatch = () => {
-            const data = JSON.stringify({
-                matchID,
-                player1Score,
-                player2Score,
-                player1Set,
-                player2Set,
-            });
-
-            if (navigator.sendBeacon){
-                const blob = new Blob([data], { type: 'application/json' });
-                navigator.sendBeacon('/api/updateMatch8', blob);
-            } 
-            else {
-                fetch('/api/updateMatch8', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: data,
-                    keepalive: true, 
-                });
-            }
-        };
-
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
-            saveMatch();
+                updatePoolMatch();
             }
         };
 
-        window.addEventListener('beforeunload', saveMatch);
+        window.addEventListener('beforeunload', updatePoolMatch);
         window.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
-            window.removeEventListener('beforeunload', saveMatch);
+            window.removeEventListener('beforeunload', updatePoolMatch);
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [matchID]);
+    }, [matchID, player1Score, player2Score, player1Set, player2Set]);
 
     if (loading){ //Loading screen
         return (
@@ -310,14 +338,33 @@ const Tracker: React.FC = () => {
                     )}
                 </div>
                 
-                {sets !== undefined && (
-                    <p className="set-text">
-                        (Set {player1Set !== undefined && player2Set !== undefined
-                        ? player1Set + player2Set + 1
-                        : 1})
-                    </p>
-                )}
                 
+                <div className="rack-box">
+                    <p className="rack-text">
+                        (
+                    </p>
+                    {sets !== undefined && (
+                        <div className="rack-box">
+                            <p className="rack-text">
+                                Set {player1Set !== undefined && player2Set !== undefined ? player1Set + player2Set + 1: 1}
+                            </p>
+
+                            <p className="rack-text">
+                                -
+                            </p>
+                        </div>
+                    )}
+                    
+                    <p className="rack-text">
+                        Rack {sets !== null && player1Set !== undefined && player2Set !== undefined &&
+                        raceTo !== undefined ? (player1Set + player2Set) * raceTo + (player1Score + player2Score) : player1Score + player2Score}
+                    </p>
+
+                    <p className="rack-text">
+                        )
+                    </p>
+                </div>
+
                 <img src="/divider.png" className="tracker-divider-css"></img>
 
                 <div className="to-break-box">
@@ -390,6 +437,28 @@ const Tracker: React.FC = () => {
                     <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
                 </div>
             </div>
+
+            {winner && (
+                <div className="winner-modal">
+                    <div className="winner-content-modal">
+                        <p className="winner-notice-text">
+                            And the winner is...
+                        </p>
+                        <p className="winner-text">
+                            {winner}
+                        </p>
+                        <div className="winner-button-box">
+                            <button className="winner-button" onClick={handleExit}>
+                                exit match
+                            </button>
+                            <button className="winner-button">
+                                continue match
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
 
     )
