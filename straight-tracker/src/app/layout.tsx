@@ -1,5 +1,8 @@
-import type { Metadata } from "next";
+'use client';
+
+import { useState } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,17 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Straight Tracker",
-  description: "Your professional billiards score tracker.",
-  icons: '/straight-tracker-logo.svg',
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>

@@ -2,9 +2,6 @@
 
 import { redirect, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import "@/src/app/styles/General.css"
-import "@/src/app/styles/Home.css"
-import "@/src/app/styles/Signup.css"
 import { signInWithGoogle, signUp } from '@/actions/auth';
 import Header from '@/src/components/Header';
 
@@ -100,7 +97,7 @@ const Signup: React.FC = () => {
 
 
     return (
-        <div className="page-box">
+        <div className="signup-page-box">
             <Header/>
 
             <div className="sign-up-box">
@@ -115,7 +112,7 @@ const Signup: React.FC = () => {
                         title="Username must be at least 3 characters and can only contain letters, numbers, and underscores. No spaces."
                         name="username"
                         onChange={handleChange}
-                        />
+                    />
                     </div>
                     {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
                     <div className="form-group">

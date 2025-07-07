@@ -2,10 +2,6 @@
 
 import { redirect, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-
-import "@/src/app/styles/General.css"
-import "@/src/app/styles/Home.css"
-import "@/src/app/styles/Signup.css"
 import { forgotPassword, resetPassword, signIn, signInWithGoogle } from '@/actions/auth';
 import Header from '@/src/components/Header';
 
@@ -36,7 +32,7 @@ const Forgotpassword: React.FC = () => {
     }
 
     return (
-        <div className="page-box">
+        <div className="signin-page-box">
             <Header />
 
             <div className="sign-up-box">
