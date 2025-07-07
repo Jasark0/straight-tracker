@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getUserSession } from '@/actions/auth';
 import { useSearchParams } from 'next/navigation';
@@ -181,7 +181,7 @@ const Tracker: React.FC = () => {
         setActionHistory(prev => prev.slice(0, -1));
     };
 
-    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number) => {
+    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number) => { //updates scores to database
         try {
             const res = await fetch('/api/updatePoolMatch', {
                 method: 'POST',
@@ -202,7 +202,7 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number) => {
+    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number) => { //creates a new set when a player reaches the race_to requirement
         try{
             await updatePoolMatch(finalPlayer1Score, finalPlayer2Score);
 
@@ -228,7 +228,7 @@ const Tracker: React.FC = () => {
         }
     }
     
-    const handleWinner = async (winnerValue: string) => {
+    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -323,11 +323,18 @@ const Tracker: React.FC = () => {
         return () => clearInterval(interval);
     }, [id, player1Score, player2Score]);
     
-    useEffect(() => {
+    useEffect(() => { //Updating database with scores on reload & leaving tab
         if (!id) return;
 
-        const handleBeforeUnload = () => {
+        const handlePopState = () => {
             updatePoolMatch(player1Score, player2Score);
+        };
+
+
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            updatePoolMatch(player1Score, player2Score);
+            e.preventDefault();
+            e.returnValue = '';
         };
 
         const handleVisibilityChange = () => {
@@ -336,10 +343,12 @@ const Tracker: React.FC = () => {
             }
         };
 
+        window.addEventListener('popstate', handlePopState);
         window.addEventListener('beforeunload', handleBeforeUnload);
         window.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
+            window.removeEventListener('popstate', handlePopState);
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
