@@ -20,15 +20,16 @@ export async function getUserSession() {
 
 export async function signUp(formData : FormData) {
     const supabase = await createClient();
+    const origin = (await headers()).get("origin");
 
     const credentials = {
         username: formData.get("username") as string,
         email: formData.get("email") as string,
+        nickname: formData.get("nickname") as string,
         password: formData.get("password") as string,
         confirmPassword: formData.get("confirmPassword") as string,
     };
 
-    // Password validation
     if(credentials.password !== credentials.confirmPassword) {
         return { status: "Passwords do not match." };
     }
@@ -37,9 +38,11 @@ export async function signUp(formData : FormData) {
         email: credentials.email,
         password: credentials.password,
         options: {
+            emailRedirectTo: `${origin}/auth/callback`,
             data: {
                 username: credentials.username,
                 display_name: credentials.username,
+                nickname: credentials.nickname,
             },
         }
     });
@@ -50,6 +53,7 @@ export async function signUp(formData : FormData) {
         id: data.user?.id,
         email: credentials.email,
         username: credentials.username,
+        nickname: credentials.nickname,
         created_at: new Date().toISOString(),
     }])
     .select();

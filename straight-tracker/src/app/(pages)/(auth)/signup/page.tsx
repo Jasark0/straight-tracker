@@ -11,6 +11,7 @@ const Signup: React.FC = () => {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
+        nickname: '',
         password: '',
         confirmPassword: ''
     });
@@ -18,6 +19,7 @@ const Signup: React.FC = () => {
     const [emailAvailable, setEmailAvailable] = useState <boolean|null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [showVerificationPopup, setShowVerificationPopup] = useState<boolean>(false);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -27,7 +29,9 @@ const Signup: React.FC = () => {
         const formData = new FormData(event.currentTarget);
         const result = await signUp(formData);
 
-        if ( result.status === "success") {
+        if (result.status === "success") {
+            // Simple HTML alert popup
+            alert("Email verification sent! Please check your email and click the verification link to activate your account.");
             router.push("/signin");
         } else {
             setError(result.status);
@@ -126,6 +130,16 @@ const Signup: React.FC = () => {
                         />
                     </div>
                     {emailAvailable === false && <p className="email-taken-css">Email is used.</p>}
+                    <div className="form-group">
+                        <label>Nickname</label>
+                        <input type="text" 
+                        placeholder="Your nickname (Optional)" 
+                        pattern="^[A-Za-z0-9_]{3,}$"
+                        title="Nickname must be at least 3 characters and can only contain letters, numbers, and underscores. No spaces."
+                        name="nickname"
+                        onChange={handleChange}
+                    />
+                    </div>
                     <div className="form-group">
                         <label>Password</label>
                         <input 
