@@ -178,7 +178,7 @@ const Select: React.FC = () => {
                                 className="sets-input"
                                 type="text"
                                 inputMode="numeric"
-                                pattern="^[3-9][0-9]*$"
+                                pattern="^[1-9][0-9]*$"
                                 value={sets}
                                 onChange={handleChange}
                                 required

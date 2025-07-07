@@ -378,7 +378,7 @@ const Tracker: React.FC = () => {
                     <div className="hamburger-container">
                         <img src="/hamburger-menu.png" className="hamburger-icon" />
                         <div className="dropdown-menu">
-                            <div className="dropdown-item">Edit Score</div>
+                            <div className="dropdown-item">Configure Match</div>
                             <div className="dropdown-item">Go to History</div>
                         </div>
                     </div>
