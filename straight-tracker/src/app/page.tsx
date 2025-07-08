@@ -2,10 +2,14 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
+import { createBoard } from "@wixc3/react-board";
+import { getUserSession, signOut } from '@/actions/auth';
+import { Settings } from 'lucide-react';
 import "./styles/General.css"
 import "./styles/Home.css"
-import { getUserSession, signOut } from '@/actions/auth';
 
+// Mock function for button clicks since useRouter is not available in Codux
+const mockFunction = () => alert("Button clicked!");
 
 export default function Home() {
   const router = useRouter();
@@ -35,6 +39,10 @@ export default function Home() {
 
   const handleHistory = async () => {
     router.push('/history');
+  }
+
+  const handleSettings = () => {
+    router.push('/settings');
   }
 
   const handleSignOut = async () => {
@@ -70,6 +78,9 @@ export default function Home() {
                 <button className="sign-up-css" onClick={handleSignOut}>
                   Sign out
                 </button>
+                <button className="settings-icon-button" onClick={handleSettings}>
+                  <Settings />
+                </button>
               </div>
             ) : (
               <>
@@ -79,6 +90,7 @@ export default function Home() {
                 <button className="sign-up-css" onClick={signupPage}>
                     Sign up
                 </button>
+                
               </>
             )}
           </div>
@@ -86,3 +98,69 @@ export default function Home() {
     </div>
   );
 }
+
+export const HomePageBoard = createBoard({
+  name: "Home Page Board",
+  Board: () => (
+    <div>
+      {/* Version 1: Logged Out State */}
+      <h2>Logged Out</h2>
+      <div className="page-box">
+        <div className="home-title-box">
+            <div className="logo-box" onClick={mockFunction}>
+                <img src="/straight-tracker-logo.png" className="logo-css" alt="Logo" />
+                <p className="home-title-name">
+                    Straight Tracker
+                </p>
+            </div>
+            <div className="login-box">
+                <>
+                  <button className="sign-in-css" onClick={mockFunction}>
+                      Sign in
+                  </button>
+                  <button className="sign-up-css" onClick={mockFunction}>
+                      Sign up
+                  </button>
+                </>
+            </div>
+        </div>
+      </div>
+
+      <hr style={{ margin: '40px 0' }} />
+
+      {/* Version 2: Logged In State */}
+      <h2>Logged In</h2>
+      <div className="page-box">
+        <div className="home-title-box">
+            <div className="logo-box" onClick={mockFunction}>
+                <img src="/straight-tracker-logo.png" className="logo-css" alt="Logo" />
+                <p className="home-title-name">
+                    Straight Tracker
+                </p>
+            </div>
+            <div className="login-box">
+                <div className="header-buttons-box">
+                  <button className="sign-up-css" onClick={mockFunction}>
+                    History Page
+                  </button>
+                  <button className="sign-up-css" onClick={mockFunction}>
+                    Sign out
+                  </button>
+                </div>
+                
+            </div>
+            <button className="settings-icon-button" onClick={mockFunction}>
+                    <Settings />
+            </button>
+            
+        </div>
+        
+      </div>
+      
+    </div>
+  ),
+  environmentProps: {
+    canvasWidth: 1024,
+    canvasHeight: 300,
+  },
+});
