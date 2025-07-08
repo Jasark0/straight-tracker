@@ -2,6 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { getUserSession } from '@/actions/auth';
 
 import Header from '@/src/components/Header';
@@ -28,8 +31,9 @@ const Select: React.FC = () => {
         const val = e.target.value;
 
         if (/^\d*$/.test(val)) {
+            setSets(val);
+            
             if (val === ''){
-                setSets('');
                 setOddWarning('');
             } 
             else{
@@ -42,7 +46,6 @@ const Select: React.FC = () => {
                 } 
                 else{
                     setOddWarning('');
-                    setSets(val);
                 }
             }
         }
@@ -61,6 +64,17 @@ const Select: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        if (oddWarning){
+            toast.error('Fix the Best of (Sets): input.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+            return;
+        }
+
         if (breakMethod === 'lag'){
             setLagPopup(true);
             return;
@@ -115,6 +129,7 @@ const Select: React.FC = () => {
     return (
         <div className="select-page-box">
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
+            <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
                     <p className="game-name-message">What would your legendary 8-ball game name be today?</p>
@@ -178,7 +193,7 @@ const Select: React.FC = () => {
                                 className="sets-input"
                                 type="text"
                                 inputMode="numeric"
-                                pattern="^[1-9][0-9]*$"
+                                pattern="^\d*$"
                                 value={sets}
                                 onChange={handleChange}
                                 required

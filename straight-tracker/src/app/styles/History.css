@@ -61,6 +61,92 @@
   text-align: center;
 }
 
+.details-modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); 
+}
+
+.details-modal-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 40%;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.modal-game-type-text{
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 1vh;
+}
+
+.modal-game-name-text{
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1vh;
+}
+
+.modal-player-names-box{
+  display: flex;
+  flex-direction: row;
+  gap: 1vh;
+}
+
+.modal-player-names-text{
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.modal-vs-text{
+  margin-top: 0.5vh;
+  margin-bottom: 0;
+}
+
+.modal-winner-text{
+  font-size: 1.75rem;
+  margin-top: 0.5vh;
+  margin-bottom: 0;
+}
+
+.modal-race-to-text{
+  font-size: 1.75rem;
+  margin-top: 1vh;
+  margin-bottom: 0;
+}
+
+.modal-all-scores-text, .modal-race-score-text{
+  font-size: 1.5rem;
+  margin-bottom: 0.5vh;
+}
+
+.modal-sets-grid{
+  display: grid;
+  gap: 2vh;
+  justify-content: center;
+}
+
+.modal-sets-scores-text{
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.modal-race-scores-text{
+  font-size: 1.5rem;
+  margin: 0;
+}
+
 .game-options {
   display: grid;
   width: 50%;
@@ -170,6 +256,14 @@
   padding: 1rem;
 }
 
+.no-match-history-text{
+  display: flex;
+  font-size: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .history-item {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -206,7 +300,15 @@
   font-size: 1.4rem;
 }
 
-.history-button {
+.history-button-box{
+  display: flex;
+  flex-direction: row;
+  gap: 2vh;
+}
+
+.history-button{
+  display: flex;
+  flex-direction: row;
   padding: 0.4rem 0.75rem;
   border: none;
   border-radius: 6px;
