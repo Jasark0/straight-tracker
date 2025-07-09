@@ -18,8 +18,8 @@ export async function POST(req: Request) {
         .insert([
             {
                 match_id,
-                player1Score: 0,
-                player2Score: 0,
+                player1_score: 0,
+                player2_score: 0,
             },
         ])
         .select();

@@ -300,14 +300,14 @@ const Tracker: React.FC = () => {
                 
                 const raceCount = json.matchRace.length;
                 setId(json.matchRace[raceCount-1].id);
-                setPlayer1Score(json.matchRace[raceCount-1].player1Score); 
-                setPlayer2Score(json.matchRace[raceCount-1].player2Score);
+                setPlayer1Score(json.matchRace[raceCount-1].player1_score); 
+                setPlayer2Score(json.matchRace[raceCount-1].player2_score);
 
                 const setsEnabled = json.matchSets.sets !== undefined;
 
                 if (setsEnabled) {
-                    const p1SetWins = json.matchRace.filter((set: any) => set.player1Score === json.poolMatch.race_to).length;
-                    const p2SetWins = json.matchRace.filter((set: any) => set.player2Score === json.poolMatch.race_to).length;
+                    const p1SetWins = json.matchRace.filter((set: any) => set.player1_score === json.poolMatch.race_to).length;
+                    const p2SetWins = json.matchRace.filter((set: any) => set.player2_score === json.poolMatch.race_to).length;
 
                     setPlayer1Set(p1SetWins);
                     setPlayer2Set(p2SetWins);
