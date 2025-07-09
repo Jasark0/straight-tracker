@@ -10,8 +10,6 @@ export async function POST(req: Request) {
         if (!match_id){
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
-
-        console.log(match_id);
         
         const { data: newRace, error } = await supabase
         .from('pool_matches_race')
