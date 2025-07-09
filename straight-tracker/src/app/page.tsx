@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
-
 import "./styles/General.css"
 import "./styles/Home.css"
 import { getUserSession, signOut } from '@/actions/auth';
+
 
 export default function Home() {
   const router = useRouter();
