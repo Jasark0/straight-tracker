@@ -12,6 +12,7 @@ const Tracker: React.FC = () => {
             
             <div className="remaining-balls-container">
                 <p className="remaining-balls-style remaining-balls">
+                    
                     15
                 </p>
                 <p className="remaining-balls-style">
@@ -56,7 +57,6 @@ const Tracker: React.FC = () => {
                     </div>
                 </div>
                 
-        
                 <div className="s-player2-box">
                     <p id = "player2" className="s-player2-name">John</p>
                     <div className="s-score-box">

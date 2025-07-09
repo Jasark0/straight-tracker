@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getUserSession } from '@/actions/auth';
 import { useSearchParams } from 'next/navigation';
@@ -188,8 +188,8 @@ const Tracker: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id,
-                    player1Score: updatedPlayer1Score,
-                    player2Score: updatedPlayer2Score,
+                    player1_score: updatedPlayer1Score,
+                    player2_score: updatedPlayer2Score,
                 }),
             });
 
@@ -207,8 +207,8 @@ const Tracker: React.FC = () => {
 
         const payload = JSON.stringify({
             id,
-            player1Score: updatedPlayer1Score,
-            player2Score: updatedPlayer2Score,
+            player1_score: updatedPlayer1Score,
+            player2_score: updatedPlayer2Score,
         });
 
         const blob = new Blob([payload], { type: 'application/json' });
@@ -354,6 +354,18 @@ const Tracker: React.FC = () => {
         };
     }, [id, player1Score, player2Score]);
 
+    useEffect(() => {
+        const handlePopState = () => {
+            console.log('Popstate triggered (likely back button)');
+            location.reload(); // force reload
+        };
+
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+        }, []);
 
     if (loading){ //Loading screen
         return (

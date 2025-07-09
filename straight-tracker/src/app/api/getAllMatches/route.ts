@@ -31,8 +31,8 @@ export async function GET(req: Request) {
             winner,
             created_at,
             pool_matches_race (
-                player1Score,
-                player2Score
+                player1_score,
+                player2_score
             ),
             pool_matches_sets (
                 sets

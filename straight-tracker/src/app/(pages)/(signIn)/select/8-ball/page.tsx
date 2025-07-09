@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getUserSession } from '@/actions/auth';
 
 import Header from '@/src/components/Header';
 
@@ -24,8 +23,6 @@ const Select: React.FC = () => {
 
     const [lagPopup, setLagPopup] = useState(false);
     const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
-
-    const [user, setUser] = useState<any>(null);
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -115,15 +112,6 @@ const Select: React.FC = () => {
             console.error('Unexpected error:', err);
         }
     }
-
-    useEffect(() => {
-        const fetchUser = async () => {
-          const session = await getUserSession();
-          setUser(session?.user);
-        };
-        fetchUser();
-    }, []);
-
 
 
     return (

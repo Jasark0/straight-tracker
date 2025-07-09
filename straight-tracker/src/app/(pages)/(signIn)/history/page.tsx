@@ -18,8 +18,8 @@ export default function History() {
         winner: string | null;
         created_at: string;
         pool_matches_race: {
-            player1Score: number;
-            player2Score: number;
+            player1_score: number;
+            player2_score: number;
         }[];
         pool_matches_sets: {
             sets: number;
@@ -137,14 +137,14 @@ export default function History() {
                             let setsWonDisplay = null;
 
                             const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
-                            currentScores = lastRace ? `Score: ${lastRace.player1Score} -  ${lastRace.player2Score}` : "No race data";
+                            currentScores = lastRace ? `Score: ${lastRace.player1_score} -  ${lastRace.player2_score}` : "No race data";
     
                             if (match.pool_matches_sets){
                                 const player1SetWins = match.pool_matches_race?.filter(
-                                    (race: any) => race.player1Score === match.race_to
+                                    (race: any) => race.player1_score === match.race_to
                                 ).length ?? 0;
                                 const player2SetWins = match.pool_matches_race?.filter(
-                                    (race: any) => race.player2Score === match.race_to
+                                    (race: any) => race.player2_score === match.race_to
                                 ).length ?? 0;
                                 setsWonDisplay = `Sets Score: ${player1SetWins} - ${player2SetWins}`;
                             }
@@ -258,7 +258,7 @@ export default function History() {
                                 <div className="modal-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedMatch.pool_matches_race.length, 5)}, 1fr)`}}>
                                     {selectedMatch.pool_matches_race.map((race, index) => (
                                     <p className="modal-sets-scores-text" key={index}>
-                                        Set {index + 1}: {race.player1Score} - {race.player2Score}
+                                        Set {index + 1}: {race.player1_score} - {race.player2_score}
                                     </p>
                                     ))}
                                 </div>
@@ -269,7 +269,7 @@ export default function History() {
                                 <p className="modal-race-score-text">Score:</p>
                                 {selectedMatch.pool_matches_race?.[0] && (
                                 <p className="modal-race-scores-text">
-                                    {selectedMatch.pool_matches_race[0].player1Score} - {selectedMatch.pool_matches_race[0].player2Score}
+                                    {selectedMatch.pool_matches_race[0].player1_score} - {selectedMatch.pool_matches_race[0].player2_score}
                                 </p>
                                 )}
                             </>
