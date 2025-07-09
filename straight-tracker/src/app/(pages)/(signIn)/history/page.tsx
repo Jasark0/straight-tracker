@@ -93,7 +93,6 @@ export default function History() {
                 }
 
                 setAllMatches(json.allPoolMatches);
-                console.log(json.allPoolMatches);
             }
             catch (err){
                 setError('Network error');
@@ -256,7 +255,7 @@ export default function History() {
                             <>
                                 <p className="modal-all-scores-text">All Scores:</p>
                                 {selectedMatch.pool_matches_race?.length > 0 && (
-                                <div className="modal-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedMatch.pool_matches_race.length, 6)}, 1fr)`}}>
+                                <div className="modal-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedMatch.pool_matches_race.length, 5)}, 1fr)`}}>
                                     {selectedMatch.pool_matches_race.map((race, index) => (
                                     <p className="modal-sets-scores-text" key={index}>
                                         Set {index + 1}: {race.player1Score} - {race.player2Score}
@@ -267,7 +266,7 @@ export default function History() {
                             </>
                         ) : (
                             <>
-                                <p className="modal-race-score-text">Race Score:</p>
+                                <p className="modal-race-score-text">Score:</p>
                                 {selectedMatch.pool_matches_race?.[0] && (
                                 <p className="modal-race-scores-text">
                                     {selectedMatch.pool_matches_race[0].player1Score} - {selectedMatch.pool_matches_race[0].player2Score}

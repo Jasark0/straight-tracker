@@ -202,6 +202,21 @@ const Tracker: React.FC = () => {
         }
     };
 
+    const updatePoolMatchBeacon = (updatedPlayer1Score: number, updatedPlayer2Score: number) => {
+        if (!id) return;
+
+        const payload = JSON.stringify({
+            id,
+            player1Score: updatedPlayer1Score,
+            player2Score: updatedPlayer2Score,
+        });
+
+        const blob = new Blob([payload], { type: 'application/json' });
+
+        navigator.sendBeacon('/api/updatePoolMatch', blob);
+    };
+
+
     const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number) => { //creates a new set when a player reaches the race_to requirement
         try{
             await updatePoolMatch(finalPlayer1Score, finalPlayer2Score);
@@ -313,12 +328,12 @@ const Tracker: React.FC = () => {
         fetchMatch();
     }, [matchID]);
 
-    useEffect(() => { //Updating database with scores every 30 seconds
+    useEffect(() => { //Updating database with scores every 15 seconds
         if (!id) return;
 
         const interval = setInterval(() => {
             updatePoolMatch(player1Score, player2Score);
-        }, 30000);
+        }, 15000);
 
         return () => clearInterval(interval);
     }, [id, player1Score, player2Score]);
@@ -326,30 +341,15 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Updating database with scores on reload & leaving tab
         if (!id) return;
 
-        const handlePopState = () => {
-            updatePoolMatch(player1Score, player2Score);
-        };
-
-
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            updatePoolMatch(player1Score, player2Score);
-            e.preventDefault();
-            e.returnValue = '';
-        };
-
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
-                updatePoolMatch(player1Score, player2Score);
+                updatePoolMatchBeacon(player1Score, player2Score);
             }
         };
 
-        window.addEventListener('popstate', handlePopState);
-        window.addEventListener('beforeunload', handleBeforeUnload);
         window.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
-            window.removeEventListener('popstate', handlePopState);
-            window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [id, player1Score, player2Score]);
