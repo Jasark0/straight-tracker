@@ -192,15 +192,6 @@ export default function History() {
                                                 </button>
                                             )}
 
-                                            <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
-                                                View Details
-                                            </button>
-<<<<<<< HEAD
-                                        </span>
-                                    </div>
-=======
-                                        )}
-
                                         <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
                                             View Details
                                         </button>
@@ -209,10 +200,10 @@ export default function History() {
                                             Delete Match
                                         </button>
                                     </span>
->>>>>>> main
                                 </div>
-                                );
-                            })}
+                            </div>
+                            );
+                        })}
                         </ul>
                         )}
                     </div>

@@ -102,21 +102,29 @@ const Tracker: React.FC = () => {
 
         const isSetsMode = sets != undefined;
 
-        if (isSetsMode) {
-            if (prev + 1 === raceTo && player2Set !== undefined) {
+        const action: Action = {
+            player: 'player2',
+            prevScore: prev,
+            toBreak: currentToBreak,
+        };
+
+        if (isSetsMode){
+            if (prev + 1 === raceTo && player2Set !== undefined){
                 const prevSet = player2Set;
+                action.prevSet = player2Set;
                 setPlayer2Set(prevSet + 1);
 
                 if (prevSet + 1 !== raceSets){
+                    action.prevRaceId = id;
                     await completeSet(player1Score, prev + 1);
-                } 
+                }
                 else{
                     await updatePoolMatch(player1Score, prev + 1);
                     const winnerValue = player2;
                     handleWinner(winnerValue);
                 }
             }
-        } 
+        }
         else{
             if (prev + 1 === raceTo){
                 await updatePoolMatch(player1Score, prev + 1);
@@ -126,23 +134,13 @@ const Tracker: React.FC = () => {
         }
 
         if (breakFormat === 0){
-            setToBreak(player1);
+            setToBreak(player2);
         } 
         else if (toBreak === player1){
             setToBreak(player2);
         } 
         else{
             setToBreak(player1);
-        }
-
-        const action: Action = {
-            player: 'player2',
-            prevScore: prev,
-            toBreak: currentToBreak,
-        };
-
-        if (isSetsMode) {
-            action.prevSet = player2Set;
         }
 
         setActionHistory(history => [...history, action]);
