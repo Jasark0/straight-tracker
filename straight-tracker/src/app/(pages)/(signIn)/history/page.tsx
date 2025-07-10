@@ -97,6 +97,8 @@ export default function History() {
                 const res = await fetch('/api/getAllMatches');
                 const json = await res.json();
 
+                console.log(json.allStraightMatches);
+
                 if (!res.ok){
                     setError(json.error);
                 }
