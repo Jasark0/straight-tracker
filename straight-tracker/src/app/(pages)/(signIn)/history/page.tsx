@@ -123,7 +123,6 @@ export default function History() {
                     </button>
                 </div>
 
-                
                 <div className="display-history-box">
                     <div className="history-placeholder-box">
                         {allMatches.length === 0 ? (
@@ -132,66 +131,66 @@ export default function History() {
                         </p>
                         ) : (
                         <ul className="history-list">
-                        {allMatches.map((match) => {
-                            let currentScores = null;
-                            let setsWonDisplay = null;
+                            {allMatches.map((match) => {
+                                let currentScores = null;
+                                let setsWonDisplay = null;
 
-                            const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
-                            currentScores = lastRace ? `Score: ${lastRace.player1_score} -  ${lastRace.player2_score}` : "No race data";
-    
-                            if (match.pool_matches_sets){
-                                const player1SetWins = match.pool_matches_race?.filter(
-                                    (race: any) => race.player1_score === match.race_to
-                                ).length ?? 0;
-                                const player2SetWins = match.pool_matches_race?.filter(
-                                    (race: any) => race.player2_score === match.race_to
-                                ).length ?? 0;
-                                setsWonDisplay = `Sets Score: ${player1SetWins} - ${player2SetWins}`;
-                            }
+                                const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
+                                currentScores = lastRace ? `Score: ${lastRace.player1_score} -  ${lastRace.player2_score}` : "No race data";
+        
+                                if (match.pool_matches_sets){
+                                    const player1SetWins = match.pool_matches_race?.filter(
+                                        (race: any) => race.player1_score === match.race_to
+                                    ).length ?? 0;
+                                    const player2SetWins = match.pool_matches_race?.filter(
+                                        (race: any) => race.player2_score === match.race_to
+                                    ).length ?? 0;
+                                    setsWonDisplay = `Sets Score: ${player1SetWins} - ${player2SetWins}`;
+                                }
 
-                            return (
-                                <div key={match.match_id} className="history-item">
-                                <div className="history-row">
-                                    <span className="game-type-text">{getGameTypeName(match.game_type)}</span>
-                                    <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
-                                        year: 'numeric',
-                                        month: 'short', 
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        hour12: true, 
-                                    })}
-                                    </span>
-                                </div>
+                                return (
+                                    <div key={match.match_id} className="history-item">
+                                    <div className="history-row">
+                                        <span className="game-type-text">{getGameTypeName(match.game_type)}</span>
+                                        <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                            year: 'numeric',
+                                            month: 'short', 
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true, 
+                                        })}
+                                        </span>
+                                    </div>
 
-                                <div className="history-row">
-                                    <span className="history-game-name-text">Game Name: {match.game_name}</span>
-                                    <span className="history-score-text">
-                                        {match.pool_matches_sets
-                                        ? `${setsWonDisplay} | ${currentScores}`
-                                        : currentScores}
-                                    </span>
-                                </div>
-                                
-                                <div className="history-row">
-                                    <span className="history-player-name-text">
-                                        {match.player1} vs. {match.player2}
-                                    </span>
-                                    <span className="history-button-box">
-                                        {match.winner === null && (
-                                            <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
-                                                Continue Match
+                                    <div className="history-row">
+                                        <span className="history-game-name-text">Game Name: {match.game_name}</span>
+                                        <span className="history-score-text">
+                                            {match.pool_matches_sets
+                                            ? `${setsWonDisplay} | ${currentScores}`
+                                            : currentScores}
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="history-row">
+                                        <span className="history-player-name-text">
+                                            {match.player1} vs. {match.player2}
+                                        </span>
+                                        <span className="history-button-box">
+                                            {match.winner === null && (
+                                                <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
+                                                    Continue Match
+                                                </button>
+                                            )}
+
+                                            <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
+                                                View Details
                                             </button>
-                                        )}
-
-                                        <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
-                                            View Details
-                                        </button>
-                                    </span>
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            );
-                        })}
+                                );
+                            })}
                         </ul>
                         )}
                     </div>
