@@ -33,6 +33,7 @@ export default function History() {
     const [selectedMatch, setSelectedMatch] = useState<PoolMatch>();
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedGame, setSelectedGame] = useState('');
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const [error, setError] = useState('');
 
@@ -82,6 +83,14 @@ export default function History() {
         }
     }
     
+    const deleteMatch = async () =>{
+        await fetch(`/api/deleteMatch?matchID=${selectedMatch?.match_id}`, {
+            method: 'DELETE',
+        });
+        
+        window.location.reload();
+    }
+
     useEffect(() => {
         const fetchAllMatches = async () => {
             try{
@@ -186,8 +195,21 @@ export default function History() {
                                             <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
                                                 View Details
                                             </button>
+<<<<<<< HEAD
                                         </span>
                                     </div>
+=======
+                                        )}
+
+                                        <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
+                                            View Details
+                                        </button>
+
+                                        <button className="history-button delete" onClick={() => {setShowDeleteModal(true); setSelectedMatch(match);}}>
+                                            Delete Match
+                                        </button>
+                                    </span>
+>>>>>>> main
                                 </div>
                                 );
                             })}
@@ -273,6 +295,27 @@ export default function History() {
                                 )}
                             </>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="delete-modal-overlay" onClick={() => {setShowDeleteModal(false)}}>
+                    <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="delete-warning-text">
+                            Are you sure you want to delete this match?
+                        </p>
+                        <p className="delete-warning-text">
+                            This action is irreversible!
+                        </p>
+                        <div className="delete-button-box">
+                            <div className="delete-confirm-button" onClick={deleteMatch}>
+                                Confirm Delete
+                            </div>
+                            <div className="delete-cancel-button" onClick={() => {setShowDeleteModal(false)}}>
+                                Cancel
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

@@ -410,7 +410,7 @@ const Tracker: React.FC = () => {
                         </div>
                     </div>
                     <p className="game-name-text">
-                        {gameName}
+                        {gameName}  
                     </p>
                 </div>
                 
