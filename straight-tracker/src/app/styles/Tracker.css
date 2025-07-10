@@ -7,7 +7,7 @@
     padding-top: 15vh;
     align-items: center;
     justify-content: center;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 
@@ -189,7 +189,7 @@
     align-items: center;
     font-size: 4rem;
     margin-top: 0;
-    margin-bottom: 5vh;
+    margin-bottom: 0;
 }
 
 .player1-score-box, .player2-score-box{
@@ -290,7 +290,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: -10vh;
+    margin-top: -20vh;
 }
 
 .undo-style{

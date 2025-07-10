@@ -36,7 +36,7 @@
     background-color: #348bf0;
 }
 
-.modal-overlay {
+.modal-overlay, .delete-modal-overlay {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,7 +48,7 @@
   background-color: rgba(0, 0, 0, 0.6); 
 }
 
-.modal-content {
+.modal-content, .delete-modal-content{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,6 +148,35 @@
 .modal-race-scores-text{
   font-size: 1.5rem;
   margin: 0;
+}
+
+.delete-warning-text{
+  font-size: 1.7rem;
+  margin: 1vh;
+}
+
+.delete-button-box{
+  display: flex;
+  flex-direction: row;
+  gap: 5vh;
+  margin-top: 8vh;
+}
+
+.delete-confirm-button{
+  background-color: #ee1616;
+  color: white;
+  padding: 3vh 4vh;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.delete-cancel-button{
+  background-color: #c8e6ff;
+  padding: 3vh 4vh;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
 }
 
 .game-options {
@@ -319,12 +348,17 @@
   font-size: 0.9rem;
 }
 
-.history-button.continue {
+.history-button.continue{
   background-color: #4caf50;
   color: white;
 }
 
-.history-button.view {
+.history-button.view{
   background-color: #2196f3;
+  color: white;
+}
+
+.history-button.delete{
+  background-color: #ee1616;
   color: white;
 }
