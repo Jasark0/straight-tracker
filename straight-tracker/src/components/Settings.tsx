@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Edit } from "lucide-react";
 // Make sure to remove the CSS module import, e.g., import styles from './Settings.module.css';
 
@@ -9,12 +9,17 @@ interface AccountInfoProps {
   profileImage?: string;
 }
 
+
 export function Settings({
   nickname = "User's Nickname",
   username = "User's Username",
   email = "User's Email",
   profileImage,
 }: AccountInfoProps) {
+
+  const [showChangePassword, setShowChangePassword] = useState(false);
+
+
   return (
     <div className="settings-container">
       {/* Header */}
@@ -86,7 +91,7 @@ export function Settings({
                 <span className="settings-fieldLabel">Password: </span>
                 <span className="settings-fieldValue">*********</span>
               </div>
-              <button className="settings-editButton">
+              <button className="settings-editButton" onClick={() => setShowChangePassword(true)}>
                 <Edit className="settings-editIcon" />
               </button>
             </div>

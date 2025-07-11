@@ -187,3 +187,28 @@ export async function resetPassword( formData: FormData, code: string ) {
 
     return { status: "success"};
 }
+
+export async function changeNickname(formData: FormData) {
+    const supabase = await createClient();
+    const { nickname } = {
+        nickname: formData.get("nickname") as string,
+    };
+
+
+    if (!nickname) {
+        return { status: "Nickname cannot be empty." };
+    }
+
+    const { data: user, error } = await supabase.auth.updateUser({
+        data: {
+            nickname: nickname,
+        },
+    });
+
+    if (error) {
+        return { status: error?.message };
+    }
+
+    revalidatePath("/", "layout");
+    return { status: "success" };
+}
