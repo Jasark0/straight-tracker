@@ -41,7 +41,6 @@ const Tracker: React.FC = () => {
                     return;
                 }
 
-                console.log(json.straightMatch);
                 setGameName(json.straightMatch.game_name);
                 setPlayer1(json.straightMatch.player1);
                 setPlayer2(json.straightMatch.player2);
