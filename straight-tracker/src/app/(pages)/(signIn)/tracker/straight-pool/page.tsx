@@ -129,8 +129,16 @@ const Tracker: React.FC = () => {
                         <img src={toShoot === player1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
                         <div className="player-turn-text-style" id="player-turn-text">
                         </div>
-                        <div className="player-swap-text-style">
-                            (Press spacebar to swap turn)
+                        <div className="player-swap-text-container">
+                            <div className="player-swap-text-style">
+                                (Press 
+                            </div>
+                            <div className="player-swap-spacebar-text-style">
+                                spacebar
+                            </div>
+                            <div className="player-swap-text-style">
+                                to swap turn)
+                            </div>
                         </div>
                     </div>
                     <button className="undo-style">Undo</button>
