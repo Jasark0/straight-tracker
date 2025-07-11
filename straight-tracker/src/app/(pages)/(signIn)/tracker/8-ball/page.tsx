@@ -299,6 +299,12 @@ const Tracker: React.FC = () => {
         }
     }
 
+    const handleConfigureGame = async () => {
+        await updatePoolMatch(player1Score, player2Score);
+
+        router.push(`/configure/8-ball?matchID=${matchID}`);
+    }
+
     const handleExit = () => {
         const winnerValue = winner;
         handleWinner(winnerValue);
@@ -403,7 +409,7 @@ const Tracker: React.FC = () => {
                     <div className="hamburger-container">
                         <img src="/hamburger-menu.png" className="hamburger-icon" />
                         <div className="dropdown-menu">
-                            <div className="dropdown-item">Configure Match</div>
+                            <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
                             <div className="dropdown-item">Go to History</div>
                         </div>
                     </div>
