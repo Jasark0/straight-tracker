@@ -1,8 +1,7 @@
 "use client";
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { getUserSession } from '@/actions/auth';
 import { useSearchParams } from 'next/navigation';
 
 import Header from '@/src/components/Header';
@@ -34,8 +33,9 @@ const Tracker: React.FC = () => {
         prevScore: number;
         toBreak: string;
         prevSet?: number;
-        resetScore?: boolean;
+        prevRaceId?: number;
     };
+    
     const [actionHistory, setActionHistory] = useState<Action[]>([]);
 
     const [loading, setLoading] = useState(true);
@@ -50,12 +50,20 @@ const Tracker: React.FC = () => {
 
         const isSetsMode = sets != undefined;
 
+        const action: Action = {
+            player: 'player1',
+            prevScore: prev,
+            toBreak: currentToBreak,
+        };
+
         if (isSetsMode){
             if (prev + 1 === raceTo && player1Set !== undefined){
                 const prevSet = player1Set;
+                action.prevSet = player1Set;
                 setPlayer1Set(prevSet + 1);
-                
+
                 if (prevSet + 1 !== raceSets){
+                    action.prevRaceId = id;
                     await completeSet(prev + 1, player2Score);
                 }
                 else{
@@ -83,17 +91,6 @@ const Tracker: React.FC = () => {
             setToBreak(player1);
         }
 
-        const action: Action = {
-            player: 'player1',
-            prevScore: prev,
-            toBreak: currentToBreak,
-        };
-
-        if (isSetsMode){
-            action.prevSet = player1Set;
-            action.resetScore = prev + 1 === raceTo;
-        }
-
         setActionHistory(history => [...history, action]);
     };
 
@@ -105,21 +102,29 @@ const Tracker: React.FC = () => {
 
         const isSetsMode = sets != undefined;
 
-        if (isSetsMode) {
-            if (prev + 1 === raceTo && player2Set !== undefined) {
+        const action: Action = {
+            player: 'player2',
+            prevScore: prev,
+            toBreak: currentToBreak,
+        };
+
+        if (isSetsMode){
+            if (prev + 1 === raceTo && player2Set !== undefined){
                 const prevSet = player2Set;
+                action.prevSet = player2Set;
                 setPlayer2Set(prevSet + 1);
 
                 if (prevSet + 1 !== raceSets){
+                    action.prevRaceId = id;
                     await completeSet(player1Score, prev + 1);
-                } 
+                }
                 else{
                     await updatePoolMatch(player1Score, prev + 1);
                     const winnerValue = player2;
                     handleWinner(winnerValue);
                 }
             }
-        } 
+        }
         else{
             if (prev + 1 === raceTo){
                 await updatePoolMatch(player1Score, prev + 1);
@@ -129,7 +134,7 @@ const Tracker: React.FC = () => {
         }
 
         if (breakFormat === 0){
-            setToBreak(player1);
+            setToBreak(player2);
         } 
         else if (toBreak === player1){
             setToBreak(player2);
@@ -138,42 +143,61 @@ const Tracker: React.FC = () => {
             setToBreak(player1);
         }
 
-        const action: Action = {
-            player: 'player2',
-            prevScore: prev,
-            toBreak: currentToBreak,
-        };
-
-        if (isSetsMode) {
-            action.prevSet = player2Set;
-            action.resetScore = prev + 1 === raceTo;
-        }
-
         setActionHistory(history => [...history, action]);
     };
 
-    const handleUndo = () => { //Undo button logic
+    const handleUndo = async () => { //Undo button logic
         const lastAction = actionHistory[actionHistory.length - 1];
         if (!lastAction) return;
 
         if (lastAction.player === 'player1') {
             setPlayer1Score(lastAction.prevScore);
 
-            if (sets !== undefined && lastAction.prevSet !== undefined) {
+            if (sets !== undefined && raceTo !== undefined && lastAction.prevSet !== undefined && lastAction.prevRaceId !== undefined) {
+                setLoading(true);
                 setPlayer1Set(lastAction.prevSet);
-            }
-            if (sets !== undefined && raceTo !== undefined && lastAction.resetScore) {
-                setPlayer1Score(raceTo - 1);
+                
+                await fetch(`/api/deleteRace?raceID=${id}`, {
+                    method: 'DELETE',
+                });
+
+                const res = await fetch(`/api/getRaceScores?raceID=${lastAction.prevRaceId}`);
+                const json = await res.json();
+                
+                if (res.ok){
+                    setId(lastAction.prevRaceId);
+                    setPlayer1Score(json.player1Score-1);
+                    setPlayer2Score(json.player2Score);
+                }
+                else{
+                    console.error('Failed to retrieve previous race score:', json.error);
+                }
+                setLoading(false);
             }
         } 
         else if (lastAction.player === 'player2') {
             setPlayer2Score(lastAction.prevScore);
 
-            if (sets !== undefined && lastAction.prevSet !== undefined) {
+            if (sets !== undefined && raceTo !== undefined && lastAction.prevSet !== undefined && lastAction.prevRaceId !== undefined) {
+                setLoading(true);
                 setPlayer2Set(lastAction.prevSet);
-            }
-            if (sets !== undefined && raceTo !== undefined && lastAction.resetScore) {
-                setPlayer2Score(raceTo - 1);
+                
+                await fetch(`/api/deleteRace?raceID=${id}`, {
+                    method: 'DELETE',
+                });
+
+                const res = await fetch(`/api/getRaceScores?raceID=${lastAction.prevRaceId}`);
+                const json = await res.json();
+                
+                if (res.ok){
+                    setId(lastAction.prevRaceId);
+                    setPlayer1Score(json.player1Score);
+                    setPlayer2Score(json.player2Score-1);
+                }
+                else{
+                    console.error('Failed to retrieve previous race score:', json.error);
+                }
+                setLoading(false);
             }
         }
 
@@ -188,8 +212,8 @@ const Tracker: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id,
-                    player1Score: updatedPlayer1Score,
-                    player2Score: updatedPlayer2Score,
+                    player1_score: updatedPlayer1Score,
+                    player2_score: updatedPlayer2Score,
                 }),
             });
 
@@ -202,8 +226,23 @@ const Tracker: React.FC = () => {
         }
     };
 
+    const updatePoolMatchBeacon = (updatedPlayer1Score: number, updatedPlayer2Score: number) => {
+        if (!id) return;
+
+        const payload = JSON.stringify({
+            id,
+            player1_score: updatedPlayer1Score,
+            player2_score: updatedPlayer2Score,
+        });
+
+        const blob = new Blob([payload], { type: 'application/json' });
+
+        navigator.sendBeacon('/api/updatePoolMatch', blob);
+    };
+
     const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number) => { //creates a new set when a player reaches the race_to requirement
         try{
+            setLoading(true);
             await updatePoolMatch(finalPlayer1Score, finalPlayer2Score);
 
             const res = await fetch(`/api/createNewRace?matchID=${matchID}`, {
@@ -222,6 +261,7 @@ const Tracker: React.FC = () => {
 
             const newRaceID = json.newRace?.[0]?.id;
             setId(newRaceID);
+            setLoading(false);
         } 
         catch (err){
             console.error('Failed to create new set', err);
@@ -259,6 +299,12 @@ const Tracker: React.FC = () => {
         }
     }
 
+    const handleConfigureGame = async () => {
+        await updatePoolMatch(player1Score, player2Score);
+
+        router.push(`/configure/8-ball?matchID=${matchID}`);
+    }
+
     const handleExit = () => {
         const winnerValue = winner;
         handleWinner(winnerValue);
@@ -285,14 +331,14 @@ const Tracker: React.FC = () => {
                 
                 const raceCount = json.matchRace.length;
                 setId(json.matchRace[raceCount-1].id);
-                setPlayer1Score(json.matchRace[raceCount-1].player1Score); 
-                setPlayer2Score(json.matchRace[raceCount-1].player2Score);
+                setPlayer1Score(json.matchRace[raceCount-1].player1_score); 
+                setPlayer2Score(json.matchRace[raceCount-1].player2_score);
 
                 const setsEnabled = json.matchSets.sets !== undefined;
 
                 if (setsEnabled) {
-                    const p1SetWins = json.matchRace.filter((set: any) => set.player1Score === json.poolMatch.race_to).length;
-                    const p2SetWins = json.matchRace.filter((set: any) => set.player2Score === json.poolMatch.race_to).length;
+                    const p1SetWins = json.matchRace.filter((set: any) => set.player1_score === json.poolMatch.race_to).length;
+                    const p2SetWins = json.matchRace.filter((set: any) => set.player2_score === json.poolMatch.race_to).length;
 
                     setPlayer1Set(p1SetWins);
                     setPlayer2Set(p2SetWins);
@@ -313,12 +359,12 @@ const Tracker: React.FC = () => {
         fetchMatch();
     }, [matchID]);
 
-    useEffect(() => { //Updating database with scores every 30 seconds
+    useEffect(() => { //Updating database with scores every 15 seconds
         if (!id) return;
 
         const interval = setInterval(() => {
             updatePoolMatch(player1Score, player2Score);
-        }, 30000);
+        }, 15000);
 
         return () => clearInterval(interval);
     }, [id, player1Score, player2Score]);
@@ -326,30 +372,15 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Updating database with scores on reload & leaving tab
         if (!id) return;
 
-        const handlePopState = () => {
-            updatePoolMatch(player1Score, player2Score);
-        };
-
-
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            updatePoolMatch(player1Score, player2Score);
-            e.preventDefault();
-            e.returnValue = '';
-        };
-
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
-                updatePoolMatch(player1Score, player2Score);
+                updatePoolMatchBeacon(player1Score, player2Score);
             }
         };
 
-        window.addEventListener('popstate', handlePopState);
-        window.addEventListener('beforeunload', handleBeforeUnload);
         window.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
-            window.removeEventListener('popstate', handlePopState);
-            window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [id, player1Score, player2Score]);
@@ -378,12 +409,12 @@ const Tracker: React.FC = () => {
                     <div className="hamburger-container">
                         <img src="/hamburger-menu.png" className="hamburger-icon" />
                         <div className="dropdown-menu">
-                            <div className="dropdown-item">Edit Score</div>
+                            <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
                             <div className="dropdown-item">Go to History</div>
                         </div>
                     </div>
                     <p className="game-name-text">
-                        {gameName}
+                        {gameName}  
                     </p>
                 </div>
                 

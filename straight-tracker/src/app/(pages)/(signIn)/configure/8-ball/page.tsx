@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
@@ -11,6 +11,8 @@ import Header from '@/src/components/Header';
 const Select: React.FC = () => {
     const router = useRouter();
 
+    const searchParams = useSearchParams();
+    let matchID = searchParams.get('matchID');
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
@@ -18,11 +20,24 @@ const Select: React.FC = () => {
     const [sets, setSets] = useState('');
     const [enableSets, setEnableSets] = useState(false);
     const [oddWarning, setOddWarning] = useState('');
-    const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
-    const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
+    const [raceWarning, setRaceWarning] = useState('');
+    const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">();
 
     const [lagPopup, setLagPopup] = useState(false);
     const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
+
+    const [id, setId] = useState<number>();
+
+    const [toBreak, setToBreak] = useState('');
+    const [player1Score, setPlayer1Score] = useState<number>(0);
+    const [player2Score, setPlayer2Score] = useState<number>(0);
+
+    const raceSets = parseInt(sets) !== undefined ? Math.floor(parseInt(sets) / 2) + 1 : null; //Converts best of to race to (sets)
+    const [player1Set, setPlayer1Set] = useState<number | undefined>();
+    const [player2Set, setPlayer2Set] = useState<number | undefined>();
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -58,6 +73,28 @@ const Select: React.FC = () => {
         }
     };
 
+    const handleNewRace = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+
+        if (/^\d*$/.test(val)) {
+            setRaceTo(val);
+            
+            if (val === ''){
+                setRaceWarning('Please enter a number greater than 0.');
+            } 
+            else{
+                const num = parseInt(val);
+                const minRaceVal = Math.max(player1Score, player2Score) + 1;
+                if (num < minRaceVal){
+                    setRaceWarning(`New race to value too small.  Minimum value is ${minRaceVal}`);
+                } else {
+                    setRaceWarning('');
+                }
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -72,18 +109,26 @@ const Select: React.FC = () => {
             return;
         }
 
-        if (breakMethod === 'lag'){
-            setLagPopup(true);
+        if (raceWarning){
+            toast.error(raceWarning, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
             return;
         }
         
-        await submitMatch(null);
+        await updateMatchConfig(null);
     };
 
-    const submitMatch = async (finalLagWinner: string|null) => {
+    const updateMatchConfig = async (finalLagWinner: string|null) => {
         try {
-            const res = await fetch('/api/createPoolMatch', {
-                method: 'POST',
+            if (!matchID) return;
+
+            const res = await fetch(`/api/updateMatchConfiguration?matchID=${matchID}`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -92,9 +137,10 @@ const Select: React.FC = () => {
                     game_name: gameName,
                     player1: player1,
                     player2: player2,
-                    race_to: raceTo,
-                    break_format: breakFormat,
+                    race_to: parseInt(raceTo),
+                    break_format: breakFormat == "Winner Breaks" ? 0 : 1,
                     lag_winner: finalLagWinner,
+                    to_break: toBreak,
                     sets: sets ? parseInt(sets) : null,
                 }),
             });
@@ -105,14 +151,70 @@ const Select: React.FC = () => {
                 return;
             }
 
-            const result = await res.json();
-
-            router.push(`/tracker/8-ball?matchID=${result.match_id}`);
+            router.push(`/tracker/8-ball?matchID=${matchID}`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }
     }
 
+    useEffect(() => { //Get match info
+        const fetchMatch = async () => {
+            try{
+                if (!matchID) return;
+                const res = await fetch(`/api/getPoolMatch?matchID=${matchID}`);
+                const json = await res.json();
+
+                setGameName(json.poolMatch.game_name);
+                setPlayer1(json.poolMatch.player1);
+                setPlayer2(json.poolMatch.player2);
+                setRaceTo(json.poolMatch.race_to);
+                setBreakFormat(json.poolMatch.to_break == 0 ? "Winner Breaks" : "Alternate Breaks");
+                setToBreak(json.poolMatch.to_break);
+                
+                const raceCount = json.matchRace.length;
+                setId(json.matchRace[raceCount-1].id);
+                setPlayer1Score(json.matchRace[raceCount-1].player1_score); 
+                setPlayer2Score(json.matchRace[raceCount-1].player2_score);
+
+                const setsEnabled = json.matchSets.sets !== undefined;
+                handleToggleSets(setsEnabled)
+
+                if (setsEnabled) {
+                    const p1SetWins = json.matchRace.filter((set: any) => set.player1_score === json.poolMatch.race_to).length;
+                    const p2SetWins = json.matchRace.filter((set: any) => set.player2_score === json.poolMatch.race_to).length;
+
+                    setPlayer1Set(p1SetWins);
+                    setPlayer2Set(p2SetWins);
+                } else {
+                    setPlayer1Set(undefined);
+                    setPlayer2Set(undefined);
+                } 
+                
+                setSets(json.matchSets.sets || undefined); //Load sets last: this prevents rendering inconsistencies.
+            }
+            catch (err){
+                setError('Error');
+            }
+            finally{
+                setLoading(false);
+            };
+        }
+        fetchMatch();
+    }, [matchID]);
+
+    if(loading) { //Loading screen
+        return (
+            <div className="page-box">
+                <div className="loading-screen">
+                    <Header/>
+                    <div className="loading-content">
+                        <p>Loading match configuration...</p>
+                        <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="select-page-box">
@@ -120,14 +222,10 @@ const Select: React.FC = () => {
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
-                    <p className="game-name-message">What would your legendary 8-ball game name be today?</p>
+                    <p className="game-name-message">Game name:</p>
                     <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
                     
                     <img src="/divider.png" className="divider-css"></img>
-
-                    <div className="names-selection-message">   
-                        <p className="names-message">Players, Type Your Names.</p>
-                    </div>
 
                     <div className="names-selection-box">
                         <div className="player-names">
@@ -150,12 +248,7 @@ const Select: React.FC = () => {
                                 inputMode="numeric"
                                 pattern="^[1-9][0-9]*$"
                                 value={raceTo}
-                                onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d*$/.test(val)) {
-                                    setRaceTo(val);
-                                }
-                                }}
+                                onChange={handleNewRace}
                                 required
                                 title="Please enter a number greater than 0."
                             />
@@ -209,53 +302,9 @@ const Select: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="lag-box">
-                        <label className="lag-label">Who breaks first?</label>
-                        <div className="break-method-box">
-                            <label>
-                                <input type="radio" name="breakMethod" value="random" checked={breakMethod === 'random'}
-                                onChange={() => setBreakMethod('random')}/>
-                                Randomize
-                            </label>
-                            <label>
-                                <input type="radio" name="breakMethod" value="lag" checked={breakMethod === 'lag'}
-                                onChange={() => setBreakMethod('lag')}/>
-                                Lag for Break
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="submit" className="submit-button">Start Match</button>
+                    <button type="submit" className="submit-button">Update Match</button>
                 </form>
             </div>
-
-            {lagPopup && (
-                <div className="modal-overlay" onClick={() => { if (lagWinnerSelected) { setLagPopup(false); }}}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <p className="lag-text">Players, lag for break at this time.</p>
-                        <p className="lag-winner-text">Pick a lag winner:</p>
-                        <div className="lag-button-box">
-                            <button className={`player1-lag-button ${ lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
-                                {player1 || 'Player1'}
-                            </button>
-                                
-                            <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
-                                {player2 || 'Player2'}
-                            </button>
-                        </div>
-
-                        <button className="continue-button" disabled={!lagWinnerSelected}
-                            onClick={() => {
-                                setLagPopup(false);
-                                const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                                submitMatch(lagName);
-                            }}
-                        >
-                            Continue
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     )
 }

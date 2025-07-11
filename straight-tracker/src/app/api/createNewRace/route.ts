@@ -10,16 +10,14 @@ export async function POST(req: Request) {
         if (!match_id){
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
-
-        console.log(match_id);
         
         const { data: newRace, error } = await supabase
         .from('pool_matches_race')
         .insert([
             {
                 match_id,
-                player1Score: 0,
-                player2Score: 0,
+                player1_score: 0,
+                player2_score: 0,
             },
         ])
         .select();

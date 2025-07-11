@@ -6,14 +6,11 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-        game_type,
         game_name,
         player1,
         player2,
         race_to,
-        break_format,
         lag_winner,
-        sets,
     } = body;
 
     const session = await getUserSession();
@@ -37,40 +34,44 @@ export async function POST(req: Request) {
     
     if (!finalGameName) {
         const { count, error: countError } = await supabase
-        .from('pool_matches')
+        .from('straight_pool_matches')
         .select('match_id', { count: 'exact' })
         .eq('username', username)
-        .eq('game_type', 0);
 
         if (countError) {
-            return NextResponse.json({ error: 'Failed to count 8 Ball matches' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to count straight pool matches' }, { status: 500 });
         }
 
         let safeCount = 0;
         if (count !== null){
             safeCount = count;
         }
-        finalGameName = `8 Ball - Match ${safeCount + 1}`;
+        finalGameName = `Straight Pool - Match ${safeCount + 1}`;
     }
 
     const finalPlayer1 = player1?.trim() ? player1 : "Player1";
     const finalPlayer2 = player2?.trim() ? player2 : "Player2";
-    const breakFormatInt = break_format === "Winner Breaks" ? 0 : break_format === "Alternate Breaks" ? 1 : null;
     const selectedLagWinner = lag_winner?.trim() ? lag_winner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
-
+    
     const { data: matchData, error: matchError } = await supabase
-    .from('pool_matches')
+    .from('straight_pool_matches')
     .insert([
         {
             username,
-            game_type: game_type,
             game_name: finalGameName,
             player1: finalPlayer1,
             player2: finalPlayer2,
             race_to: parseInt(race_to),
-            break_format: breakFormatInt,
             lag_winner: selectedLagWinner,
-            to_break: selectedLagWinner,
+            to_shoot: selectedLagWinner,
+            rack: 1,
+            remaining_balls: 15,
+            player1_score: 0,
+            player1_high_run: 0,
+            player1_curr_run: 0,
+            player2_score: 0,
+            player2_high_run: 0,
+            player2_curr_run: 0,
             winner: null,
         },
     ])
@@ -80,40 +81,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
     }
 
-
     const match_id = matchData[0].match_id;
-    
-    const { error: raceError } = await supabase
-    .from('pool_matches_race')
-    .insert([
-        {
-            match_id,
-            player1_score: 0,
-            player2_score: 0,
-        },
-    ]);
-
-    if (raceError) {
-        console.error('Pool match race insert error:', raceError);
-        return NextResponse.json({ error: 'Failed to create pool match race' }, { status: 500 });
-    }
-
-
-    if (sets){
-        const { error: setsError } = await supabase
-        .from('pool_matches_sets')
-        .insert([
-            {
-                match_id,
-                sets: parseInt(sets),
-            },
-        ]);
-
-        if (setsError) {
-            console.error('Sets insert error:', setsError);
-            return NextResponse.json({ error: 'Failed to create sets entry' }, { status: 500 });
-        }
-    }
 
     return NextResponse.json({ success: true, match_id }, { status: 200 });
 }

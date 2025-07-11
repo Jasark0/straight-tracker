@@ -31,8 +31,8 @@ export async function GET(req: Request) {
             winner,
             created_at,
             pool_matches_race (
-                player1Score,
-                player2Score
+                player1_score,
+                player2_score
             ),
             pool_matches_sets (
                 sets
@@ -44,5 +44,21 @@ export async function GET(req: Request) {
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
 
-    return NextResponse.json({ allPoolMatches }, { status: 200 });
+    const { data: allStraightMatches, error: straightMatchesError } = await supabase
+        .from('straight_pool_matches')
+        .select(`
+            game_name,
+            player1,
+            player2,
+            race_to,
+            player1_score,
+            player1_high_run,
+            player2_score,
+            player2_high_run,
+            winner,
+            created_at
+        `)
+        .eq('username', username)
+
+    return NextResponse.json({ allPoolMatches, allStraightMatches }, { status: 200 });
 }
