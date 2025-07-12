@@ -173,7 +173,7 @@ const Select: React.FC = () => {
                             <div className="sets-box">
                             <div className="sets-info-box">
                                 <label className="sets-label">Best of (Sets):</label>
-                                <button className="sets-icon">i</button>
+                                <button type="button" className="sets-icon">i</button>
                             </div>
 
                             <div className="sets-info-box">
@@ -230,7 +230,7 @@ const Select: React.FC = () => {
             </div>
 
             {lagPopup && (
-                <div className="modal-overlay" onClick={() => { if (lagWinnerSelected) { setLagPopup(false); }}}>
+                <div className="modal-overlay" onClick={() => {setLagPopup(false)}}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <p className="lag-text">Players, lag for break at this time.</p>
                         <p className="lag-winner-text">Pick a lag winner:</p>

@@ -3,6 +3,9 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Header from '@/src/components/Header';
 
@@ -81,15 +84,9 @@ const Tracker: React.FC = () => {
         setActionHistory(history => [...history, action]);
     };
 
-    const incrementPlayer1Twice = async () => {
-        const prev = player1Score;
-        
-        setPlayer1Score(prev + 2);
+    const clearRackPlayer1 = async () => { //Work on this later
+
     }
-
-    // const clearRackPlayer1 = async () => { //Work on this later
-
-    // }
 
     const decrementPlayer1 = async () => {
         if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
@@ -168,15 +165,10 @@ const Tracker: React.FC = () => {
         setActionHistory(history => [...history, action]);
     };
 
-    // const clearRackPlayer2 = async () => { //Work on this later
+    const clearRackPlayer2 = async () => { //Work on this later
 
-    // }
-
-    const incrementPlayer2Twice = async () => {
-        const prev = player1Score;
-        
-        setPlayer2Score(prev + 2);
     }
+
 
     const decrementPlayer2 = async () => {
         if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
@@ -281,6 +273,7 @@ const Tracker: React.FC = () => {
             }
             else if (lastAction.ActionType === '3_foul_penalty'){
                 setPlayer1Score(player1Score+16);
+                setRack(rack - 1);
 
                 if (lastAction.prevRemainingBalls !== undefined){
                     setRemainingBalls(lastAction.prevRemainingBalls);
@@ -404,7 +397,7 @@ const Tracker: React.FC = () => {
     }, []);
 
     useEffect(()=>{
-        
+        // console.log(actionHistory); 
     }, [actionHistory])
 
     if (loading){ //Loading screen
@@ -424,6 +417,8 @@ const Tracker: React.FC = () => {
     return (
         <div className="s-main-container">
             <Header></Header>
+            <ToastContainer className="s-toast-warning"/>
+
             <p className="s-game-name-text">
                 Game Name: {gameName}
             </p>
@@ -441,7 +436,6 @@ const Tracker: React.FC = () => {
                         <p className="s-player1-score">{player1Score}</p>
                         <div className="s-increment-container">
                             <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
-                            <button className="s-increment-button" onClick={incrementPlayer1Twice}>+2</button>
                             <div className="CR-container">
                                 <button className="s-increment-button">CR</button>
                                 <button className="CR-icon">i</button>
@@ -492,7 +486,6 @@ const Tracker: React.FC = () => {
                         <p className="s-player2-score">{player2Score}</p>
                         <div className="s-increment-container">
                             <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
-                            <button className="s-increment-button" onClick={incrementPlayer2Twice}>+2</button>
                             <button className="s-increment-button">CR</button>
                         </div>     
                     </div>

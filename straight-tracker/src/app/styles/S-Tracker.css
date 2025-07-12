@@ -68,7 +68,7 @@
 
 .s-increment-container{
   display: grid;
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
   row-gap: 10px;
 }
 
@@ -164,7 +164,7 @@
 .s-player1-score{
   display: flex;
   justify-content: center;
-  margin-top: 0;
+  margin: 0;
   font-size: 125px;
   color: hsl(6, 93%, 71%);
 }
@@ -172,7 +172,7 @@
 .s-player2-score{
   display: flex;
   justify-content: center;
-  margin-top: 0;
+  margin: 0;
   font-size: 125px;
   color: hsl(250, 100%, 65%);
 }
