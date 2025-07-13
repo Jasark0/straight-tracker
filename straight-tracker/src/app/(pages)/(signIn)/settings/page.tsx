@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { changeNickname, getUserSession } from '@/actions/auth';
+import { changeNickname, getUserSession, updateAvatarInProfile } from '@/actions/auth';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Settings.css" // Make sure settings styles are imported
@@ -10,6 +10,7 @@ import { Edit } from "lucide-react"; // Import Edit icon
 import { forgotPassword } from '@/actions/auth'; // Import forgotPassword action
 
 import Header from '@/src/components/Header';
+import Avatar from './avatar';
 // No longer importing Settings component
 
 export default function SettingsPage() {
@@ -22,14 +23,17 @@ export default function SettingsPage() {
   const [showChangeNicknameModal, setShowChangeNicknameModal] = useState(false);
   const [newNickname, setNewNickname] = useState(""); // State for the new nickname input
   const [resetEmail, setResetEmail] = useState("");
+  const [avatar_url, setAvatarUrl] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
       const session = await getUserSession();
       setUser(session?.user);
 
+      console.log("User metadata:", session?.user?.user_metadata);
+
       // When user data is fetched, initialize newNickname with the current nickname
-      setNewNickname(session?.user?.user_metadata?.nickname || ""); 
+      setNewNickname(session?.user?.user_metadata?.nickname || "");
       setLoading(false);
     };
     fetchUser();
@@ -41,7 +45,7 @@ export default function SettingsPage() {
     setError(null);
 
     // Security Check: Ensure the entered email matches the logged-in user's email
-    if (user && resetEmail.toLowerCase() !== user.email.toLowerCase() ) {
+    if (user && resetEmail.toLowerCase() !== user.email.toLowerCase()) {
       setError("The email provided does not match your account's email.");
       setLoading(false);
       return;
@@ -52,7 +56,7 @@ export default function SettingsPage() {
 
     const result = await forgotPassword(formData);
 
-    if (result.status === "success" ) {
+    if (result.status === "success") {
       setShowChangePasswordModal(false);
       alert("Password reset email sent! Please check your inbox.");
     } else {
@@ -121,10 +125,22 @@ export default function SettingsPage() {
               ) : null}
             </div>
             <div className="settings-profileControls">
-              <button className="settings-changeImageButton">
-                Change Image
-              </button>
-              <div className="settings-filename">img.png</div>
+              <Avatar
+                uid={user?.id ?? null}
+                url={avatar_url}
+                size={150}
+                onUpload={async (url: string) => {
+                  setAvatarUrl(url);
+
+                  const result = await updateAvatarInProfile({ avatar_url: url });
+
+                  if (result.status === "success") {
+                    alert("Avatar updated successfully!");
+                  } else {
+                    alert("Error updating avatar: " + result.status);
+                  }
+                }}
+              />
             </div>
           </div>
 
@@ -172,9 +188,9 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-      
+
       {showChangePasswordModal && (
-        <div className="modal-overlay" onClick={() => setShowChangePasswordModal(false)}> 
+        <div className="modal-overlay" onClick={() => setShowChangePasswordModal(false)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangePasswordModal(false)}>
@@ -185,15 +201,15 @@ export default function SettingsPage() {
             <form onSubmit={handlePasswordReset}>
               <div className="settings-modal-body">
                 <div className="settings-form-group">
-                <input 
-                  type="email"
-                  placeholder="Your email"
-                  required
-                  className="settingsTextInput" 
-                  name="email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                />
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    required
+                    className="settingsTextInput"
+                    name="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                  />
                 </div>
                 {error && <p className="error-message">{error}</p>}
               </div>
@@ -205,9 +221,9 @@ export default function SettingsPage() {
         </div>
       )}
 
-    
+
       {showChangeNicknameModal && (
-        <div className="modal-overlay" onClick={() => setShowChangeNicknameModal(false)}> 
+        <div className="modal-overlay" onClick={() => setShowChangeNicknameModal(false)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeNicknameModal(false)}>
@@ -217,11 +233,11 @@ export default function SettingsPage() {
             </div>
             <form onSubmit={handleChangeNickname}>
               <div className="settings-modal-body">
-                <input 
-                  type="text" 
-                  placeholder="Enter new nickname" 
-                  maxLength={20} 
-                  className="settingsTextInput" 
+                <input
+                  type="text"
+                  placeholder="Enter new nickname"
+                  maxLength={20}
+                  className="settingsTextInput"
                   value={newNickname}
                   onChange={(e) => setNewNickname(e.target.value)}
                 />
@@ -235,6 +251,7 @@ export default function SettingsPage() {
               <div className="settings-modal-footer">
                 <button type="submit" className="settings-btn">Save</button>
               </div>
+              {error && <p className="error-message">{error}</p>}
             </form>
           </div>
         </div>

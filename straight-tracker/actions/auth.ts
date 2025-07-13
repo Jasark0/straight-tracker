@@ -43,6 +43,7 @@ export async function signUp(formData : FormData) {
                 username: credentials.username,
                 display_name: credentials.username,
                 nickname: credentials.nickname,
+                avatar_url: null,
             },
         }
     });
@@ -124,7 +125,6 @@ export async function signOut() {
 
     if (error) {
         console.error("Error signing out:", error);
-        // Optionally redirect to an error page
         return redirect("/error");
     }
 
@@ -211,4 +211,38 @@ export async function changeNickname(formData: FormData) {
 
     revalidatePath("/", "layout");
     return { status: "success" };
+}
+
+export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string }) {
+    const supabase = await createClient();
+
+    const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+
+    if (sessionError || !user) {
+        return { status: "User not found or session expired." };
+    }
+
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url })
+        .eq('id', user.id); 
+
+    if (profileError) {
+        console.error("Error updating profile:", profileError);
+        return { status: profileError.message };
+    }
+
+    const { data: updatedUser, error: userError } = await supabase.auth.updateUser({
+        data: {
+            avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url,
+        },
+    });
+
+    if (userError) {
+        console.error("Error updating user metadata:", userError);
+        return { status: userError.message };
+    }
+    
+    revalidatePath("/", "layout");
+    return { status: "success", user: updatedUser };
 }
