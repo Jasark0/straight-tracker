@@ -47,6 +47,7 @@ export async function GET(req: Request) {
     const { data: allStraightMatches, error: straightMatchesError } = await supabase
         .from('straight_pool_matches')
         .select(`
+            match_id,
             game_name,
             player1,
             player2,

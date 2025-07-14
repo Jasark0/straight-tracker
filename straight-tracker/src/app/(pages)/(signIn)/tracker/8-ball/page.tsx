@@ -226,20 +226,6 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const updatePoolMatchBeacon = (updatedPlayer1Score: number, updatedPlayer2Score: number) => {
-        if (!id) return;
-
-        const payload = JSON.stringify({
-            id,
-            player1_score: updatedPlayer1Score,
-            player2_score: updatedPlayer2Score,
-        });
-
-        const blob = new Blob([payload], { type: 'application/json' });
-
-        navigator.sendBeacon('/api/updatePoolMatch', blob);
-    };
-
     const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number) => { //creates a new set when a player reaches the race_to requirement
         try{
             setLoading(true);
@@ -372,9 +358,18 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Updating database with scores on reload & leaving tab
         if (!id) return;
 
+        
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
-                updatePoolMatchBeacon(player1Score, player2Score);
+                const payload = JSON.stringify({
+                    id,
+                    player1_score: player1Score,
+                    player2_score: player2Score,
+                });
+
+                const blob = new Blob([payload], { type: 'application/json' });
+
+                navigator.sendBeacon('/api/updatePoolMatch', blob);
             }
         };
 

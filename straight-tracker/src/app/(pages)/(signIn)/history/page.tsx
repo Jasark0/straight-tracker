@@ -25,15 +25,34 @@ export default function History() {
             sets: number;
         }
     };
+
+    type StraightMatch = {
+        match_id: number,
+        game_name: string;
+        player1: string;
+        player2: string;
+        race_to: number;
+        player1_score: number;
+        player1_high_run: number;
+        player2_score: number;
+        player2_high_run: number;
+        winner: string | null;
+        created_at: string;
+    }
     
     const router = useRouter();
 
-    const [allMatches, setAllMatches] = useState<PoolMatch[]>([]);
+    const [allPoolMatches, setAllPoolMatches] = useState<PoolMatch[]>([]);
+    const [allStraightMatches, setAllStraightMatches] = useState<StraightMatch[]>([]);
     const [showSelectModal, setShowSelectModal] = useState(false);
-    const [selectedMatch, setSelectedMatch] = useState<PoolMatch>();
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedGame, setSelectedGame] = useState('');
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [selectedPoolMatch, setSelectedPoolMatch] = useState<PoolMatch>();
+    const [selectedStraightMatch, setSelectedStraightMatch] = useState<StraightMatch>();
+    const [showPoolDetailsModal, setShowPoolDetailsModal] = useState(false);
+    const [showStraightDetailsModal, setShowStraightDetailsModal] = useState(false);
+    const [showDeletePoolModal, setShowDeletePoolModal] = useState(false);
+    const [showDeleteStraightModal, setShowDeleteStraightModal] = useState(false);
 
     const [error, setError] = useState('');
 
@@ -46,7 +65,6 @@ export default function History() {
             setSelectedGame('');
         }
     }
-
 
     const selectPage = () => {
         if (selectedGame === "8 Ball"){
@@ -83,8 +101,16 @@ export default function History() {
         }
     }
     
-    const deleteMatch = async () =>{
-        await fetch(`/api/deleteMatch?matchID=${selectedMatch?.match_id}`, {
+    const deletePoolMatch = async () =>{
+        await fetch(`/api/deletePoolMatch?matchID=${selectedPoolMatch?.match_id}`, {
+            method: 'DELETE',
+        });
+        
+        window.location.reload();
+    }
+
+    const deleteStraightMatch = async () =>{
+        await fetch(`/api/deleteStraightMatch?matchID=${selectedStraightMatch?.match_id}`, {
             method: 'DELETE',
         });
         
@@ -97,13 +123,12 @@ export default function History() {
                 const res = await fetch('/api/getAllMatches');
                 const json = await res.json();
 
-                console.log(json.allStraightMatches);
-
                 if (!res.ok){
                     setError(json.error);
                 }
 
-                setAllMatches(json.allPoolMatches);
+                setAllPoolMatches(json.allPoolMatches);
+                setAllStraightMatches(json.allStraightMatches);
             }
             catch (err){
                 setError('Network error');
@@ -136,13 +161,13 @@ export default function History() {
 
                 <div className="display-history-box">
                     <div className="history-placeholder-box">
-                        {allMatches.length === 0 ? (
+                        {allPoolMatches.length === 0 ? (
                         <p className="no-match-history-text">
                             No match history found. 
                         </p>
                         ) : (
                         <ul className="history-list">
-                            {allMatches.map((match) => {
+                            {allPoolMatches.map((match) => {
                                 let currentScores = null;
                                 let setsWonDisplay = null;
 
@@ -161,51 +186,98 @@ export default function History() {
 
                                 return (
                                     <div key={match.match_id} className="history-item">
-                                    <div className="history-row">
-                                        <span className="game-type-text">{getGameTypeName(match.game_type)}</span>
-                                        <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
-                                            year: 'numeric',
-                                            month: 'short', 
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: true, 
-                                        })}
-                                        </span>
-                                    </div>
+                                        <div className="history-row">
+                                            <span className="game-type-text">{getGameTypeName(match.game_type)}</span>
+                                            <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                                year: 'numeric',
+                                                month: 'short', 
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                hour12: true, 
+                                            })}
+                                            </span>
+                                        </div>
 
-                                    <div className="history-row">
-                                        <span className="history-game-name-text">Game Name: {match.game_name}</span>
-                                        <span className="history-score-text">
-                                            {match.pool_matches_sets
-                                            ? `${setsWonDisplay} | ${currentScores}`
-                                            : currentScores}
-                                        </span>
-                                    </div>
-                                    
-                                    <div className="history-row">
-                                        <span className="history-player-name-text">
-                                            {match.player1} vs. {match.player2}
-                                        </span>
-                                        <span className="history-button-box">
-                                            {match.winner === null && (
-                                                <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
-                                                    Continue Match
+                                        <div className="history-row">
+                                            <span className="history-game-name-text">Game Name: {match.game_name}</span>
+                                            <span className="history-score-text">
+                                                {match.pool_matches_sets
+                                                ? `${setsWonDisplay} | ${currentScores}`
+                                                : currentScores}
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="history-row">
+                                            <span className="history-player-name-text">
+                                                {match.player1} vs. {match.player2}
+                                            </span>
+                                            <span className="history-button-box">
+                                                {match.winner === null && (
+                                                    <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
+                                                        Continue Match
+                                                    </button>
+                                                )}
+
+                                                <button className="history-button view" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
+                                                    View Details
                                                 </button>
-                                            )}
 
-                                        <button className="history-button view" onClick={() => {setShowDetailsModal(true); setSelectedMatch(match);}}>
-                                            View Details
-                                        </button>
+                                                <button className="history-button delete" onClick={() => {setShowDeletePoolModal(true); setSelectedPoolMatch(match);}}>
+                                                    Delete Match
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
 
-                                        <button className="history-button delete" onClick={() => {setShowDeleteModal(true); setSelectedMatch(match);}}>
-                                            Delete Match
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                            );
-                        })}
+                            {allStraightMatches.map((match) => {
+                                return (
+                                    <div key={match.match_id} className="history-item">
+                                        <div className="history-row">
+                                            <span className="game-type-text">Straight Pool (14.1 Continous)</span>
+                                            <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                                year: 'numeric',
+                                                month: 'short', 
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                hour12: true, 
+                                            })}
+                                            </span>
+                                        </div>
+
+                                        <div className="history-row">
+                                            <span className="history-game-name-text">Game Name: {match.game_name}</span>
+                                            <span className="history-score-text">
+                                                Score: {match.player1_score} - {match.player2_score}
+                                            </span>
+                                        </div>
+                                    
+                                        <div className="history-row">
+                                            <span className="history-player-name-text">
+                                                {match.player1} vs. {match.player2}
+                                            </span>
+                                            <span className="history-button-box">
+                                                {match.winner === null && (
+                                                    <button className="history-button continue" onClick={() => router.push(`/tracker/straight-pool?matchID=${match.match_id}`)}>
+                                                        Continue Match
+                                                    </button>
+                                                )}
+
+                                                <button className="history-button view" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
+                                                    View Details
+                                                </button>
+
+                                                <button className="history-button delete" onClick={() => {setShowDeleteStraightModal(true); setSelectedStraightMatch(match);}}>
+                                                    Delete Match
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </ul>
                         )}
                     </div>
@@ -233,44 +305,44 @@ export default function History() {
                 </div>
             )}
 
-            {showDetailsModal && selectedMatch && (
-                <div className="details-modal-overlay" onClick={() => setShowDetailsModal(false)}>
+            {showPoolDetailsModal && selectedPoolMatch && (
+                <div className="details-modal-overlay" onClick={() => setShowPoolDetailsModal(false)}>
                     <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
                         <p className="modal-game-type-text">
-                            Game Type: {getGameTypeName(selectedMatch.game_type)}
+                            Game Type: {getGameTypeName(selectedPoolMatch.game_type)}
                         </p>
                         <p className="modal-game-name-text">
-                            Game Name: {selectedMatch.game_name}
+                            Game Name: {selectedPoolMatch.game_name}
                         </p>
                         <div className="modal-player-names-box">
                             <p className="modal-player-names-text">
-                                {selectedMatch.player1}
+                                {selectedPoolMatch.player1}
                             </p>
                             <p className="modal-vs-text">
                                 vs.
                             </p>
                             <p className="modal-player-names-text">
-                                {selectedMatch.player2}
+                                {selectedPoolMatch.player2}
                             </p>
                         </div>
                         <p className="modal-winner-text">
-                            Winner: {selectedMatch.winner || "In Progress"}
+                            Winner: {selectedPoolMatch.winner || "In Progress"}
                         </p>
 
                         <img src="/divider.png" className="divider-css"></img>
 
                         <p className="modal-race-to-text">
-                            Race to {selectedMatch.race_to}
-                            {selectedMatch.pool_matches_sets?.sets !== null && selectedMatch.pool_matches_sets?.sets !== undefined && (
-                                <>, Best of {selectedMatch.pool_matches_sets.sets}</>
+                            Race to {selectedPoolMatch.race_to}
+                            {selectedPoolMatch.pool_matches_sets?.sets !== null && selectedPoolMatch.pool_matches_sets?.sets !== undefined && (
+                                <>, Best of {selectedPoolMatch.pool_matches_sets.sets}</>
                             )}
                         </p>
-                        {selectedMatch.pool_matches_sets?.sets != null ? (
+                        {selectedPoolMatch.pool_matches_sets?.sets != null ? (
                             <>
                                 <p className="modal-all-scores-text">All Scores:</p>
-                                {selectedMatch.pool_matches_race?.length > 0 && (
-                                <div className="modal-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedMatch.pool_matches_race.length, 5)}, 1fr)`}}>
-                                    {selectedMatch.pool_matches_race.map((race, index) => (
+                                {selectedPoolMatch.pool_matches_race?.length > 0 && (
+                                <div className="modal-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedPoolMatch.pool_matches_race.length, 5)}, 1fr)`}}>
+                                    {selectedPoolMatch.pool_matches_race.map((race, index) => (
                                     <p className="modal-sets-scores-text" key={index}>
                                         Set {index + 1}: {race.player1_score} - {race.player2_score}
                                     </p>
@@ -281,9 +353,9 @@ export default function History() {
                         ) : (
                             <>
                                 <p className="modal-race-score-text">Score:</p>
-                                {selectedMatch.pool_matches_race?.[0] && (
+                                {selectedPoolMatch.pool_matches_race?.[0] && (
                                 <p className="modal-race-scores-text">
-                                    {selectedMatch.pool_matches_race[0].player1_score} - {selectedMatch.pool_matches_race[0].player2_score}
+                                    {selectedPoolMatch.pool_matches_race[0].player1_score} - {selectedPoolMatch.pool_matches_race[0].player2_score}
                                 </p>
                                 )}
                             </>
@@ -292,8 +364,8 @@ export default function History() {
                 </div>
             )}
 
-            {showDeleteModal && (
-                <div className="delete-modal-overlay" onClick={() => {setShowDeleteModal(false)}}>
+            {showDeletePoolModal && (
+                <div className="delete-modal-overlay" onClick={() => {setShowDeletePoolModal(false)}}>
                     <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
                         <p className="delete-warning-text">
                             Are you sure you want to delete this match?
@@ -302,10 +374,70 @@ export default function History() {
                             This action is irreversible!
                         </p>
                         <div className="delete-button-box">
-                            <div className="delete-confirm-button" onClick={deleteMatch}>
+                            <div className="delete-confirm-button" onClick={deletePoolMatch}>
                                 Confirm Delete
                             </div>
-                            <div className="delete-cancel-button" onClick={() => {setShowDeleteModal(false)}}>
+                            <div className="delete-cancel-button" onClick={() => {setShowDeletePoolModal(false)}}>
+                                Cancel
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showStraightDetailsModal && selectedStraightMatch && (
+                <div className="details-modal-overlay" onClick={() => setShowStraightDetailsModal(false)}>
+                    <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="modal-game-type-text">
+                            Game Type: Straight Pool (14.1 Continuous)
+                        </p>
+                        <p className="modal-game-name-text">
+                            Game Name: {selectedStraightMatch.game_name}
+                        </p>
+                        <div className="modal-player-names-box">
+                            <p className="modal-player-names-text">
+                                {selectedStraightMatch.player1}
+                            </p>
+                            <p className="modal-vs-text">
+                                vs.
+                            </p>
+                            <p className="modal-player-names-text">
+                                {selectedStraightMatch.player2}
+                            </p>
+                        </div>
+                        <p className="modal-winner-text">
+                            Winner: {selectedStraightMatch.winner || "In Progress"}
+                        </p>
+
+                        <img src="/divider.png" className="divider-css"></img>
+
+                        <p className="modal-race-to-text">
+                            Race to {selectedStraightMatch.race_to}
+                        </p>
+
+                        <p className="modal-race-score-text">Score:</p>
+
+                        <p className="modal-race-scores-text">
+                            {selectedStraightMatch.player1_score} - {selectedStraightMatch.player2_score}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {showDeleteStraightModal && (
+                <div className="delete-modal-overlay" onClick={() => {setShowDeleteStraightModal(false)}}>
+                    <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="delete-warning-text">
+                            Are you sure you want to delete this match?
+                        </p>
+                        <p className="delete-warning-text">
+                            This action is irreversible!
+                        </p>
+                        <div className="delete-button-box">
+                            <div className="delete-confirm-button" onClick={deleteStraightMatch}>
+                                Confirm Delete
+                            </div>
+                            <div className="delete-cancel-button" onClick={() => {setShowDeleteStraightModal(false)}}>
                                 Cancel
                             </div>
                         </div>

@@ -19,7 +19,7 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 });
         }
 
-        return NextResponse.json({ message: 'Race deleted successfully' }, { status: 200 });
+        return NextResponse.json({ message: 'Pool match deleted successfully' }, { status: 200 });
     } 
     catch (error){
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
