@@ -9,6 +9,12 @@
   overflow-y: hidden;
 }
 
+/* Toast Warning CSS */
+
+.s-toast-warning{
+  margin-top: 8vh;
+}
+
 /* Game Name & Race To CSS */
 
 .s-game-name-text{

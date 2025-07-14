@@ -19,7 +19,7 @@ const Tracker: React.FC = () => {
     const [player2, setPlayer2] = useState('');
     const player1Ref = useRef(player1);
     const player2Ref = useRef(player2);
-    const [raceTo, setRaceTo] = useState('5');
+    const [raceTo, setRaceTo] = useState<number>(0);
     const [toShoot, setToShoot] = useState('');
     const toShootRef = useRef(toShoot);
     const [rack, setRack] = useState<number>(1);
@@ -45,8 +45,7 @@ const Tracker: React.FC = () => {
     type Action = {
         player: string;
         ActionType: string;
-        prevScore?: number; //Only store this for CR
-        prevRemainingBalls?: number; //Only store this for 3 foul rule
+        prevRemainingBalls?: number; //Only store this for 3 foul rule & CR
         prevPlayerHighRun?: number;
         prevPlayerCurrRun?: number;
     };
@@ -59,18 +58,20 @@ const Tracker: React.FC = () => {
             ActionType: 'increment',
         }
 
+        const updatedScore = player1Score + 1;
+        const updatedCurrRun = player1CurrRun + 1;
+        const updatedHighRun = Math.max(updatedCurrRun, player1HighRun);
+
+        setPlayer1Score(updatedScore);
+        setPlayer1CurrRun(updatedCurrRun);
+
         if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
-        setPlayer1Score(player1Score + 1);
-
-        const prevCurrRun = player1CurrRun;
-        setPlayer1CurrRun(prevCurrRun + 1);
-
-        if (prevCurrRun + 1 > player1HighRun){ //Replace highRun by currRun if higher
+        if (updatedHighRun > player1HighRun){ //Replace highRun by currRun if higher
             action.prevPlayerHighRun = player1HighRun; //Declare previous player high run when replaced into action stack
-            setPlayer1HighRun(prevCurrRun + 1);
+            setPlayer1HighRun(updatedHighRun);
         }
 
         if (remainingBalls - 1 === 1){ //Updates remaining balls
@@ -79,13 +80,55 @@ const Tracker: React.FC = () => {
         }
         else{
             setRemainingBalls(remainingBalls - 1);
+        }  
+
+        if (updatedScore === raceTo){
+            updateStraightMatch(updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
+            handleWinner(player1);
         }
 
         setActionHistory(history => [...history, action]);
     };
 
-    const clearRackPlayer1 = async () => { //Work on this later
+    const clearRackPlayer1 = async () => { 
+        const clearScore = remainingBalls - 1;
 
+        if (remainingBalls === 2){
+            incrementPlayer1();
+            return;
+        }
+
+        const action: Action = {
+            player: 'player1',
+            ActionType: 'increment',
+            prevRemainingBalls: remainingBalls,
+        }
+
+        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+            missPlayer();
+        }
+
+        const updatedScore = player1Score + clearScore;
+        const updatedCurrRun = player1CurrRun + clearScore;
+        const updatedHighRun = Math.max(updatedCurrRun, player1HighRun);
+
+        setPlayer1Score(updatedScore);
+        setPlayer1CurrRun(updatedCurrRun);
+
+        if (updatedHighRun > player1HighRun){ //Replace highRun by currRun if higher
+            action.prevPlayerHighRun = player1HighRun; //Declare previous player high run when replaced into action stack
+            setPlayer1HighRun(updatedHighRun);
+        }
+
+        setRemainingBalls(15);
+        setRack(rack + 1);
+
+        if (updatedScore >= raceTo){
+            updateStraightMatch(updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
+            handleWinner(player1);
+        }
+
+        setActionHistory(history => [...history, action]);
     }
 
     const decrementPlayer1 = async () => {
@@ -112,19 +155,38 @@ const Tracker: React.FC = () => {
                     break;
                 }
             }
+        }
 
-            if (foulCount === 2){
-                action.ActionType = '3_foul_penalty';
-                action.prevRemainingBalls = remainingBalls;
+        if (foulCount === 1){
+            toast.error(`${player1} is on 2 consecutive fouls, with a 3rd foul, ${player1} will take a 15 point penalty alongside with a rack reset.`, {
+                className: "s-toast-warning",
+                position: "top-right",
+                autoClose: 7500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+        }
+        else if (foulCount === 2){
+            toast.error(`${player1} is on 3 consecutive fouls, a 15 point penalty is applied. At this time, please reset the rack.`, {
+                className: "s-toast-warning",
+                position: "top-right",
+                autoClose: 6000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
 
-                setPlayer1Score(player1Score - 16);
-                setPlayer1CurrRun(0);
-                setRemainingBalls(15);
-                setRack(rack + 1);
-                setToShoot(player2);
-                setActionHistory(history => [...history, action]);
-                return;
-            }
+            action.ActionType = '3_foul_penalty';
+            action.prevRemainingBalls = remainingBalls;
+
+            setPlayer1Score(player1Score - 16);
+            setPlayer1CurrRun(0);
+            setRemainingBalls(15);
+            setRack(rack + 1);
+            setToShoot(player2);
+            setActionHistory(history => [...history, action]);
+            return;
         }
 
         setPlayer1Score(player1Score - 1);
@@ -140,18 +202,20 @@ const Tracker: React.FC = () => {
             ActionType: 'increment',
         }
 
+        const updatedScore = player2Score + 1;
+        const updatedCurrRun = player2CurrRun + 1;
+        const updatedHighRun = Math.max(updatedCurrRun, player2HighRun);
+
+        setPlayer2Score(updatedScore);
+        setPlayer2CurrRun(updatedCurrRun);
+
         if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
-        setPlayer2Score(player2Score + 1);
-
-        const prevCurrRun = player2CurrRun;
-        setPlayer2CurrRun(prevCurrRun + 1);
-
-        if (prevCurrRun + 1 > player2HighRun){ //Replace highRun by currRun if higher
+        if (updatedHighRun > player2HighRun){ //Replace highRun by currRun if higher
             action.prevPlayerHighRun = player2HighRun; //Declare previous player high run when replaced into action stack
-            setPlayer2HighRun(prevCurrRun + 1);
+            setPlayer2HighRun(updatedHighRun);
         }
 
         if (remainingBalls - 1 === 1){ //Updates remaining balls
@@ -160,15 +224,56 @@ const Tracker: React.FC = () => {
         }
         else{
             setRemainingBalls(remainingBalls - 1);
+        }  
+
+        if (updatedScore === raceTo){
+            updateStraightMatch(player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
+            handleWinner(player2);
         }
 
         setActionHistory(history => [...history, action]);
     };
 
-    const clearRackPlayer2 = async () => { //Work on this later
+    const clearRackPlayer2 = async () => {
+        const clearScore = remainingBalls - 1;
 
+        if (remainingBalls === 2){
+            incrementPlayer2();
+            return;
+        }
+
+        const action: Action = {
+            player: 'player2',
+            ActionType: 'increment',
+            prevRemainingBalls: remainingBalls,
+        }
+
+        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+            missPlayer();
+        }
+
+        const updatedScore = player2Score + clearScore;
+        const updatedCurrRun = player2CurrRun + clearScore;
+        const updatedHighRun = Math.max(updatedCurrRun, player2HighRun);
+
+        setPlayer2Score(updatedScore);
+        setPlayer2CurrRun(updatedCurrRun);
+
+        if (updatedHighRun > player2HighRun){ //Replace highRun by currRun if higher
+            action.prevPlayerHighRun = player2HighRun; //Declare previous player high run when replaced into action stack
+            setPlayer2HighRun(updatedHighRun);
+        }
+
+        setRemainingBalls(15);
+        setRack(rack + 1);
+
+        if (updatedScore >= raceTo){
+            updateStraightMatch(player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
+            handleWinner(player2);
+        }
+
+        setActionHistory(history => [...history, action]);
     }
-
 
     const decrementPlayer2 = async () => {
         if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
@@ -194,19 +299,38 @@ const Tracker: React.FC = () => {
                     break;
                 }
             }
-            
-            if (foulCount === 2){
-                action.ActionType = '3_foul_penalty';
-                action.prevRemainingBalls = remainingBalls;
+        }
 
-                setPlayer2Score(player2Score - 16);
-                setPlayer2CurrRun(0);
-                setRemainingBalls(15);
-                setRack(rack + 1);
-                setToShoot(player1);
-                setActionHistory(history => [...history, action]);
-                return;
-            }
+        if (foulCount === 1){
+            toast.error(`${player2} is on 2 consecutive fouls, with a 3rd foul, ${player2} will take a 15 point penalty alongside with a rack reset.`, {
+                className: "s-toast-warning",
+                position: "top-right",
+                autoClose: 7500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+        }
+        else if (foulCount === 2){
+            toast.error(`${player2} is on 3 consecutive fouls, a 15 point penalty is applied. At this time, please reset the rack.`, {
+                className: "s-toast-warning",
+                position: "top-right",
+                autoClose: 6000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+
+            action.ActionType = '3_foul_penalty';
+            action.prevRemainingBalls = remainingBalls;
+
+            setPlayer2Score(player2Score - 16);
+            setPlayer2CurrRun(0);
+            setRemainingBalls(15);
+            setRack(rack + 1);
+            setToShoot(player1);
+            setActionHistory(history => [...history, action]);
+            return;
         }
 
         setPlayer2Score(player2Score - 1);
@@ -247,17 +371,26 @@ const Tracker: React.FC = () => {
 
         if (lastAction.player === 'player1'){
             if (lastAction.ActionType === 'increment'){
-                setPlayer1Score(player1Score-1);
-                setPlayer1CurrRun(player1CurrRun-1);
-
-                const prevRemainingBalls = remainingBalls;
-
-                if (prevRemainingBalls + 1 > 15){
-                    setRemainingBalls(2);
+                if (lastAction.prevRemainingBalls !== undefined){
+                    const clearScore = lastAction.prevRemainingBalls - 1;
+                    setPlayer1Score(player1Score - clearScore);
+                    setPlayer1CurrRun(player1CurrRun - clearScore);
+                    setRemainingBalls(lastAction.prevRemainingBalls);
                     setRack(rack - 1);
                 }
                 else{
-                    setRemainingBalls(prevRemainingBalls + 1);
+                    setPlayer1Score(player1Score-1);
+                    setPlayer1CurrRun(player1CurrRun-1);
+
+                    const prevRemainingBalls = remainingBalls;
+
+                    if (prevRemainingBalls + 1 > 15){
+                        setRemainingBalls(2);
+                        setRack(rack - 1);
+                    }
+                    else{
+                        setRemainingBalls(prevRemainingBalls + 1);
+                    }
                 }
 
                 if (lastAction.prevPlayerHighRun !== undefined){
@@ -293,19 +426,28 @@ const Tracker: React.FC = () => {
         }
         else if (lastAction.player === 'player2'){
             if (lastAction.ActionType === 'increment'){
-                setPlayer2Score(player2Score-1);
-                setPlayer2CurrRun(player2CurrRun-1);
-
-                const prevRemainingBalls = remainingBalls;
-
-                if (prevRemainingBalls + 1 > 15){
-                    setRemainingBalls(2);
+                if (lastAction.prevRemainingBalls !== undefined){
+                    const clearScore = lastAction.prevRemainingBalls - 1;
+                    setPlayer2Score(player2Score - clearScore);
+                    setPlayer2CurrRun(player2CurrRun - clearScore);
+                    setRemainingBalls(lastAction.prevRemainingBalls);
                     setRack(rack - 1);
                 }
                 else{
-                    setRemainingBalls(prevRemainingBalls + 1);
-                }
+                    setPlayer2Score(player2Score-1);
+                    setPlayer2CurrRun(player2CurrRun-1);
 
+                    const prevRemainingBalls = remainingBalls;
+
+                    if (prevRemainingBalls + 1 > 15){
+                        setRemainingBalls(2);
+                        setRack(rack - 1);
+                    }
+                    else{
+                        setRemainingBalls(prevRemainingBalls + 1);
+                    }
+                }
+                
                 if (lastAction.prevPlayerHighRun !== undefined){
                     setPlayer2HighRun(lastAction.prevPlayerHighRun);
                 }
@@ -337,6 +479,69 @@ const Tracker: React.FC = () => {
         }
 
         setActionHistory(prev => prev.slice(0, -1));
+    }
+
+    const updateStraightMatch = async (updatedPlayer1Score: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
+        updatedPlayer2Score: number, updatedPlayer2HighRun: number, updatedPlayer2CurrRun: number) => { //updates scores to database
+        try {
+            const res = await fetch('/api/updateStraightMatch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    match_id: matchID,
+                    player1_score: updatedPlayer1Score,
+                    player1_high_run: updatedPlayer1HighRun,
+                    player1_curr_run: updatedPlayer1CurrRun,
+                    player2_score: updatedPlayer2Score,
+                    player2_high_run: updatedPlayer2HighRun,
+                    player2_curr_run: updatedPlayer2CurrRun,
+                }),
+            });
+
+            const data = await res.json();
+            if (data.error) {
+                console.error('Failed to update match:', data.error);
+            }
+        } catch (err) {
+            console.error('Error updating match:', err);
+        }
+    };
+
+    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+        setWinner(winnerValue);
+        setLoading(true);
+        try{
+            const res = await fetch('/api/updateStraightWinner',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    matchID,
+                    winner: winnerValue,
+                }),
+            })
+
+            const data = await res.json();
+            if (!res.ok){
+                setError(data.error || 'Failed to update winner');
+            } 
+            else{
+                console.log('Success:', data.message);
+            }
+        } 
+        catch (err){
+            setError('Error contacting server');
+        } 
+        finally{
+            setLoading(false);
+        }
+    }
+
+    const handleExit = () => {
+        const winnerValue = winner;
+        handleWinner(winnerValue);
+        router.push('/history');
     }
 
     useEffect(() => { //Get match info
@@ -396,9 +601,42 @@ const Tracker: React.FC = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    useEffect(()=>{
-        // console.log(actionHistory); 
-    }, [actionHistory])
+    useEffect(() => { //Updating database with scores and runs every 15 seconds
+        if (!matchID) return;
+
+        const interval = setInterval(() => {
+            updateStraightMatch(player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
+        }, 15000);
+
+        return () => clearInterval(interval);
+    }, [matchID, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
+
+    useEffect(() => { //Updating database with scores and runs on reload & leaving tab
+        if (!matchID) return;
+        
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                const payload = JSON.stringify({
+                    match_id: matchID,
+                    player1_score: player1Score,
+                    player1_high_run: player1HighRun,
+                    player1_curr_run: player1CurrRun,
+                    player2_score: player2Score,
+                    player2_high_run: player2HighRun,
+                    player2_curr_run: player2CurrRun,
+                });
+
+                const blob = new Blob([payload], { type: 'application/json' });
+                navigator.sendBeacon('/api/updateStraightMatch', blob);
+            }
+        };
+
+        window.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [matchID, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
 
     if (loading){ //Loading screen
         return (
@@ -437,7 +675,7 @@ const Tracker: React.FC = () => {
                         <div className="s-increment-container">
                             <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
                             <div className="CR-container">
-                                <button className="s-increment-button">CR</button>
+                                <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
                                 <button className="CR-icon">i</button>
                             </div>
                         </div>
@@ -486,7 +724,7 @@ const Tracker: React.FC = () => {
                         <p className="s-player2-score">{player2Score}</p>
                         <div className="s-increment-container">
                             <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
-                            <button className="s-increment-button">CR</button>
+                            <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
                         </div>     
                     </div>
 
@@ -498,6 +736,27 @@ const Tracker: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {winner && (
+                <div className="winner-modal">
+                    <div className="winner-content-modal">
+                        <p className="winner-notice-text">
+                            And the winner is...
+                        </p>
+                        <p className="winner-text">
+                            {winner}
+                        </p>
+                        <div className="winner-button-box">
+                            <button className="winner-button" onClick={handleExit}>
+                                exit match
+                            </button>
+                            <button className="winner-button">
+                                continue match
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
 
     )
