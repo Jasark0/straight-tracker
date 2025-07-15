@@ -16,10 +16,10 @@ const Header: React.FC<HeaderProps> = ({ className = "home-title-box" }) => {
   return (
     <div className={className}>
       <div className="logo-box" onClick={homePage}>
-        <img src="/straight-tracker-logo.png" className="logo-css" alt="Straight Tracker Logo"></img>
-        <p className="home-title-name">
-          Straight Tracker
-        </p>
+        <div className="header-logo-container" onClick={homePage}>
+            <img src="/straight-header-logo.png" className="header-logo-css"></img>
+            <img src="/straight-header-logo-text.png" className="header-logo-text-css"></img>
+        </div>
       </div>
     </div>
   );

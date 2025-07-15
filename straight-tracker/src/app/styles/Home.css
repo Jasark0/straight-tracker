@@ -1,11 +1,19 @@
 /*Title CSS*/
 
+.home-page-container{
+  display: flex;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom, #0f0f0f, #1e1e1e);
+  color: #ffffff;
+  flex-direction: column;
+}
+
 .home-title-box{
   position: fixed;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 16vh;
+  height: 12vh;
   background-color: hsl(198, 55%, 75%);
   left: 0;
   right: 0;
@@ -14,15 +22,25 @@
   z-index: 10;
 }
 
-.logo-box{
+.header-logo-container{
   display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  margin-left: 4vh;
 }
 
-.logo-css{
+.header-logo-css{
   display: flex;
-  padding: 2vh;
-  width: 16vh;
+  width: 15vh;
+  margin-right: -2vh;
+} 
+
+.header-logo-text-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .home-title-name{
@@ -40,27 +58,37 @@
 
 .header-buttons-box{
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 5vh;
 }
 
-.sign-in-css{
+.sign-in-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2vh 2.5vw; 
-  font-size: 2.5vh;
-  color: rgb(82, 83, 196);
-  background-color: rgb(179, 195, 255);
-  border: 1px solid black;
-  border-radius: 8px;
+  padding: 1.5vh 4vh;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border-radius: 20px;
+  border: none;
+  background: hsl(198, 55%, 75%);
+  color: black;
   cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.sign-in-button:hover {
+  color: #0f0f0f;
+  transform: translateY(-2px) scale(1.03);
 }
 
 .sign-up-css{
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5vh 2vw; 
+  padding: 2vh 2vw; 
   font-size: 2.5vh;
   color: rgb(65, 45, 45);
   background-color: rgb(255, 255, 255);
@@ -69,10 +97,29 @@
   cursor: pointer;
 }
 
-.sign-in-css:hover{
-  outline: none;
-  background-color: rgb(207, 247, 248);
-  transition: 0.15s ease;
+.my-games-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5vh;
+  padding: 2vh 2vw;
+  background-color: hsl(198, 55%, 75%);
+  color: black;
+  border: 1px solid black;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.profile-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 8vh;
+  width: 8vh;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid black;
+  border-radius: 100%;
+  cursor: pointer;
 }
 
 .sign-up-css:hover{
@@ -82,6 +129,10 @@
   transition: 0.15s ease;
 }
 
-.sign-in-css:focus, .sign-up-css:focus{
+.sign-up-css:focus{
   outline: none;
 }
+
+
+/* Home Center CSS */
+
