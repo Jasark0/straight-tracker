@@ -36,8 +36,16 @@ const Select: React.FC = () => {
     const [player1Set, setPlayer1Set] = useState<number | undefined>();
     const [player2Set, setPlayer2Set] = useState<number | undefined>();
 
+    const [showWinnerVerificationModal, setShowWinnerVerificationModal] = useState(false);
+    const [playerToWin, setPlayerToWin] = useState('');
+    const [playerToWinScore, setPlayerToWinScore] = useState<number>(0);
+    const [isOpen, setIsOpen] = useState(false);
+    const [winner, setWinner] = useState('');
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -155,6 +163,43 @@ const Select: React.FC = () => {
         } catch (err) {
             console.error('Unexpected error:', err);
         }
+    }
+
+    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+        setWinner(winnerValue);
+        setLoading(true);
+        try{
+            const res = await fetch('/api/updateWinner',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    matchID,
+                    winner: winnerValue,
+                }),
+            })
+
+            const data = await res.json();
+            if (!res.ok){
+                setError(data.error || 'Failed to update winner');
+            } 
+            else{
+                console.log('Success:', data.message);
+            }
+        } 
+        catch (err){
+            setError('Error contacting server');
+        } 
+        finally{
+            setLoading(false);
+        }
+    }
+
+    const handleExit = () => {
+        const winnerValue = playerToWin;
+        handleWinner(winnerValue);
+        router.push('/history');
     }
 
     useEffect(() => { //Get match info
@@ -301,10 +346,50 @@ const Select: React.FC = () => {
                             </label>
                         </div>
                     </div>
+                    
+                    <hr className="styled-divider" />
+                    <div className="dropdown-component">
+                        <div className="dropdown-container" onClick={toggleDropdown}>
+                            <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>&#9660;</span>
+                            <span className="dropdown-text">Declare Winner</span>
+                        </div>
 
-                    <button type="submit" className="submit-button">Update Match</button>
+                        <div>
+                            {isOpen && (
+                                <div>
+                                    <div className="button-selection-box">
+                                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(true); setPlayerToWin(player1); setPlayerToWinScore(player1Score);}}>
+                                            {player1}
+                                        </button>
+                                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(true); setPlayerToWin(player2); setPlayerToWinScore(player2Score);}}>
+                                            {player2}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    <div className="button-selection-box">
+                        <button type="submit" className="submit-button">Update Match</button>
+                    </div>
                 </form>
             </div>
+        {showWinnerVerificationModal && (
+            <div className="details-modal-overlay" onClick={() => setShowWinnerVerificationModal(false)}>
+                <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}.</p>
+                    <div className="button-selection-box">
+                        <button type="button" className="submit-button" onClick={() => {handleExit()}}>
+                            Yes
+                        </button>
+                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(false)}}>
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
         </div>
     )
 }
