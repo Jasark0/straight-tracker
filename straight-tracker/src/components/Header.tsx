@@ -7,22 +7,20 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ className = "home-title-box" }) => {
-  const router = useRouter();
+    const router = useRouter();
 
-  const homePage = () => {
-    router.push('/');
-  };
+    const homePage = () => {
+        router.push('/');
+    };
 
-  return (
-    <div className={className}>
-      <div className="logo-box" onClick={homePage}>
-        <div className="header-logo-container" onClick={homePage}>
-            <img src="/straight-header-logo.png" className="header-logo-css"></img>
-            <img src="/straight-header-logo-text.png" className="header-logo-text-css"></img>
-        </div>
-      </div>
-    </div>
-  );
+    return (
+        <header className="header-title-container">
+            <div className="header-logo-container" onClick={homePage}>
+                <img src="/straight-header-logo.png" className="header-logo-css"></img>
+                <img src="/straight-header-logo-text.png" className="header-logo-text-css"></img>
+            </div>
+        </header>
+    );
 };
 
 export default Header;

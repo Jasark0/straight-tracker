@@ -2,14 +2,16 @@
 
 .home-page-container{
   display: flex;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: 'Inter', sans-serif;
   background: linear-gradient(to bottom, #0f0f0f, #1e1e1e);
   color: #ffffff;
   flex-direction: column;
 }
 
-.home-title-box{
-  position: fixed;
+.home-title-container{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,7 +34,7 @@
 
 .header-logo-css{
   display: flex;
-  width: 15vh;
+  width: 12vh;
   margin-right: -2vh;
 } 
 
@@ -40,7 +42,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  width: 22vh;
+}
+
+.header-logo-container:hover .header-logo-text-css {
+  transform: scale(1.03);
+  transition: transform 0.3s ease-in-out;
 }
 
 .home-title-name{
@@ -52,18 +59,40 @@
 
 .login-box{
   display: flex;
-  gap: 2vw;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
   padding-right: 10vh;
 }
 
 .header-buttons-box{
   display: flex;
+  height: 100%;
   align-items: center;
   justify-content: center;
   gap: 5vh;
 }
 
-.sign-in-button {
+.learn-more-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3vh;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  border: none;
+  background: hsl(198, 55%, 75%);
+  color: black;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.learn-more-button:hover {
+  color: #0f0f0f;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.sign-in-button{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,17 +126,32 @@
   cursor: pointer;
 }
 
+.sign-up-css:focus{
+  outline: none;
+}
+
 .my-games-css{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5vh;
-  padding: 2vh 2vw;
+  font-family: 'Inter', sans-serif;
+  font-size: 3vh;
+  font-weight: 500;
+  padding: 2vh 4vh;
   background-color: hsl(198, 55%, 75%);
   color: black;
   border: 1px solid black;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.my-games-css:hover{
+  background-color: hsl(198, 65%, 60%);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .profile-css{
@@ -120,6 +164,14 @@
   border: 1px solid black;
   border-radius: 100%;
   cursor: pointer;
+  transition: all 0.3s ease;
+  object-fit: cover;
+}
+
+.profile-css:hover{
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: hsl(198, 70%, 55%);
 }
 
 .sign-up-css:hover{
@@ -129,10 +181,113 @@
   transition: 0.15s ease;
 }
 
-.sign-up-css:focus{
-  outline: none;
+/* Home Center CSS */
+
+.hero-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh ;
+  background: linear-gradient(to bottom, #111, #1a1a1a);
+  color: white;
+}
+
+.hero-content {
+  max-width: 50%;
+}
+
+.main-hero-heading{
+  font-size: 3.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 3vh;
+  color: white;
+}
+
+.get-started-button{
+  display: block;
+  margin: 0 auto;
+  padding: 1.5vh 4vh;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background-color: hsl(198, 65%, 60%);
+  color: black;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.get-started-button:hover {
+  background-color: hsl(198, 75%, 55%);
+  transform: scale(1.05);
+}
+
+.guest-access-box {
+  margin-top: 6vh;
+  text-align: center;
+}
+
+.guest-subtext {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 2vh;
+}
+
+.guest-button {
+  padding: 1.5vh 4vh;
+  font-size: 1.2rem;
+  background-color: #333;
+  color: white;
+  border: 2px solid hsl(198, 65%, 60%);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guest-button:hover {
+  background-color: hsl(198, 65%, 60%);
+  color: black;
+  transform: scale(1.03);
+}
+
+.image-showcase {
+  background: #0f0f0f;
+  text-align: center;
+  padding: 6vh 4vw;
+}
+
+.pool-image {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  margin-bottom: 3vh;
+}
+
+.image-caption {
+  font-size: 1.25rem;
+  color: #dddddd;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 
-/* Home Center CSS */
 
+/* Smaller Screen Media CSS */
+
+@media (max-width: 768px) {
+  .home-title-box {
+    height: 8vh;
+    padding: 0 2vw;
+  }
+  .header-logo-css {
+    width: 10vh;
+  }
+  .my-games-css, .sign-in-button {
+    font-size: 1.25rem;
+    padding: 1vh 2vh;
+  }
+}

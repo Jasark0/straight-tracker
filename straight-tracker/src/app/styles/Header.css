@@ -1,0 +1,54 @@
+.header-title-container{
+  display: flex;
+  position: fixed;
+  align-items: center;
+  justify-content: space-between;
+  height: 12vh;
+  background-color: hsl(198, 55%, 75%);
+  left: 0;
+  right: 0;
+  top: 0;
+  border-bottom: 1px solid black;
+  z-index: 10;
+}
+
+.header-logo-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 4vh;
+}
+
+.header-logo-css{
+  display: flex;
+  width: 15vh;
+  margin-right: -2vh;
+} 
+
+.header-logo-text-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo-container:hover .header-logo-text-css {
+  transform: scale(1.03);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Smaller Screen Media CSS */
+
+@media (max-width: 768px) {
+  .home-title-container {
+    height: 8vh;
+    padding: 0 2vw;
+  }
+  .header-logo-css {
+    width: 10vh;
+  }
+  .my-games-css, .sign-in-button {
+    font-size: 1.25rem;
+    padding: 1vh 2vh;
+  }
+}

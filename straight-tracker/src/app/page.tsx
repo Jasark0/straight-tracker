@@ -50,7 +50,7 @@ export default function Home() {
 
     return (
         <div className="home-page-container">
-            <div className="home-title-box">
+            <header className="home-title-container">
                 <div className="header-logo-container" onClick={homePage}>
                     <img src="/straight-header-logo.png" className="header-logo-css"></img>
                     <img src="/straight-header-logo-text.png" className="header-logo-text-css"></img>
@@ -60,22 +60,48 @@ export default function Home() {
                     <div>Loading...</div>
                     ) : user ? (
                     <div className="header-buttons-box">
+                        <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
+                            Learn More
+                        </button>
                         <button className="my-games-css" onClick={handleHistory}>
                             My Games
                         </button>
-                        <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}>
-                            
-                        </img>
+                        <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}></img>
                     </div>
                     ) : (
                         <>
+                            <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
+                                Learn More
+                            </button>
                             <button className="sign-in-button" onClick={signinPage}>
                                 ↪ Sign In
                             </button>
                         </>
                     )}
                 </div>
-            </div>
+            </header>
+
+            <section className="hero-section">
+                <div className="hero-content">
+                    <h1 className="main-hero-heading">Your Professional Pool/Billiards Score Tracker</h1>
+                    <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
+
+                    <div className="guest-access-box">
+                    <p className="guest-subtext">
+                        Want to give our tracker a shot but unsure about making an account?
+                    </p>
+                    <button className="guest-button">🎯 Continue as a Guest — Start a Match</button>
+                    </div>
+                </div>
+            </section>
+
+            <section className="image-showcase" id="learn-more">
+                <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
+                <p className="image-caption">
+                    We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
+                    your scores will be saved and ready to continue serious long races.
+                </p>
+            </section>
         </div>
     );
 }
