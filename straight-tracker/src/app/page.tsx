@@ -13,12 +13,12 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-    const fetchUser = async () => {
-        const session = await getUserSession();
-        setUser(session?.user);
-        setIsLoading(false);
-    };
-    fetchUser();
+        const fetchUser = async () => {
+            const session = await getUserSession();
+            setUser(session?.user);
+            setIsLoading(false);
+        };
+        fetchUser();
     }, []);
 
     const homePage = () => {
@@ -30,6 +30,10 @@ export default function Home() {
     }
   
     const signupPage = () => {
+        if (user){
+            router.push('/history');
+            return;
+        }
         router.push('signup');
     }
 
@@ -48,18 +52,18 @@ export default function Home() {
         }
     };
 
-    return (
+    return !isLoading && (
         <div className="home-page-container">
             <header className="home-title-container">
-                <div className="header-logo-container" onClick={homePage}>
-                    <img src="/straight-header-logo.png" className="header-logo-css"></img>
-                    <img src="/straight-header-logo-text.png" className="header-logo-text-css"></img>
+                <div className="home-header-logo-container" onClick={homePage}>
+                    <img src="/straight-header-logo.png" className="home-header-logo-css"></img>
+                    <img src="/straight-header-logo-text.png" className="home-header-logo-text-css"></img>
                 </div>
                 <div className="login-box">
                     {isLoading ? (
                     <div>Loading...</div>
                     ) : user ? (
-                    <div className="header-buttons-box">
+                    <div className="home-header-buttons-box">
                         <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
                             Learn More
                         </button>
@@ -90,26 +94,43 @@ export default function Home() {
                 </div>
             </header>
 
+
             <section className="hero-section">
                 <div className="hero-content">
-                    <h1 className="main-hero-heading">Your Professional Pool/Billiards Score Tracker</h1>
+                    <p className="main-hero-heading">Your Professional Pool/Billiards Score Tracker</p>
                     <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
 
-                    <div className="guest-access-box">
-                    <p className="guest-subtext">
-                        Want to give our tracker a shot but unsure about making an account?
-                    </p>
-                    <button className="guest-button">🎯 Continue as a Guest — Start a Match</button>
-                    </div>
+                    {!user && (<div className="guest-access-box">
+                        <p className="guest-subtext">
+                            Want to give our tracker a shot but unsure about making an account?
+                        </p>
+                        <button className="guest-button">🎯 Continue as a Guest — Start a Match</button>
+                    </div>)}
                 </div>
             </section>
 
-            <section className="image-showcase" id="learn-more">
+            <div className="hero-features" id="learn-more">
+                <div className="feature-card">🔥 Track Sets & Races</div>
+                <div className="feature-card">📊 Analyze Match History</div>
+                <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
+            </div>
+            
+            <section className="image-showcase">
                 <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
                 <p className="image-caption">
                     We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
                     your scores will be saved and ready to continue serious long races.
                 </p>
+            </section>
+
+            <div className="section-divider"></div>
+
+            <section className="image-showcase">
+                <p className="image-caption">
+                    Currently, we have released 8-ball, 9-ball, 10-ball, straight pool (14.1 continuous). Our mission is to cover 
+                    all professional/popular cue sports such as snooker, one pocket, and the billiards fans.
+                </p>
+                <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="snooker-image" />
             </section>
         </div>
     );
