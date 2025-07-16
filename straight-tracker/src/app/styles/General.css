@@ -1,8 +1,8 @@
 html, body{
   background-color: hsl(57, 29%, 85%);
-  overflow: hidden;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;
   height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
