@@ -7,9 +7,12 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: {
     template: '%s | Straight Tracker',
-    default: 'Straight Tracker', // This will be the title for your homepage
+    default: 'Straight Tracker',
   },
   description: 'Welcome to Straight Tracker, your go-to app for tracking pool matches and player statistics.',
+  icons:{
+    icon: '/straight-tab-logo.png',
+  }
 }
 
 export default function RootLayout({

@@ -1,11 +1,21 @@
 /*Title CSS*/
 
-.home-title-box {
-  position: fixed;
+.home-page-container{
+  display: flex;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom, #0f0f0f, #1e1e1e);
+  color: #ffffff;
+  flex-direction: column;
+}
+
+.home-title-container{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 16vh;
+  height: 6vw;
   background-color: hsl(198, 55%, 75%);
   left: 0;
   right: 0;
@@ -14,98 +24,280 @@
   z-index: 10;
 }
 
-.logo-box {
-  display: flex;
-  cursor: pointer;
-}
-
-.logo-css {
-  display: flex;
-  padding: 2vh;
-  width: 16vh;
-}
-
-.home-title-name {
-  color: rgb(49, 49, 49);
-  font-size: 5vh;
-  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  font-weight: 900;
-}
-
-.login-box {
-  display: flex;
-  gap: 2vw;
-  padding-right: 10vh;
-}
-
-.header-buttons-box {
-  display: flex;
-  gap: 5vh;
-}
-
-.sign-in-css {
+.header-logo-container{
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2vh 2.5vw;
-  font-size: 2.5vh;
-  color: rgb(82, 83, 196);
-  background-color: rgb(179, 195, 255);
-  border: 1px solid black;
-  border-radius: 8px;
   cursor: pointer;
+  margin-left: 2vw;
 }
 
-.sign-up-css {
+.header-logo-css{
+  display: flex;
+  width: 6vw;
+  min-width: 6vw;
+  margin-right: -1vw;
+} 
+
+.header-logo-text-css{
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5vh 2vw;
-  font-size: 2.5vh;
-  color: rgb(65, 45, 45);
-  background-color: rgb(255, 255, 255);
+  width: 11vw;
+}
+
+.header-logo-container:hover .header-logo-text-css {
+  transform: scale(1.03);
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-box{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5vw;
+}
+
+.header-buttons-box{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 2.3vw;
+}
+
+.learn-more-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2vw;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  border: none;
+  background: hsl(198, 55%, 75%);
+  color: black;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.learn-more-button:hover {
+  color: #0f0f0f;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.sign-in-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1vw 2.2vw;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border-radius: 20px;
+  border: none;
+  background: hsl(198, 55%, 75%);
+  color: black;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.sign-in-button:hover {
+  color: #0f0f0f;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.my-games-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.4vw;
+  font-weight: 500;
+  padding: 0.6vw 1.6vw;
+  background-color: hsl(198, 55%, 75%);
+  color: black;
   border: 1px solid black;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.sign-in-css:hover {
-  outline: none;
-  background-color: rgb(207, 247, 248);
-  transition: 0.15s ease;
+.my-games-css:hover{
+  background-color: hsl(198, 65%, 60%);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.sign-up-css:hover {
+.profile-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-css {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.6vw;
+  width: 3.6vw;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  object-fit: cover;
+}
+
+.profile-css:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: hsl(198, 70%, 55%);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%; 
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.2vw;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-button {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.dropdown-button:hover {
+  background-color: #f0f0f0;
+}
+
+.sign-up-css:hover{
   outline: none;
   background-color: rgb(90, 255, 145);
   color: rgb(0, 0, 0);
   transition: 0.15s ease;
 }
 
-.sign-in-css:focus,
-.sign-up-css:focus {
-  outline: none;
-}
+/* Home Center CSS */
 
-.settings-icon-button {
-  position: absolute; /* Adjust padding from the right edge as needed */
-  transform: translateY(-50%);
-
-  /* Optional: Basic styling for the button */
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
+.hero-section {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  border-radius: 50%;
-  margin-bottom: 0px;
-  margin-top: 0px;
-  top: 18%;
-  right: 0%;
+  padding: 12vh;
+  background: linear-gradient(to bottom, #111, #1a1a1a);
+  color: white;
 }
 
-.settings-icon-button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+.hero-content {
+  max-width: 50%;
+}
+
+.main-hero-heading{
+  font-size: 3.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 3vh;
+  color: white;
+}
+
+.get-started-button{
+  display: block;
+  margin: 0 auto;
+  padding: 1.5vh 4vh;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background-color: hsl(198, 65%, 60%);
+  color: black;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.get-started-button:hover {
+  background-color: hsl(198, 75%, 55%);
+  transform: scale(1.05);
+}
+
+.guest-access-box {
+  margin-top: 6vh;
+  text-align: center;
+}
+
+.guest-subtext {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 2vh;
+}
+
+.guest-button {
+  padding: 1.5vh 4vh;
+  font-size: 1.2rem;
+  background-color: #333;
+  color: white;
+  border: 2px solid hsl(198, 65%, 60%);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guest-button:hover {
+  background-color: hsl(198, 65%, 60%);
+  color: black;
+  transform: scale(1.03);
+}
+
+.image-showcase {
+  background: #0f0f0f;
+  text-align: center;
+  padding: 6vh 4vw;
+}
+
+.pool-image {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  margin-bottom: 3vh;
+}
+
+.image-caption {
+  font-size: 1.25rem;
+  color: #dddddd;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+
+
+/* Smaller Screen Media CSS */
+
+@media (max-width: 768px) {
+  .home-title-box {
+    height: 8vh;
+    padding: 0 2vw;
+  }
+  .header-logo-css {
+    width: 10vh;
+  }
+  .my-games-css, .sign-in-button {
+    font-size: 1.25rem;
+    padding: 1vh 2vh;
+  }
 }

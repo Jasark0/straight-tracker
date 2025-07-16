@@ -2,101 +2,116 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
-import { createBoard } from "@wixc3/react-board";
-import { getUserSession, signOut } from '@/actions/auth';
-import { Settings } from 'lucide-react';
 import "./styles/General.css"
 import "./styles/Home.css"
-
-const mockFunction = () => alert("Button clicked!");
+import { getUserSession, signOut } from '@/actions/auth';
 
 
 export default function Home() {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+    const [profileHovered, setProfileHovered] = useState(false);
 
-  useEffect(() => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
     const fetchUser = async () => {
-      const session = await getUserSession();
-      setUser(session?.user);
-      setIsLoading(false);
+        const session = await getUserSession();
+        setUser(session?.user);
+        setIsLoading(false);
     };
     fetchUser();
-  }, []);
+    }, []);
 
-  const homePage = () => {
-      router.push('/');
-  }
-
-  const signinPage = () => {
-      router.push('/signin');
-  }
-  
-  const signupPage = () => {
-      router.push('signup');
-  }
-
-  const handleHistory = async () => {
-    router.push('/history');
-  }
-
-  const handleSettings = () => {
-    router.push('/settings');
-  }
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      // Force a complete page reload to ensure fresh state
-      window.location.reload();
-    } catch (error) {
-      console.error("Sign out error:", error);
-      // Fallback: manually refresh the user state
-      const session = await getUserSession();
-      setUser(session?.user || null);
+    const homePage = () => {
+        router.push('/');
     }
-  };
 
-  return (
-    <div className="page-box">
-      <div className="home-title-box">
-          <div className="logo-box" onClick={homePage}>
-              <img src="/straight-tracker-logo.png" className="logo-css"></img>
-              <p className="home-title-name">
-                  Straight Tracker
-              </p>
-          </div>
-          <div className="login-box">
-            {isLoading ? (
-              <div>Loading...</div>
-            ) : user ? (
-              <div className="header-buttons-box">
-                <button className="sign-up-css" onClick={handleHistory}>
-                  History Page
-                </button>
-                <button className="sign-up-css" onClick={handleSignOut}>
-                  Sign out
-                </button>
-                <button className="settings-icon-button" onClick={handleSettings}>
-                  <Settings />
-                </button>
-              </div>
-            ) : (
-              <>
-                <button className="sign-in-css" onClick={signinPage}>
-                    Sign in
-                </button>
-                <button className="sign-up-css" onClick={signupPage}>
-                    Sign up
-                </button>
-                
-              </>
-            )}
-          </div>
-      </div>
-    </div>
-  );
+    const signinPage = () => {
+        router.push('/signin');
+    }
+  
+    const signupPage = () => {
+        router.push('signup');
+    }
+
+    const handleHistory = async () => {
+        router.push('/history');
+    }
+
+    const handleSignOut = async () => {
+        try{
+            await signOut();
+            window.location.reload();
+        } 
+        catch (error){
+            const session = await getUserSession();
+            setUser(session?.user || null);
+        }
+    };
+
+    return (
+        <div className="home-page-container">
+            <header className="home-title-container">
+                <div className="header-logo-container" onClick={homePage}>
+                    <img src="/straight-header-logo.png" className="header-logo-css"></img>
+                    <img src="/straight-header-logo-text.png" className="header-logo-text-css"></img>
+                </div>
+                <div className="login-box">
+                    {isLoading ? (
+                    <div>Loading...</div>
+                    ) : user ? (
+                    <div className="header-buttons-box">
+                        <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
+                            Learn More
+                        </button>
+                        <button className="my-games-css" onClick={handleHistory}>
+                            My Games
+                        </button>
+                        <div className="profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
+                            <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}></img>
+                            {profileHovered && (
+                                <div className="dropdown-menu">
+                                    <button className="dropdown-button">Settings</button>
+                                    <button className="dropdown-button" onClick={handleSignOut}>Sign Out</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    ) : (
+                        <>
+                            <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
+                                Learn More
+                            </button>
+                            <button className="sign-in-button" onClick={signinPage}>
+                                ↪ Sign In
+                            </button>
+                        </>
+                    )}
+                </div>
+            </header>
+
+            <section className="hero-section">
+                <div className="hero-content">
+                    <h1 className="main-hero-heading">Your Professional Pool/Billiards Score Tracker</h1>
+                    <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
+
+                    <div className="guest-access-box">
+                    <p className="guest-subtext">
+                        Want to give our tracker a shot but unsure about making an account?
+                    </p>
+                    <button className="guest-button">🎯 Continue as a Guest — Start a Match</button>
+                    </div>
+                </div>
+            </section>
+
+            <section className="image-showcase" id="learn-more">
+                <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
+                <p className="image-caption">
+                    We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
+                    your scores will be saved and ready to continue serious long races.
+                </p>
+            </section>
+        </div>
+    );
 }
-
-
