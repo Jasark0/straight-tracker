@@ -10,6 +10,8 @@ import { getUserSession, signOut } from '@/actions/auth';
 export default function Home() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
+    const [profileHovered, setProfileHovered] = useState(false);
+
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -66,7 +68,15 @@ export default function Home() {
                         <button className="my-games-css" onClick={handleHistory}>
                             My Games
                         </button>
-                        <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}></img>
+                        <div className="profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
+                            <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}></img>
+                            {profileHovered && (
+                                <div className="dropdown-menu">
+                                    <button className="dropdown-button">Settings</button>
+                                    <button className="dropdown-button" onClick={handleSignOut}>Sign Out</button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     ) : (
                         <>

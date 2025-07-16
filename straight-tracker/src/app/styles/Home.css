@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 12vh;
+  height: 6vw;
   background-color: hsl(198, 55%, 75%);
   left: 0;
   right: 0;
@@ -29,20 +29,21 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-left: 4vh;
+  margin-left: 2vw;
 }
 
 .header-logo-css{
   display: flex;
-  width: 12vh;
-  margin-right: -2vh;
+  width: 6vw;
+  min-width: 6vw;
+  margin-right: -1vw;
 } 
 
 .header-logo-text-css{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22vh;
+  width: 11vw;
 }
 
 .header-logo-container:hover .header-logo-text-css {
@@ -50,19 +51,12 @@
   transition: transform 0.3s ease-in-out;
 }
 
-.home-title-name{
-  color: rgb(49, 49, 49);
-  font-size: 5vh;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  font-weight: 900;
-}
-
 .login-box{
   display: flex;
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding-right: 10vh;
+  padding-right: 5vw;
 }
 
 .header-buttons-box{
@@ -70,14 +64,14 @@
   height: 100%;
   align-items: center;
   justify-content: center;
-  gap: 5vh;
+  gap: 2.3vw;
 }
 
 .learn-more-button{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3vh;
+  font-size: 1.2vw;
   font-weight: 500;
   letter-spacing: 0.2px;
   border: none;
@@ -96,7 +90,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5vh 4vh;
+  padding: 1vw 2.2vw;
   font-size: 2rem;
   font-weight: 600;
   letter-spacing: 0.4px;
@@ -113,31 +107,14 @@
   transform: translateY(-2px) scale(1.03);
 }
 
-.sign-up-css{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2vh 2vw; 
-  font-size: 2.5vh;
-  color: rgb(65, 45, 45);
-  background-color: rgb(255, 255, 255);
-  border: 1px solid black;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.sign-up-css:focus{
-  outline: none;
-}
-
 .my-games-css{
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Inter', sans-serif;
-  font-size: 3vh;
+  font-size: 1.4vw;
   font-weight: 500;
-  padding: 2vh 4vh;
+  padding: 0.6vw 1.6vw;
   background-color: hsl(198, 55%, 75%);
   color: black;
   border: 1px solid black;
@@ -154,13 +131,18 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.profile-css{
+.profile-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-css {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 8vh;
-  width: 8vh;
-  background-color: rgb(255, 255, 255);
+  height: 3.6vw;
+  width: 3.6vw;
+  background-color: white;
   border: 1px solid black;
   border-radius: 100%;
   cursor: pointer;
@@ -168,10 +150,38 @@
   object-fit: cover;
 }
 
-.profile-css:hover{
+.profile-css:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   border-color: hsl(198, 70%, 55%);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%; 
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.2vw;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-button {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.dropdown-button:hover {
+  background-color: #f0f0f0;
 }
 
 .sign-up-css:hover{
@@ -187,7 +197,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 12vh ;
+  padding: 12vh;
   background: linear-gradient(to bottom, #111, #1a1a1a);
   color: white;
 }
