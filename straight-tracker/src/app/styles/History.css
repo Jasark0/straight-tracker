@@ -334,6 +334,16 @@
   font-size: 1.4rem;
 }
 
+.current-player-sets-css{
+  color: rgb(0, 0, 255);
+  font-weight: 550;
+}
+
+.current-player-scores-css{
+  color: red;
+  font-weight: 550;
+}
+
 .history-button-box{
   display: flex;
   flex-direction: row;

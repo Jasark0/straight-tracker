@@ -168,20 +168,20 @@ export default function History() {
                         ) : (
                         <ul className="history-list">
                             {allPoolMatches.map((match) => {
-                                let currentScores = null;
-                                let setsWonDisplay = null;
-
                                 const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
-                                currentScores = lastRace ? `Score: ${lastRace.player1_score} -  ${lastRace.player2_score}` : "No race data";
+
+                                let currentPlayer1Sets: number = 0;
+                                let currentPlayer2Sets: number = 0;
+                                const currentPlayer1Score: number = lastRace.player1_score;
+                                const currentPlayer2Score: number = lastRace.player2_score;
         
                                 if (match.pool_matches_sets){
-                                    const player1SetWins = match.pool_matches_race?.filter(
+                                    currentPlayer1Sets = match.pool_matches_race?.filter(
                                         (race: any) => race.player1_score === match.race_to
                                     ).length ?? 0;
-                                    const player2SetWins = match.pool_matches_race?.filter(
+                                    currentPlayer2Sets = match.pool_matches_race?.filter(
                                         (race: any) => race.player2_score === match.race_to
                                     ).length ?? 0;
-                                    setsWonDisplay = `Sets Score: ${player1SetWins} - ${player2SetWins}`;
                                 }
 
                                 return (
@@ -203,8 +203,17 @@ export default function History() {
                                             <span className="history-game-name-text">Game Name: {match.game_name}</span>
                                             <span className="history-score-text">
                                                 {match.pool_matches_sets
-                                                ? `${setsWonDisplay} | ${currentScores}`
-                                                : currentScores}
+                                                ? (
+                                                    <>
+                                                        Sets Score: <span className="current-player-sets-css">{currentPlayer1Sets}</span> - <span className="current-player-sets-css">{currentPlayer2Sets}</span> | 
+                                                        Score: <span className="current-player-scores-css">{currentPlayer1Score}</span> - <span className="current-player-scores-css">{currentPlayer2Score}</span>
+                                                    </>
+                                                )
+                                                : (
+                                                    <>
+                                                        Score: <span className="current-player-scores-css">{currentPlayer1Score}</span> - <span className="current-player-scores-css">{currentPlayer2Score}</span>
+                                                    </>
+                                                )}
                                             </span>
                                         </div>
                                         
