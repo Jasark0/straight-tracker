@@ -168,6 +168,24 @@ export async function forgotPassword(formData: FormData) {
     return { status: "success"};
 }
 
+export async function changePassword(formData: FormData) {
+    const origin = (await headers()).get("origin");
+    const supabase = await createClient();
+    
+    const { error} = await supabase.auth.resetPasswordForEmail(
+        formData.get("email") as string,
+        {
+            redirectTo: `${origin}/settings/changepassword`,
+        }
+    );
+
+    if ( error) {
+        return {status: error?.message};
+    }
+
+    return { status: "success"};
+}
+
 export async function resetPassword( formData: FormData, code: string ) {
     const supabase = await createClient();
 
@@ -221,6 +239,35 @@ export async function changeNickname(formData: FormData) {
 
     revalidatePath("/", "layout");
     return { status: "success" };
+}
+
+export async function changeUsername(formData: FormData) {
+    const supabase = await createClient();
+    const { username } = {
+        username: formData.get("username") as string,
+    };
+
+    if (!username) {
+        return { status: "Username cannot be empty." };
+    }
+
+    const { data: { user }, error } = await supabase.auth.updateUser({
+        data: {
+            username: username,
+        },
+    });
+
+    if (error || !user) {
+        return { status: error?.message || "User not found." };
+    }
+
+    const { data: existingProfile, error: profileError } = await supabase
+        .from('profiles')
+        .update({ username: username })
+        .eq('id', user.id)
+        
+    revalidatePath("/", "layout");
+    return { status: "success", user: user, existingProfile: existingProfile };
 }
 
 export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string }) {

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { changeNickname, getUserSession, updateAvatarInProfile } from '@/actions/auth';
+import { changeNickname, changePassword, changeUsername, getUserSession, updateAvatarInProfile } from '@/actions/auth';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Settings.css" // Make sure settings styles are imported
@@ -21,8 +21,13 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showChangeNicknameModal, setShowChangeNicknameModal] = useState(false);
-  const [newNickname, setNewNickname] = useState(""); // State for the new nickname input
+  const [showChangeEmailModal, setShowChangeEmailModal] = useState(false);
+  const [showChangeUsernameModal, setShowChangeUsernameModal] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [newNickname, setNewNickname] = useState("");
   const [resetEmail, setResetEmail] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [currentEmail, setCurrentEmail] = useState("");
   const [avatar_url, setAvatarUrl] = useState("");
 
   useEffect(() => {
@@ -39,6 +44,9 @@ export default function SettingsPage() {
     fetchUser();
   }, []);
 
+  const handleEmailChange = async (event: React.FormEvent<HTMLFormElement>) => {
+  };
+
   const handlePasswordReset = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -54,7 +62,7 @@ export default function SettingsPage() {
     const formData = new FormData();
     formData.append('email', resetEmail);
 
-    const result = await forgotPassword(formData);
+    const result = await changePassword(formData);
 
     if (result.status === "success") {
       setShowChangePasswordModal(false);
@@ -91,6 +99,34 @@ export default function SettingsPage() {
     }
     setLoading(false);
   };
+
+    const handleChangeUsername = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    if (!newUsername || newUsername.trim() === "") {
+      setError("Username cannot be empty.");
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('username', newUsername);
+
+    const result = await changeUsername(formData);
+
+    if (result.status === "success") {
+      setShowChangeUsernameModal(false);
+      alert("Username updated successfully!");
+      const session = await getUserSession();
+      setUser(session?.user);
+    } else {
+      setError(result.status);
+    }
+    setLoading(false);
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -163,6 +199,9 @@ export default function SettingsPage() {
                   <span className="settings-fieldLabel">Username: </span>
                   <span className="settings-fieldValue">{username}</span>
                 </div>
+                <button className="settings-editButton" onClick={() => setShowChangeUsernameModal(true)}>
+                  <Edit className="settings-editIcon" />
+                </button>
               </div>
 
               <div className="settings-fieldRow">
@@ -170,9 +209,9 @@ export default function SettingsPage() {
                   <span className="settings-fieldLabel">Email: </span>
                   <span className="settings-fieldValue">{email}</span>
                 </div>
-                <button className="settings-editButton">
+                {/* <button className="settings-editButton" onClick={() => setShowChangeEmailModal(true)}>
                   <Edit className="settings-editIcon" />
-                </button>
+                </button> */}
               </div>
 
               <div className="settings-fieldRow">
@@ -188,6 +227,82 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {showChangeUsernameModal && (
+        <div className="modal-overlay" onClick={() => setShowChangeUsernameModal(false)}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="settings-modal-header">
+              <button type="button" className="close-button" title="Close" onClick={() => setShowChangeUsernameModal(false)}>
+                <span>&times;</span> {/* A simple 'x' for the close icon */}
+              </button>
+              <h4 className="modal-title">Change Username</h4>
+            </div>
+            <form onSubmit={handleChangeUsername}>
+              <div className="settings-modal-body">
+                <input
+                  type="text"
+                  placeholder="Enter new username"
+                  maxLength={20}
+                  className="settingsTextInput"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                />
+                <div className="change-display-name-feedback-container">
+                  <span className="count-down">{newUsername.length}/20</span>
+                </div>
+
+              </div>
+              <div className="settings-modal-footer">
+                <button type="submit" className="settings-btn">Save</button>
+              </div>
+              {error && <p className="error-message">{error}</p>}
+            </form>
+          </div>
+        </div>
+      )}
+
+
+      {showChangeEmailModal && (
+        <div className="modal-overlay" onClick={() => setShowChangeEmailModal(false)}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="settings-modal-header">
+              <button type="button" className="close-button" title="Close" onClick={() => setShowChangeEmailModal(false)}>
+                <span>&times;</span> {/* A simple 'x' for the close icon */}
+              </button>
+              <h4 className="modal-title">Change Email</h4>
+            </div>
+            <form onSubmit={handleEmailChange}>
+              <div className="settings-modal-body">
+                
+                <div className="settings-form-group">
+                  <input
+                    type="email"
+                    placeholder="Enter current email"
+                    required
+                    className="settingsTextInput"
+                    name="currentEmail"
+                    value={currentEmail}
+                    onChange={(email) => setCurrentEmail(email.target.value)}
+                  />
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    required
+                    className="settingsTextInput"
+                    name="newEmail"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                  />
+                </div>
+                {error && <p className="error-message">{error}</p>}
+              </div>
+              <div className="settings-modal-footer">
+                <button type="submit" className="settings-btn">Update</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showChangePasswordModal && (
         <div className="modal-overlay" onClick={() => setShowChangePasswordModal(false)}>
