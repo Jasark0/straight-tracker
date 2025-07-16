@@ -20,15 +20,16 @@ export async function getUserSession() {
 
 export async function signUp(formData : FormData) {
     const supabase = await createClient();
+    const origin = (await headers()).get("origin");
 
     const credentials = {
         username: formData.get("username") as string,
         email: formData.get("email") as string,
+        nickname: formData.get("nickname") as string,
         password: formData.get("password") as string,
         confirmPassword: formData.get("confirmPassword") as string,
     };
 
-    // Password validation
     if(credentials.password !== credentials.confirmPassword) {
         return { status: "Passwords do not match." };
     }
@@ -37,9 +38,12 @@ export async function signUp(formData : FormData) {
         email: credentials.email,
         password: credentials.password,
         options: {
+            emailRedirectTo: `${origin}/auth/callback`,
             data: {
                 username: credentials.username,
                 display_name: credentials.username,
+                nickname: credentials.nickname,
+                avatar_url: null,
             },
         }
     });
@@ -50,6 +54,7 @@ export async function signUp(formData : FormData) {
         id: data.user?.id,
         email: credentials.email,
         username: credentials.username,
+        nickname: credentials.nickname,
         created_at: new Date().toISOString(),
     }])
     .select();
@@ -120,7 +125,6 @@ export async function signOut() {
 
     if (error) {
         console.error("Error signing out:", error);
-        // Optionally redirect to an error page
         return redirect("/error");
     }
 
@@ -164,6 +168,24 @@ export async function forgotPassword(formData: FormData) {
     return { status: "success"};
 }
 
+export async function changePassword(formData: FormData) {
+    const origin = (await headers()).get("origin");
+    const supabase = await createClient();
+    
+    const { error} = await supabase.auth.resetPasswordForEmail(
+        formData.get("email") as string,
+        {
+            redirectTo: `${origin}/settings/changepassword`,
+        }
+    );
+
+    if ( error) {
+        return {status: error?.message};
+    }
+
+    return { status: "success"};
+}
+
 export async function resetPassword( formData: FormData, code: string ) {
     const supabase = await createClient();
 
@@ -182,4 +204,102 @@ export async function resetPassword( formData: FormData, code: string ) {
     }
 
     return { status: "success"};
+}
+
+export async function changeNickname(formData: FormData) {
+    const supabase = await createClient();
+
+    const { nickname } = {
+        nickname: formData.get("nickname") as string,
+    };
+
+
+    if (!nickname) {
+        return { status: "Nickname cannot be empty." };
+    }
+
+    const { data: { user }, error } = await supabase.auth.updateUser({
+        data: {
+            nickname: nickname,
+        },
+    });
+
+    if (error || !user) {
+        return { status: error?.message || "User not found." };
+    }
+
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ nickname: nickname })
+        .eq('id', user.id);
+
+    if (profileError) {
+        return { status: profileError.message };
+    }
+
+    revalidatePath("/", "layout");
+    return { status: "success" };
+}
+
+export async function changeUsername(formData: FormData) {
+    const supabase = await createClient();
+    const { username } = {
+        username: formData.get("username") as string,
+    };
+
+    if (!username) {
+        return { status: "Username cannot be empty." };
+    }
+
+    const { data: { user }, error } = await supabase.auth.updateUser({
+        data: {
+            username: username,
+        },
+    });
+
+    if (error || !user) {
+        return { status: error?.message || "User not found." };
+    }
+
+    const { data: existingProfile, error: profileError } = await supabase
+        .from('profiles')
+        .update({ username: username })
+        .eq('id', user.id)
+        
+    revalidatePath("/", "layout");
+    return { status: "success", user: user, existingProfile: existingProfile };
+}
+
+export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string }) {
+    const supabase = await createClient();
+
+    const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+
+    if (sessionError || !user) {
+        return { status: "User not found or session expired." };
+    }
+
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url })
+        .eq('id', user.id); 
+
+    if (profileError) {
+        console.error("Error updating profile:", profileError);
+        return { status: profileError.message };
+    }
+
+    const { data: updatedUser, error: userError } = await supabase.auth.updateUser({
+        data: {
+            avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url,
+        },
+    });
+
+    if (userError) {
+        console.error("Error updating user metadata:", userError);
+        return { status: userError.message };
+    }
+    
+    revalidatePath("/", "layout");
+    return { status: "success", user: updatedUser };
 }

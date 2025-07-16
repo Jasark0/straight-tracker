@@ -37,6 +37,10 @@ export default function Home() {
         router.push('signup');
     }
 
+    const settingsPage = () => {
+        router.push('/settings');
+    }
+
     const handleHistory = async () => {
         router.push('/history');
     }

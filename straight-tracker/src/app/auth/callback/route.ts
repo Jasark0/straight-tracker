@@ -33,6 +33,8 @@ export async function GET(request: Request) {
                 .limit(1)
                 .single();
 
+            let username: string;
+
             if (!existingUser) {
                 // Create a random number for user identificaiton oauth
                 let idIsUnique = false;
@@ -54,15 +56,14 @@ export async function GET(request: Request) {
                     
                 }
                 
-
-                
+                username = (data?.user?.email?.split('@')[0] ?? "user") + randomId.toString();
 
 
                 // Insert the new user into the profiles table
                 const { error: dbError } = await supabase.from("profiles").insert({
                     id: data?.user?.id,
                     email: data?.user?.email,
-                    username: (data?.user?.email?.split('@')[0] ?? "user") + randomId.toString(), // Use email prefix as username if not set
+                    username: username, // Use email prefix as username if not set
                     created_at: new Date().toISOString(),
                     // options:{ display name and username mixed up idk we'll figure this out later
                     //     data: {
@@ -75,7 +76,17 @@ export async function GET(request: Request) {
                     console.error("Error inserting user into database:", dbError.message);
                     return NextResponse.redirect(`${origin}/error`);
                 }
+            } else {
+                username = existingUser.username;
             }
+
+            const { data: updatedUser, error} = await supabase.auth.updateUser({
+                data: {
+                    display_name: data?.user?.user_metadata?.full_name || "User",
+                    username: username, 
+                    nickname: data?.user?.user_metadata?.nickname || "No Nickname"
+                }
+            })
             
             
             const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
