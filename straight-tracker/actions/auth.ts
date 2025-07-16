@@ -190,6 +190,7 @@ export async function resetPassword( formData: FormData, code: string ) {
 
 export async function changeNickname(formData: FormData) {
     const supabase = await createClient();
+
     const { nickname } = {
         nickname: formData.get("nickname") as string,
     };
@@ -199,14 +200,23 @@ export async function changeNickname(formData: FormData) {
         return { status: "Nickname cannot be empty." };
     }
 
-    const { data: user, error } = await supabase.auth.updateUser({
+    const { data: { user }, error } = await supabase.auth.updateUser({
         data: {
             nickname: nickname,
         },
     });
 
-    if (error) {
-        return { status: error?.message };
+    if (error || !user) {
+        return { status: error?.message || "User not found." };
+    }
+
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ nickname: nickname })
+        .eq('id', user.id);
+
+    if (profileError) {
+        return { status: profileError.message };
     }
 
     revalidatePath("/", "layout");
