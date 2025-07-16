@@ -2,8 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
-import "./styles/General.css"
-import "./styles/Home.css"
 import { getUserSession, signOut } from '@/actions/auth';
 
 
@@ -69,11 +67,12 @@ export default function Home() {
                             My Games
                         </button>
                         <div className="profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
-                            <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}></img>
+                            <img src="default-profile-picture.jpg" className="profile-css"></img>
                             {profileHovered && (
-                                <div className="dropdown-menu">
-                                    <button className="dropdown-button">Settings</button>
-                                    <button className="dropdown-button" onClick={handleSignOut}>Sign Out</button>
+                                <div className="profile-dropdown-menu">
+                                    <button className="profile-dropdown-button"><span className="dropdown-icon">⚙️</span>Settings</button>
+                                    <div className="dropdown-divider"></div>
+                                    <button className="profile-dropdown-button sign-out" onClick={handleSignOut}><span className="dropdown-icon">⏻</span>Sign Out</button>
                                 </div>
                             )}
                         </div>

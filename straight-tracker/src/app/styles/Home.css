@@ -156,32 +156,56 @@
   border-color: hsl(198, 70%, 55%);
 }
 
-.dropdown-menu {
+.profile-dropdown-menu{
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  top: 110%; 
+  top: 100%; 
   right: 0;
   background-color: white;
   border: 1px solid #ccc;
-  border-radius: 0.5rem;
+  border-radius: 10px;
+  padding: 0.2vw 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 0.2vw;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
 }
 
-.dropdown-button {
-  padding: 0.5rem 1rem;
+.profile-dropdown-button{
+  display: flex;
+  align-items: center;
   background: none;
   border: none;
+  border-radius: 10px;
   text-align: left;
   cursor: pointer;
-  width: 100%;
+  padding-top: 0.5vw;
+  padding-bottom: 0.5vw;
+  padding-right: 2vw;
   font-family: 'Inter', sans-serif;
+  font-size: 1vw;
+  gap: 0.5vw;
 }
 
-.dropdown-button:hover {
+.profile-dropdown-button.sign-out{
+  margin-left: 0.2vw;
+  color: red;
+}
+
+.profile-dropdown-button:hover {
   background-color: #f0f0f0;
+}
+
+.dropdown-icon {
+  font-size: 1.1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #a8a8a8;
+  width: 100%;
+  border-radius: 1px;
 }
 
 .sign-up-css:hover{
