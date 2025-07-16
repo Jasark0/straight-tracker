@@ -35,6 +35,10 @@ export default function Home() {
         router.push('signup');
     }
 
+    const settingsPage = () => {
+        router.push('/settings');
+    }
+
     const handleHistory = async () => {
         router.push('/history');
     }
@@ -72,7 +76,7 @@ export default function Home() {
                             <img src="default-profile-picture.jpg" className="profile-css" onClick={handleSignOut}></img>
                             {profileHovered && (
                                 <div className="dropdown-menu">
-                                    <button className="dropdown-button">Settings</button>
+                                    <button className="dropdown-button" onClick={settingsPage}>Settings</button>
                                     <button className="dropdown-button" onClick={handleSignOut}>Sign Out</button>
                                 </div>
                             )}
