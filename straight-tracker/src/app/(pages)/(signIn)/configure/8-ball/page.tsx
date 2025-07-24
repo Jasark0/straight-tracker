@@ -149,6 +149,7 @@ const Select: React.FC = () => {
                     break_format: breakFormat == "Winner Breaks" ? 0 : 1,
                     lag_winner: finalLagWinner,
                     to_break: toBreak,
+                    enableSets: enableSets,
                     sets: sets ? parseInt(sets) : null,
                 }),
             });

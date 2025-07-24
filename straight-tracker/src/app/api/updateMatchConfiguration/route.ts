@@ -18,6 +18,7 @@ export async function PATCH(req: Request) {
             break_format,
             lag_winner,
             to_break,
+            enableSets,
             sets,
         } = body;
     
@@ -37,6 +38,34 @@ export async function PATCH(req: Request) {
         }
     
         const username = profile.username;
+
+        const { data: existingSets, error: setsCheckError } = await supabase
+            .from('pool_matches_sets')
+            .select('match_id')
+            .eq('match_id', matchID);
+
+        if (setsCheckError) {
+            return NextResponse.json({ error: 'Failed to check existing sets' }, { status: 500 });
+        }
+
+        const wasSetsEnabled = existingSets && existingSets.length > 0;
+
+        const { data: allRaces, error: fetchRacesError } = await supabase
+            .from('pool_matches_race')
+            .select('player1_score, player2_score')
+            .eq('match_id', matchID);
+
+        if (fetchRacesError) {
+            return NextResponse.json({ error: 'Failed to fetch set scores' }, { status: 500 });
+        }
+
+        let totalP1 = 0;
+        let totalP2 = 0;
+
+        allRaces?.forEach(race => {
+            totalP1 += race.player1_score ?? 0;
+            totalP2 += race.player2_score ?? 0;
+        });
 
         const { data: matchData, error: matchError } = await supabase
         .from('pool_matches')
@@ -61,19 +90,42 @@ export async function PATCH(req: Request) {
             return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
         }
 
-        if (sets){
-            const { error: setsError } = await supabase
-            .from('pool_matches_sets')
-            .update([
-                {
+        // No sets -> Enable sets
+        if (!wasSetsEnabled && enableSets) {
+            const { error: insertError } = await supabase
+                .from('pool_matches_sets')
+                .insert({
+                    match_id: matchID,
                     sets: parseInt(sets),
-                },
-            ])
-            .eq('match_id', matchID);
+                });
 
-            if (setsError) {
-                console.error('Sets insert error:', setsError);
+            if (insertError) {
                 return NextResponse.json({ error: 'Failed to create sets entry' }, { status: 500 });
+            }
+        }
+
+        // Enable Sets -> No sets
+        else if (wasSetsEnabled && !enableSets) {
+            await supabase
+                .from('pool_matches_sets')
+                .delete()
+                .eq('match_id', matchID);
+
+            await supabase
+                .from('pool_matches_race')
+                .delete()
+                .eq('match_id', matchID);
+            
+            const { error: insertRaceError } = await supabase
+                .from('pool_matches_race')
+                .insert({
+                    match_id: matchID,
+                    player1_score: totalP1,
+                    player2_score: totalP2,
+                });
+
+            if (insertRaceError) {
+                return NextResponse.json({ error: 'Failed to insert new combined race' }, { status: 500 });
             }
         }
 
