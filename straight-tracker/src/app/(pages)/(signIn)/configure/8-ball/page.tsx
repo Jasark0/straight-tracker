@@ -149,14 +149,28 @@ const Select: React.FC = () => {
                     break_format: breakFormat == "Winner Breaks" ? 0 : 1,
                     lag_winner: finalLagWinner,
                     to_break: toBreak,
+                    enableSets: enableSets,
                     sets: sets ? parseInt(sets) : null,
                 }),
             });
 
             if (!res.ok) {
-                const errorData = await res.json();
-                console.error('API error:', errorData.error);
-                return;
+                const { type, error } = await res.json();
+                if (type === 'validation_error') {
+                    console.warn('Validation failed:', error);
+                    toast.error(error, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                    setRaceWarning(error);
+                    return;
+                } else {
+                    console.error('API error:', error);
+                    return;
+                }
             }
 
             router.push(`/tracker/8-ball?matchID=${matchID}`);
