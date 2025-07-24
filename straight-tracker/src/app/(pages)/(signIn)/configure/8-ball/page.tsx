@@ -155,9 +155,22 @@ const Select: React.FC = () => {
             });
 
             if (!res.ok) {
-                const errorData = await res.json();
-                console.error('API error:', errorData.error);
-                return;
+                const { type, error } = await res.json();
+                if (type === 'validation_error') {
+                    console.warn('Validation failed:', error);
+                    toast.error(error, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                    setRaceWarning(error);
+                    return;
+                } else {
+                    console.error('API error:', error);
+                    return;
+                }
             }
 
             router.push(`/tracker/8-ball?matchID=${matchID}`);

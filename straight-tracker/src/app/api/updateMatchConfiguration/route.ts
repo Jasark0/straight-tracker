@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import { supabase } from '../../../client';
 import { getUserSession } from '@/actions/auth';
 
+class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+
 export async function PATCH(req: Request) {
     try{
         const { searchParams } = new URL(req.url);
@@ -66,6 +74,13 @@ export async function PATCH(req: Request) {
             totalP1 += race.player1_score ?? 0;
             totalP2 += race.player2_score ?? 0;
         });
+
+        if (wasSetsEnabled && !enableSets) {
+            const highestScore = Math.max(totalP1, totalP2);
+            if (parseInt(race_to) < highestScore + 1) {
+                throw new ValidationError(`Race-to must be at least ${highestScore + 1} when disabling sets.`);
+            }
+        }
 
         const { data: matchData, error: matchError } = await supabase
         .from('pool_matches')
@@ -132,6 +147,11 @@ export async function PATCH(req: Request) {
         return NextResponse.json({ message: 'Match format updated successfully' }, { status: 200 });
     } 
     catch (error){
+       if (error instanceof ValidationError) {
+            return NextResponse.json({ type: 'validation_error', error: error.message }, { status: 400 });
+        }
+
+        console.error('Unexpected error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
