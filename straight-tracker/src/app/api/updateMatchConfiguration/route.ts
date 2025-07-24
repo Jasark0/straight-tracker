@@ -69,16 +69,39 @@ export async function PATCH(req: Request) {
 
         let totalP1 = 0;
         let totalP2 = 0;
+        let player1SetWins = 0;
+        let player2SetWins = 0;
 
         allRaces?.forEach(race => {
-            totalP1 += race.player1_score ?? 0;
-            totalP2 += race.player2_score ?? 0;
+            const p1 = race.player1_score ?? 0;
+            const p2 = race.player2_score ?? 0;
+
+            totalP1 += p1;
+            totalP2 += p2;
+
+            if (p1 > p2) {
+                totalP1 += race.player1_score;
+                player1SetWins += 1;
+            } else if (p2 > p1) {
+                totalP2 += race.player2_score
+                player2SetWins += 1;
+            }
         });
+
+        console.log(totalP1, totalP2, player1SetWins, player2SetWins);
 
         if (wasSetsEnabled && !enableSets) {
             const highestScore = Math.max(totalP1, totalP2);
             if (parseInt(race_to) < highestScore + 1) {
                 throw new ValidationError(`Race-to must be at least ${highestScore + 1} when disabling sets.`);
+            }
+        }
+
+        if (wasSetsEnabled && enableSets) {
+            const maxSetsWon = Math.max(player1SetWins, player2SetWins);
+            const minimumSetsRequired = (maxSetsWon * 2) + 1;
+            if (parseInt(sets) < minimumSetsRequired) {
+                throw new ValidationError(`Bets of sets must be at least ${minimumSetsRequired}.`);
             }
         }
 
@@ -141,6 +164,15 @@ export async function PATCH(req: Request) {
 
             if (insertRaceError) {
                 return NextResponse.json({ error: 'Failed to insert new combined race' }, { status: 500 });
+            }
+        } else if (wasSetsEnabled && enableSets) {
+            const { error: updateSetError } = await supabase
+                .from('pool_matches_sets')
+                .update({ sets: parseInt(sets) })
+                .eq('match_id', matchID);
+
+            if (updateSetError) {
+                return NextResponse.json({ error: 'Failed to update sets count' }, { status: 500 });
             }
         }
 
