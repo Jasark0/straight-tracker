@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Configure.css"
 import "@/src/app/styles/Header.css"
+import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Select.css"
 import "@/src/app/styles/Signin.css"
 import "@/src/app/styles/Signup.css"
