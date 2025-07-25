@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../client'
-import { getUserSession } from '@/actions/auth';
 
 export async function POST(req: Request) {
     try{

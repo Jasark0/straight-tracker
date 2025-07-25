@@ -3,7 +3,9 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
 import { getUserSession, signOut } from '@/actions/auth';
-
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
     const router = useRouter();
@@ -56,8 +58,39 @@ export default function Home() {
         }
     };
 
+    const handleSubmitSuggestion = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+
+        const nameInput = form.elements.namedItem("name") as HTMLInputElement;
+        const emailInput = form.elements.namedItem("email") as HTMLInputElement;
+        const messageInput = form.elements.namedItem("message") as HTMLTextAreaElement;
+
+        const formData = {
+            name: nameInput.value,
+            email: emailInput.value,
+            message: messageInput.value,
+        };
+
+        try{
+            const res = await fetch("/api/sendEmail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            const text = await res.text();
+            toast.success("Thank you for contacting us! We will read your suggestion/inquiry thoroughly and get back to you as soon as we can.");
+        } 
+        catch (err){
+            toast.error("Failed to send message.");
+        }
+    };
+
     return !isLoading && (
         <div className="home-page-container">
+            <ToastContainer className="home-toast-container"/>
+
             <header className="home-title-container">
                 <div className="home-header-logo-container" onClick={homePage}>
                     <img src="/straight-header-logo.png" className="home-header-logo-css"></img>
@@ -68,6 +101,9 @@ export default function Home() {
                     <div>Loading...</div>
                     ) : user ? (
                     <div className="home-header-buttons-box">
+                        <button className="contact-us-button" onClick={() => document.getElementById("contact-us")?.scrollIntoView({ behavior: 'smooth' })}>
+                            Contact Us
+                        </button>
                         <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
                             Learn More
                         </button>
@@ -99,7 +135,7 @@ export default function Home() {
             </header>
 
 
-            <section className="hero-section">
+            <section className={user ? "hero-section hero-auth" : "hero-section"}>
                 <div className="hero-content">
                     <p className="main-hero-heading">Your Professional Pool/Billiards Score Tracker</p>
                     <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
@@ -113,28 +149,53 @@ export default function Home() {
                 </div>
             </section>
 
-            <div className="hero-features" id="learn-more">
+            <div className="hero-features">
                 <div className="feature-card">🔥 Track Sets & Races</div>
                 <div className="feature-card">📊 Analyze Match History</div>
                 <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
             </div>
+
+            <div className="section-divider"></div>
             
-            <section className="image-showcase">
-                <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
-                <p className="image-caption">
-                    We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
-                    your scores will be saved and ready to continue serious long races.
-                </p>
+            <section className="image-showcase" id="learn-more">
+                <p className="home-about-us-text">About Us</p>
+                <div className="home-image-container">
+                    <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
+                    <p className="image-caption">
+                        We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
+                        your scores will be saved and ready to continue serious long races.
+                    </p>
+                </div>
             </section>
 
             <div className="section-divider"></div>
 
             <section className="image-showcase">
-                <p className="image-caption">
-                    Currently, we have released 8-ball, 9-ball, 10-ball, straight pool (14.1 continuous). Our mission is to cover 
-                    all professional/popular cue sports such as snooker, one pocket, and the billiards fans.
-                </p>
-                <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="snooker-image" />
+                <div className="home-image-container">
+                    <p className="image-caption">
+                        Currently, we have released 8-ball, 9-ball, 10-ball, straight pool (14.1 continuous). Our mission is to cover 
+                        all professional/popular cue sports such as snooker, one pocket, and the billiards fans.
+                    </p>
+                    <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="snooker-image" />
+                </div>
+            </section>
+
+            <div className="section-divider"></div>
+
+            <section className="suggestion-box-container" id="contact-us">
+                <p className="suggestion-contact-us-text">Contact Us</p>
+                <form className="suggestion-form" onSubmit={handleSubmitSuggestion}>
+                    <label>Name</label>
+                    <input type="text" id="name" name="name" required />
+
+                    <label>Email</label>
+                    <input type="email" id="email" name="email" required />
+
+                    <label>Suggestions / Inquires</label>
+                    <textarea id="message" name="message" rows={8} required />
+
+                    <button type="submit">Submit</button>
+                </form>
             </section>
         </div>
     );

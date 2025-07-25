@@ -151,12 +151,6 @@ export default function History() {
                         <span className="search-icon">🔍</span>
                         <input className="search-input" placeholder="Search game name" />
                     </div>
-                    <button className="icon-button">
-                        📅
-                    </button>
-                    <button className="icon-button">
-                        ⬇️
-                    </button>
                 </div>
 
                 <div className="display-history-box">
