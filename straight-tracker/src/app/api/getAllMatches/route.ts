@@ -28,6 +28,7 @@ export async function GET(req: Request) {
             player1,
             player2,
             race_to,
+            lag_winner,
             winner,
             created_at,
             pool_matches_race (

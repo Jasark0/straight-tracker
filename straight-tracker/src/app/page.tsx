@@ -122,14 +122,17 @@ export default function Home() {
                         </div>
                     </div>
                     ) : (
-                        <>
+                        <div className="home-header-buttons-box">
+                            <button className="contact-us-button" onClick={() => document.getElementById("contact-us")?.scrollIntoView({ behavior: 'smooth' })}>
+                                Contact Us
+                            </button>
                             <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
                                 Learn More
                             </button>
                             <button className="sign-in-button" onClick={signinPage}>
                                 ↪ Sign In
                             </button>
-                        </>
+                        </div>
                     )}
                 </div>
             </header>

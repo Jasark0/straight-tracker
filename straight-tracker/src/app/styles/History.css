@@ -18,12 +18,12 @@
 
 .new-game{
   display: flex;
-  width: 20vh;
-  height: 6vh;
+  width: 25vh;
+  height: 7vh;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin: 3vh 0;
   background-color: #539ff5;
   color: white;
@@ -91,8 +91,11 @@
 
 .modal-game-type-text{
   font-size: 2rem;
+  font-weight: 600;
   margin-top: 0;
   margin-bottom: 1vh;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
 }
 
 .modal-game-name-text{
@@ -114,6 +117,13 @@
 
 .modal-vs-text{
   margin-top: 0.5vh;
+  margin-bottom: 0;
+}
+
+.modal-lag-winner-text{
+  font-size: 1.7rem;
+  margin-top: 0.5vh;
+  margin-top: 2vh;
   margin-bottom: 0;
 }
 
@@ -181,14 +191,14 @@
   cursor: pointer;
 }
 
-.game-options {
+.game-options{
   display: grid;
   width: 50%;
   gap: 1rem;
   grid-template-columns: 1fr;
 }
 
-.game-option {
+.game-option{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,15 +211,15 @@
   transition: 0.3s;
 }
 
-.game-option:hover {
+.game-option:hover{
   background-color: #e0e0ff;
 }
 
-.game-option.selected {
+.game-option.selected{
   background-color: rgb(137, 205, 236);
 }
 
-.confirm-footer {
+.confirm-footer{
   margin-top: 2rem;
   text-align: right;
 }
@@ -227,40 +237,7 @@
   background-color: #e0e0ff;
 }
 
-.search-row-box{
-  display: flex;
-  align-items: center;
-  gap: 2vh;
-  margin-bottom: 2vh;
-  height: 3vh;
-}
-
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.search-icon {
-  position: absolute;
-  left: 10px;
-  font-size: 1rem;
-  color: gray;
-  pointer-events: none; 
-  height: 100%;
-}
-
-.search-input {
-  padding: 1vh 1vh 1vh 2.5rem;
-  width: 80vh;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  height: 100%;
-}
-
-.icon-button {
+.icon-button{
   font-size: 1.4rem;
   background: none;
   border: none;
@@ -270,19 +247,111 @@
   transition: background 0.2s;
 }
 
-.icon-button:hover {
+.icon-button:hover{
   background-color: #f0f0f0;
 }
 
-.display-history-box {
+.display-history-container{
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-box{
+  width: 35vh;
+  height: 60vh;
+  padding: 1rem;
+  background-color: #f4f4f4;
+  border-radius: 0.5rem;
+  border: 2px solid #ccc;
+}
+
+.filter-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2vh;
+}
+
+.filter-button{
+  display: block;
+  width: 100%;
+  height: 4rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.filter-button.active{
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.filter-button.smaller-font{
+  font-size: 0.9rem;
+}
+
+.search-input-wrapper{
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 3vh;
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 3vh;
+}
+
+.search-icon{
+  position: absolute;
+  left: 10px;
+  font-size: 1rem;
+  color: gray;
+  pointer-events: none; 
+  height: 100%;
+}
+
+.search-input{
+  padding:  0.5rem 0.75rem 0.5rem 2rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.date-filter-row{
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.date-input{
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  background-color: #fff;
+}
+
+.display-history-box{
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.history-placeholder-box {
-  width: 60vw;
-  height: 50vh;
+.history-placeholder-box{
+  width: 55vw;
+  height: 60vh;
   background-color: white;
   border: 2px solid #ccc;
   border-radius: 12px;
@@ -298,7 +367,7 @@
   text-align: center;
 }
 
-.history-item {
+.history-item{
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 10px;

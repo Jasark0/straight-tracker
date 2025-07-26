@@ -15,6 +15,7 @@ export default function History() {
         player1: string;
         player2: string;
         race_to: number;
+        lag_winner: string;
         winner: string | null;
         created_at: string;
         pool_matches_race: {
@@ -42,6 +43,7 @@ export default function History() {
     
     const router = useRouter();
 
+    const [selectedGameType, setSelectedGameType] = useState('8-Ball');
     const [allPoolMatches, setAllPoolMatches] = useState<PoolMatch[]>([]);
     const [allStraightMatches, setAllStraightMatches] = useState<StraightMatch[]>([]);
     const [showSelectModal, setShowSelectModal] = useState(false);
@@ -146,143 +148,172 @@ export default function History() {
             <div className={`history-box ${showSelectModal ? "blurred" : ""}`}>
                 <button className="new-game" onClick={() => setShowSelectModal(true)}>+ New Game</button>
 
-                <div className="search-row-box">
-                    <div className="search-input-wrapper">
-                        <span className="search-icon">🔍</span>
-                        <input className="search-input" placeholder="Search game name" />
+                <div className="display-history-container">
+                    <div className="filter-box">
+                        <p>Game to display:</p>
+                        <div className="filter-grid">
+                            {['8-Ball', '9-Ball', '10-Ball', 'straight-pool'].map((type) => (
+                                <button
+                                    key={type}
+                                    className={`filter-button ${selectedGameType === type ? 'active' : ''} ${type === 'straight-pool' ? 'smaller-font' : ''}`}
+                                    onClick={() => setSelectedGameType(type)}
+                                >
+                                    {type === 'straight-pool' ? <>Straight Pool <br/> (14.1 Continuous)</> : `${type}`}
+                                </button>
+                            ))}
+                        </div> 
+                        
+                        <p>Search game name:</p>
+                        <div className="search-input-wrapper">
+                            <span className="search-icon">🔍</span>
+                            <input className="search-input" placeholder="Search game name" />
+                        </div>
+                        
+
+                        <p>Filter by date:</p>
+                        <div className="date-filter-row">
+                            <input type="date" className="date-input" placeholder="Start date"/>
+                            <input type="date" className="date-input" placeholder="End date"/>
+                        </div>
+
+                        <p>Filter by player name:</p>
+                        <div className="search-input-wrapper">
+                            <span className="search-icon">🔍</span>
+                            <input className="search-input" placeholder="Search player name" />
+                        </div>
                     </div>
-                </div>
 
-                <div className="display-history-box">
-                    <div className="history-placeholder-box">
-                        {allPoolMatches.length === 0 ? (
-                        <p className="no-match-history-text">
-                            No match history found. 
-                        </p>
-                        ) : (
-                        <ul className="history-list">
-                            {allPoolMatches.map((match) => {
-                                const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
+                    <div className="display-history-box">
+                        <div className="history-placeholder-box">
+                            {allPoolMatches.length === 0 ? (
+                            <p className="no-match-history-text">
+                                No match history found. 
+                            </p>
+                            ) : (
+                                <ul className="history-list">
+                                    {allPoolMatches.map((match) => {
+                                        const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
 
-                                let currentPlayer1Sets: number = 0;
-                                let currentPlayer2Sets: number = 0;
-                                const currentPlayer1Score: number = lastRace.player1_score;
-                                const currentPlayer2Score: number = lastRace.player2_score;
-        
-                                if (match.pool_matches_sets){
-                                    currentPlayer1Sets = match.pool_matches_race?.filter(
-                                        (race: any) => race.player1_score === match.race_to
-                                    ).length ?? 0;
-                                    currentPlayer2Sets = match.pool_matches_race?.filter(
-                                        (race: any) => race.player2_score === match.race_to
-                                    ).length ?? 0;
-                                }
+                                        let currentPlayer1Sets: number = 0;
+                                        let currentPlayer2Sets: number = 0;
+                                        const currentPlayer1Score: number = lastRace.player1_score;
+                                        const currentPlayer2Score: number = lastRace.player2_score;
+                
+                                        if (match.pool_matches_sets){
+                                            currentPlayer1Sets = match.pool_matches_race?.filter(
+                                                (race: any) => race.player1_score > race.player2_score
+                                            ).length ?? 0;
+                                            currentPlayer2Sets = match.pool_matches_race?.filter(
+                                                (race: any) => race.player2_score >= race.player1_score
+                                            ).length ?? 0;
+                                        }
 
-                                return (
-                                    <div key={match.match_id} className="history-item">
-                                        <div className="history-row">
-                                            <span className="game-type-text">{getGameTypeName(match.game_type)}</span>
-                                            <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
-                                                year: 'numeric',
-                                                month: 'short', 
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: true, 
-                                            })}
-                                            </span>
-                                        </div>
+                                        return (
+                                            <div key={match.match_id} className="history-item">
+                                                <div className="history-row">
+                                                    <span className="game-type-text">{getGameTypeName(match.game_type)}</span>
+                                                    <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                                        year: 'numeric',
+                                                        month: 'short', 
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: true, 
+                                                    })}
+                                                    </span>
+                                                </div>
 
-                                        <div className="history-row">
-                                            <span className="history-game-name-text">Game Name: {match.game_name}</span>
-                                            <span className="history-score-text">
-                                                {match.pool_matches_sets
-                                                ? (
-                                                    <>
-                                                        Sets Score: <span className="current-player-sets-css">{currentPlayer1Sets}</span> - <span className="current-player-sets-css">{currentPlayer2Sets}</span> | 
-                                                        Score: <span className="current-player-scores-css">{currentPlayer1Score}</span> - <span className="current-player-scores-css">{currentPlayer2Score}</span>
-                                                    </>
-                                                )
-                                                : (
-                                                    <>
-                                                        Score: <span className="current-player-scores-css">{currentPlayer1Score}</span> - <span className="current-player-scores-css">{currentPlayer2Score}</span>
-                                                    </>
-                                                )}
-                                            </span>
-                                        </div>
-                                        
-                                        <div className="history-row">
-                                            <span className="history-player-name-text">
-                                                {match.player1} vs. {match.player2}
-                                            </span>
-                                            <span className="history-button-box">
-                                                {match.winner === null && (
-                                                    <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
-                                                        Continue Match
-                                                    </button>
-                                                )}
+                                                <div className="history-row">
+                                                    <span className="history-game-name-text">Game Name: {match.game_name}</span>
+                                                    <span className="history-score-text">
+                                                        {match.pool_matches_sets
+                                                        ? (
+                                                            <>
+                                                                Sets Score: <span className="current-player-sets-css">{currentPlayer1Sets}</span> - <span className="current-player-sets-css">{currentPlayer2Sets}</span> | 
+                                                                Score: <span className="current-player-scores-css">{currentPlayer1Score}</span> - <span className="current-player-scores-css">{currentPlayer2Score}</span>
+                                                            </>
+                                                        )
+                                                        : (
+                                                            <>
+                                                                Score: <span className="current-player-scores-css">{currentPlayer1Score}</span> - <span className="current-player-scores-css">{currentPlayer2Score}</span>
+                                                            </>
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                
+                                                <div className="history-row">
+                                                    <span className="history-player-name-text">
+                                                        {match.player1} vs. {match.player2}
+                                                    </span>
+                                                    <span className="history-button-box">
+                                                        {match.winner === null && (
+                                                            <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
+                                                                Continue Match
+                                                            </button>
+                                                        )}
 
-                                                <button className="history-button view" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
-                                                    View Details
-                                                </button>
+                                                        <button className="history-button view" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
+                                                            View Details
+                                                        </button>
 
-                                                <button className="history-button delete" onClick={() => {setShowDeletePoolModal(true); setSelectedPoolMatch(match);}}>
-                                                    Delete Match
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                                        <button className="history-button delete" onClick={() => {setShowDeletePoolModal(true); setSelectedPoolMatch(match);}}>
+                                                            Delete Match
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
 
-                            {allStraightMatches.map((match) => {
-                                return (
-                                    <div key={match.match_id} className="history-item">
-                                        <div className="history-row">
-                                            <span className="game-type-text">Straight Pool (14.1 Continous)</span>
-                                            <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
-                                                year: 'numeric',
-                                                month: 'short', 
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: true, 
-                                            })}
-                                            </span>
-                                        </div>
+                                    {allStraightMatches.map((match) => {
+                                        return (
+                                            <div key={match.match_id} className="history-item">
+                                                <div className="history-row">
+                                                    <span className="game-type-text">Straight Pool (14.1 Continous)</span>
+                                                    <span className="created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                                        year: 'numeric',
+                                                        month: 'short', 
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: true, 
+                                                    })}
+                                                    </span>
+                                                </div>
 
-                                        <div className="history-row">
-                                            <span className="history-game-name-text">Game Name: {match.game_name}</span>
-                                            <span className="history-score-text">
-                                                Score: {match.player1_score} - {match.player2_score}
-                                            </span>
-                                        </div>
-                                    
-                                        <div className="history-row">
-                                            <span className="history-player-name-text">
-                                                {match.player1} vs. {match.player2}
-                                            </span>
-                                            <span className="history-button-box">
-                                                {match.winner === null && (
-                                                    <button className="history-button continue" onClick={() => router.push(`/tracker/straight-pool?matchID=${match.match_id}`)}>
-                                                        Continue Match
-                                                    </button>
-                                                )}
+                                                <div className="history-row">
+                                                    <span className="history-game-name-text">Game Name: {match.game_name}</span>
+                                                    <span className="history-score-text">
+                                                        Score: <span className="current-player-scores-css">{match.player1_score}</span> - <span className="current-player-scores-css">{match.player2_score}</span>
+                                                    </span>
+                                                </div>
+                                            
+                                                <div className="history-row">
+                                                    <span className="history-player-name-text">
+                                                        {match.player1} vs. {match.player2}
+                                                    </span>
+                                                    <span className="history-button-box">
+                                                        {match.winner === null && (
+                                                            <button className="history-button continue" onClick={() => router.push(`/tracker/straight-pool?matchID=${match.match_id}`)}>
+                                                                Continue Match
+                                                            </button>
+                                                        )}
 
-                                                <button className="history-button view" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
-                                                    View Details
-                                                </button>
+                                                        <button className="history-button view" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
+                                                            View Details
+                                                        </button>
 
-                                                <button className="history-button delete" onClick={() => {setShowDeleteStraightModal(true); setSelectedStraightMatch(match);}}>
-                                                    Delete Match
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </ul>
-                        )}
+                                                        <button className="history-button delete" onClick={() => {setShowDeleteStraightModal(true); setSelectedStraightMatch(match);}}>
+                                                            Delete Match
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </ul>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,12 +359,13 @@ export default function History() {
                                 {selectedPoolMatch.player2}
                             </p>
                         </div>
+                        <p className="modal-lag-winner-text">
+                            Lag Winner: {selectedPoolMatch.lag_winner}
+                        </p>
                         <p className="modal-winner-text">
                             Winner: {selectedPoolMatch.winner || "In Progress"}
                         </p>
-
                         <img src="/divider.png" className="divider-css"></img>
-
                         <p className="modal-race-to-text">
                             Race to {selectedPoolMatch.race_to}
                             {selectedPoolMatch.pool_matches_sets?.sets !== null && selectedPoolMatch.pool_matches_sets?.sets !== undefined && (
@@ -347,7 +379,7 @@ export default function History() {
                                 <div className="modal-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedPoolMatch.pool_matches_race.length, 5)}, 1fr)`}}>
                                     {selectedPoolMatch.pool_matches_race.map((race, index) => (
                                     <p className="modal-sets-scores-text" key={index}>
-                                        Set {index + 1}: {race.player1_score} - {race.player2_score}
+                                        Set {index + 1}: <span className="current-player-scores-css">{race.player1_score}</span> - <span className="current-player-scores-css">{race.player2_score}</span>
                                     </p>
                                     ))}
                                 </div>

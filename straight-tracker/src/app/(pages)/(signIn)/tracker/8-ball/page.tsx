@@ -64,7 +64,7 @@ const Tracker: React.FC = () => {
 
                 if (prevSet + 1 !== raceSets){
                     action.prevRaceId = id;
-                    await completeSet(prev + 1, player2Score);
+                    await completeSet(prev + 1, player2Score, 'player1');
                 }
                 else{
                     await updatePoolMatch(prev + 1, player2Score);
@@ -116,7 +116,7 @@ const Tracker: React.FC = () => {
 
                 if (prevSet + 1 !== raceSets){
                     action.prevRaceId = id;
-                    await completeSet(player1Score, prev + 1);
+                    await completeSet(player1Score, prev + 1, 'player2');
                 }
                 else{
                     await updatePoolMatch(player1Score, prev + 1);
@@ -205,7 +205,7 @@ const Tracker: React.FC = () => {
         setActionHistory(prev => prev.slice(0, -1));
     };
 
-    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number) => { //updates scores to database
+    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number, winner?: 'player1' | 'player2' | null) => { //updates scores to database
         try {
             const res = await fetch('/api/updatePoolMatch', {
                 method: 'POST',
@@ -214,6 +214,7 @@ const Tracker: React.FC = () => {
                     id,
                     player1_score: updatedPlayer1Score,
                     player2_score: updatedPlayer2Score,
+                    winner: winner ?? null
                 }),
             });
 
@@ -226,10 +227,10 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number) => { //creates a new set when a player reaches the race_to requirement
+    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number, winner: 'player1' | 'player2') => { //creates a new set when a player reaches the race_to requirement
         try{
             setLoading(true);
-            await updatePoolMatch(finalPlayer1Score, finalPlayer2Score);
+            await updatePoolMatch(finalPlayer1Score, finalPlayer2Score, winner);
 
             const res = await fetch(`/api/createNewRace?matchID=${matchID}`, {
                 method: 'POST',

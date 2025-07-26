@@ -4,15 +4,24 @@ import { supabase } from '../../../client'
 export async function POST(req: Request) {
     try{
         const body = await req.json();
-        const { id, player1_score, player2_score } = body;
+        const { id, player1_score, player2_score, winner } = body;
 
         if (!id || player1_score == null || player2_score == null){
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        const updateData: any = {
+            player1_score,
+            player2_score,
+        };
+
+        if (winner !== undefined){
+            updateData.winner = winner;
+        }
+
         const { error } = await supabase
         .from('pool_matches_race')
-        .update({ player1_score, player2_score })
+        .update(updateData)
         .eq('id', id);
 
         if (error){

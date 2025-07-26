@@ -10,16 +10,45 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: 'Missing raceID' }, { status: 400 });
         }
 
-        const { error } = await supabase
+        const { data: raceData, error: fetchError } = await supabase
+            .from('pool_matches_race')
+            .select('match_id')
+            .eq('id', raceID)
+            .single();
+
+        if (fetchError || !raceData) {
+            return NextResponse.json({ error: 'Race not found' }, { status: 404 });
+        }
+
+        const matchId = raceData.match_id;
+
+        const { error: deleteError } = await supabase
             .from('pool_matches_race')
             .delete()
             .eq('id', raceID);
 
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+        if (deleteError) {
+            return NextResponse.json({ error: deleteError.message }, { status: 500 });
         }
 
-        return NextResponse.json({ message: 'Race deleted successfully' }, { status: 200 });
+        const { data: latestRace } = await supabase
+            .from('pool_matches_race')
+            .select('id')
+            .eq('match_id', matchId)
+            .order('id', { ascending: false })
+            .limit(1)
+            .single();
+
+        console.log(latestRace)
+
+        if (latestRace){
+            await supabase
+                .from('pool_matches_race')
+                .update({ winner: null })
+                .eq('id', latestRace.id);
+        }
+
+        return NextResponse.json({ message: 'Race deleted and previous race updated' }, { status: 200 });
     } 
     catch (error){
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
