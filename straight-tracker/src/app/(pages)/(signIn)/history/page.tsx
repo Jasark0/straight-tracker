@@ -199,12 +199,13 @@ export default function History() {
                                         const currentPlayer1Score: number = lastRace.player1_score;
                                         const currentPlayer2Score: number = lastRace.player2_score;
                 
-                                        if (match.pool_matches_sets){
+                                        if (match.pool_matches_sets) {
                                             currentPlayer1Sets = match.pool_matches_race?.filter(
-                                                (race: any) => race.player1_score > race.player2_score
+                                                (race: any) => race.winner === 'player1'
                                             ).length ?? 0;
+
                                             currentPlayer2Sets = match.pool_matches_race?.filter(
-                                                (race: any) => race.player2_score >= race.player1_score
+                                                (race: any) => race.winner === 'player2'
                                             ).length ?? 0;
                                         }
 
