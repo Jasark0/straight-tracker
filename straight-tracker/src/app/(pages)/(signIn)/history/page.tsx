@@ -44,6 +44,13 @@ export default function History() {
     const router = useRouter();
 
     const [selectedGameType, setSelectedGameType] = useState('8-Ball');
+    const [searchTerm, setSearchTerm] = useState("");
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); //Sets a delay between new user search terms
+    const [startDate, setStartDate] = useState<string>("");
+    const [endDate, setEndDate] = useState<string>("");
+    const [playerName, setPlayerName] = useState("");
+    const [debouncedPlayerName, setDebouncedPlayerName] = useState(playerName); //Sets a delay between new player name search terms
+
     const [allPoolMatches, setAllPoolMatches] = useState<PoolMatch[]>([]);
     const [allStraightMatches, setAllStraightMatches] = useState<StraightMatch[]>([]);
     const [showSelectModal, setShowSelectModal] = useState(false);
@@ -115,8 +122,22 @@ export default function History() {
     }
 
     const filteredMatches = useMemo(() => {
+        const gameNameSearch = debouncedSearchTerm.toLowerCase();
+        const playerNameSearch = debouncedPlayerName.toLowerCase();
+
+        const filterByDate = (createdAt: string) => {
+            const date = new Date(createdAt);
+            const matchDate = date.toLocaleDateString("en-CA");
+            if (startDate && matchDate < startDate) return false;
+            if (endDate && matchDate > endDate) return false;
+            return true;
+        };
+
         if (selectedGameType === "straight-pool") {
-            return allStraightMatches.map((match) => ({
+            return allStraightMatches
+            .filter((match) => match.game_name.toLowerCase().includes(gameNameSearch) && filterByDate(match.created_at) &&
+            (match.player1.toLowerCase().includes(playerNameSearch.toLowerCase()) || match.player2.toLowerCase().includes(playerNameSearch.toLowerCase())))
+            .map((match) => ({
                 ...match,
                 type: "straight" as const
             }));
@@ -125,12 +146,13 @@ export default function History() {
         const selected = gameTypeMap[selectedGameType];
 
         return allPoolMatches
-            .filter((match) => match.game_type === selected)
+            .filter((match) => match.game_type === selected && match.game_name.toLowerCase().includes(gameNameSearch) && filterByDate(match.created_at) &&
+            (match.player1.toLowerCase().includes(playerNameSearch.toLowerCase()) || match.player2.toLowerCase().includes(playerNameSearch.toLowerCase())))
             .map((match) => ({
                 ...match,
                 type: "pool" as const
             }));
-    }, [allPoolMatches, allStraightMatches, selectedGameType]);
+    }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, debouncedPlayerName]);
 
     useEffect(() => {
         const fetchAllMatches = async () => {
@@ -152,8 +174,33 @@ export default function History() {
         };
         fetchAllMatches();
     }, []);
-
     
+    useEffect(() => {
+        if (searchTerm === "") {
+            setDebouncedSearchTerm("");
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        if (playerName === "") {
+            setDebouncedPlayerName("");
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedPlayerName(playerName);
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [playerName]);
+
     return (
         <div className="history-page-box">
             <Header className={`home-title-box ${showSelectModal ? "blurred" : ""}`}>
@@ -179,20 +226,20 @@ export default function History() {
                         <p>Search game name:</p>
                         <div className="search-input-wrapper">
                             <span className="search-icon">🔍</span>
-                            <input className="search-input" placeholder="Search game name" />
+                            <input className="search-input" placeholder="Search game name" onChange={(e) => setSearchTerm(e.target.value)}/>
                         </div>
                         
 
                         <p>Filter by date:</p>
                         <div className="date-filter-row">
-                            <input type="date" className="date-input" placeholder="Start date"/>
-                            <input type="date" className="date-input" placeholder="End date"/>
+                            <input type="date" className="date-input" placeholder="Start date" onChange={(e) => setStartDate(e.target.value)}/>
+                            <input type="date" className="date-input" placeholder="End date" onChange={(e) => setEndDate(e.target.value)}/>
                         </div>
 
                         <p>Filter by player name:</p>
                         <div className="search-input-wrapper">
                             <span className="search-icon">🔍</span>
-                            <input className="search-input" placeholder="Search player name" />
+                            <input className="search-input" placeholder="Search player name" onChange={(e) => setPlayerName(e.target.value)}/>
                         </div>
                     </div>
 
