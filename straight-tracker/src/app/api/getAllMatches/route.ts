@@ -41,6 +41,7 @@ export async function GET(req: Request) {
             )
         `)
         .eq('username', username)
+        .order('created_at', { ascending: false });
 
     if (matchesError || !allPoolMatches) {
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
@@ -62,6 +63,7 @@ export async function GET(req: Request) {
             created_at
         `)
         .eq('username', username)
+        .order('created_at', { ascending: false });
 
     return NextResponse.json({ allPoolMatches, allStraightMatches }, { status: 200 });
 }
