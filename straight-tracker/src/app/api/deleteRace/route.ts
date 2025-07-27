@@ -39,8 +39,6 @@ export async function DELETE(req: Request) {
             .limit(1)
             .single();
 
-        console.log(latestRace)
-
         if (latestRace){
             await supabase
                 .from('pool_matches_race')

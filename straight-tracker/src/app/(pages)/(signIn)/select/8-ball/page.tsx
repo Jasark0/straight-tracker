@@ -24,6 +24,8 @@ const Select: React.FC = () => {
     const [lagPopup, setLagPopup] = useState(false);
     const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
     
+    const [error, setError] = useState('');
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
 
@@ -113,6 +115,25 @@ const Select: React.FC = () => {
         }
     }
 
+    useEffect(() => {
+        const fetchNickname = async () => {
+            try{
+                const res = await fetch('/api/getNickname');
+                const json = await res.json();
+
+                if (!res.ok){
+                    setError(json.error);
+                }
+                
+                setPlayer1(json.nickname);
+            }
+            catch (err){
+                setError('Network error');
+                console.error(err);
+            }
+        }
+        fetchNickname();
+    }, []);
 
     return (
         <div className="select-page-box">
@@ -132,7 +153,7 @@ const Select: React.FC = () => {
                     <div className="names-selection-box">
                         <div className="player-names">
                             <label className="player-names-label">Player 1:</label>
-                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => setPlayer1(e.target.value)} />
+                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => setPlayer1(e.target.value)}/>
                         </div>
 
                         <div className="player-names">

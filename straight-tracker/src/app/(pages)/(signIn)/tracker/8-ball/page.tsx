@@ -381,7 +381,6 @@ const Tracker: React.FC = () => {
         };
     }, [id, player1Score, player2Score]);
 
-
     if (loading){ //Loading screen
         return (
             <div className="page-box">
