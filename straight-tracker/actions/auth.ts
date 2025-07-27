@@ -303,3 +303,38 @@ export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string
     revalidatePath("/", "layout");
     return { status: "success", user: updatedUser };
 }
+
+export async function updateProfile() {
+    const supabase = await createClient();
+    const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+
+    if (sessionError || !user) {
+        return { status: "User not found or session expired." };
+    }
+
+    const updateData = {
+        avatar_url: user.user_metadata.avatar_url,
+        nickname: user.user_metadata.nickname,
+        username: user.user_metadata.username,
+        email: user.email,
+    }
+    
+    const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', user.id)
+        .select()
+        .single();
+
+    if (profileError) {
+        console.error("Error updating profile:", profileError);
+        return { status: profileError.message };
+    }
+
+    if (!profile) {
+        return { status: "Profile not found." };
+    }
+
+    revalidatePath("/", "layout");
+    return { status: "success", profile: profile };
+}
