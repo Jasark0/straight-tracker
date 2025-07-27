@@ -114,7 +114,7 @@ export default function Home() {
                             <img src="default-profile-picture.jpg" className="profile-css"></img>
                             {profileHovered && (
                                 <div className="profile-dropdown-menu">
-                                    <button className="profile-dropdown-button"><span className="dropdown-icon">⚙️</span>Settings</button>
+                                    <button className="profile-dropdown-button" onClick={settingsPage}><span className="dropdown-icon">⚙️</span>Settings</button>
                                     <div className="dropdown-divider"></div>
                                     <button className="profile-dropdown-button sign-out" onClick={handleSignOut}><span className="dropdown-icon">⏻</span>Sign Out</button>
                                 </div>
