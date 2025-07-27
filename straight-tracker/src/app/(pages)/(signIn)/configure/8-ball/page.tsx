@@ -38,7 +38,8 @@ const Select: React.FC = () => {
 
     const [showWinnerVerificationModal, setShowWinnerVerificationModal] = useState(false);
     const [playerToWin, setPlayerToWin] = useState('');
-    const [playerToWinScore, setPlayerToWinScore] = useState<number>(0);
+    const [playerToWinScore, setPlayerToWinScore] = useState<number | undefined>(0);
+    const [playerToWinSets, setPlayerToWinSets] = useState<number | undefined>(0);
     const [isOpen, setIsOpen] = useState(false);
     const [winner, setWinner] = useState('');
 
@@ -165,7 +166,6 @@ const Select: React.FC = () => {
                         closeOnClick: true,
                         pauseOnHover: true,
                     });
-                    setRaceWarning(error);
                     return;
                 } else {
                     console.error('API error:', error);
@@ -239,8 +239,8 @@ const Select: React.FC = () => {
                 handleToggleSets(setsEnabled)
 
                 if (setsEnabled) {
-                    const p1SetWins = json.matchRace.filter((set: any) => set.player1_score === json.poolMatch.race_to).length;
-                    const p2SetWins = json.matchRace.filter((set: any) => set.player2_score === json.poolMatch.race_to).length;
+                    const p1SetWins = json.matchRace.filter((set: any) => set.winner === /* json.poolMatch.player1 */ "player1").length;
+                    const p2SetWins = json.matchRace.filter((set: any) => set.winner === /* json.poolMatch.player2 */ "player2").length;
 
                     setPlayer1Set(p1SetWins);
                     setPlayer2Set(p2SetWins);
@@ -372,7 +372,12 @@ const Select: React.FC = () => {
                             {isOpen && (
                                 <div>
                                     <div className="button-selection-box">
-                                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(true); setPlayerToWin(player1); setPlayerToWinScore(player1Score);}}>
+                                        <button type="button" className="submit-button" onClick={() => {
+                                            setShowWinnerVerificationModal(true);
+                                            setPlayerToWin(player1);
+                                            setPlayerToWinScore(player1Score);
+                                            if(raceSets) setPlayerToWinSets(player1Set);
+                                        }}>
                                             {player1}
                                         </button>
                                         <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(true); setPlayerToWin(player2); setPlayerToWinScore(player2Score);}}>
@@ -392,7 +397,7 @@ const Select: React.FC = () => {
         {showWinnerVerificationModal && (
             <div className="details-modal-overlay" onClick={() => setShowWinnerVerificationModal(false)}>
                 <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
-                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}.</p>
+                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}{raceSets && ` and won ${playerToWinSets} sets`}.</p>
                     <div className="button-selection-box">
                         <button type="button" className="submit-button" onClick={() => {handleExit()}}>
                             Yes

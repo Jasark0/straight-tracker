@@ -29,6 +29,8 @@ export async function PATCH(req: Request) {
             enableSets,
             sets,
         } = body;
+
+        // console.log(enableSets);
     
         const session = await getUserSession();
         const user = session?.user;
@@ -60,7 +62,7 @@ export async function PATCH(req: Request) {
 
         const { data: allRaces, error: fetchRacesError } = await supabase
             .from('pool_matches_race')
-            .select('player1_score, player2_score')
+            .select('player1_score, player2_score, winner')
             .eq('match_id', matchID);
 
         if (fetchRacesError) {
@@ -73,22 +75,12 @@ export async function PATCH(req: Request) {
         let player2SetWins = 0;
 
         allRaces?.forEach(race => {
-            const p1 = race.player1_score ?? 0;
-            const p2 = race.player2_score ?? 0;
 
-            totalP1 += p1;
-            totalP2 += p2;
-
-            if (p1 > p2) {
-                totalP1 += race.player1_score;
-                player1SetWins += 1;
-            } else if (p2 > p1) {
-                totalP2 += race.player2_score
-                player2SetWins += 1;
-            }
+            totalP1 += race.player1_score ?? 0;
+            totalP2 += race.player2_score ?? 0;
+            player1SetWins += race.winner == "player1" ? 1 : 0;
+            player2SetWins += race.winner == "player2" ? 1 : 0;
         });
-
-        console.log(totalP1, totalP2, player1SetWins, player2SetWins);
 
         if (wasSetsEnabled && !enableSets) {
             const highestScore = Math.max(totalP1, totalP2);
