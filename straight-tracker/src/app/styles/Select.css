@@ -275,7 +275,7 @@
   z-index: 1000;
 }
 
-.blurred {
+.blurred{
   filter: blur(4px);
 }
 

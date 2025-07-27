@@ -250,7 +250,7 @@ export default function History() {
                                 No match history found. 
                             </p>
                             ) : (
-                                <ul className="history-list">
+                                <div>
                                     {filteredMatches.map((match) => {
                                         if (match.type === "pool"){
                                             const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
@@ -373,7 +373,7 @@ export default function History() {
                                             );
                                         }
                                     })}
-                                </ul>
+                                </div>
                             )}
                         </div>
                     </div>
