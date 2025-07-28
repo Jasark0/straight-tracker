@@ -18,6 +18,7 @@ const Select: React.FC = () => {
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
     const [sets, setSets] = useState('');
+    const [oldSets, setOldSets] = useState('');
     const [enableSets, setEnableSets] = useState(false);
     const [oddWarning, setOddWarning] = useState('');
     const [raceWarning, setRaceWarning] = useState('');
@@ -67,6 +68,7 @@ const Select: React.FC = () => {
                 } 
                 else{
                     setOddWarning('');
+                    setOldSets(val);
                 }
             }
         }
@@ -74,8 +76,9 @@ const Select: React.FC = () => {
     
     const handleToggleSets = (checked: boolean) => {
         setEnableSets(checked);
+        console.log(oldSets);
         if (checked){
-            setSets('3');
+            setSets(oldSets);
         }   
         else{
             setSets('');
@@ -250,6 +253,8 @@ const Select: React.FC = () => {
                 } 
                 
                 setSets(json.matchSets.sets || undefined); //Load sets last: this prevents rendering inconsistencies.
+                if(json.matchSets.sets)
+                    setOldSets(json.matchSets.sets);
             }
             catch (err){
                 setError('Error');
