@@ -402,7 +402,7 @@ const Select: React.FC = () => {
         {showWinnerVerificationModal && (
             <div className="details-modal-overlay" onClick={() => setShowWinnerVerificationModal(false)}>
                 <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
-                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}{raceSets && ` and won ${playerToWinSets} sets`}.</p>
+                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}{raceSets && playerToWinSets != null ? ` and won ${playerToWinSets} sets` : ''}.</p>
                     <div className="button-selection-box">
                         <button type="button" className="submit-button" onClick={() => {handleExit()}}>
                             Yes
