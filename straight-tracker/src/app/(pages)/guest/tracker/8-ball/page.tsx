@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import Header from '@/src/components/Header';
+import { match } from 'assert';
 
 const Tracker: React.FC = () => {
     const router = useRouter();
@@ -18,8 +19,8 @@ const Tracker: React.FC = () => {
 
     const [sets, setSets] = useState<number>(); 
     const raceSets = sets !== undefined ? Math.floor(sets / 2) + 1 : null; //Converts best of to race to (sets)
-    const [player1Set, setPlayer1Set] = useState<number | undefined>();
-    const [player2Set, setPlayer2Set] = useState<number | undefined>();
+    const [player1Set, setPlayer1Set] = useState<number>(0);
+    const [player2Set, setPlayer2Set] = useState<number>(0);
 
     const [winner, setWinner] = useState('');
 
@@ -27,12 +28,14 @@ const Tracker: React.FC = () => {
         player: string;
         prevScore: number;
         toBreak: string;
+        prevPlayer1Score?: number;
+        prevPlayer2Score?: number;
         prevSet?: number;
     };
     
     const [actionHistory, setActionHistory] = useState<Action[]>([]);
 
-    const incrementPlayer1 = async () => { //Increment player1 score, updates who to break
+    const incrementPlayer1 = () => { //Increment player1 score, updates who to break
         const prev = player1Score;
         const currentToBreak = toBreak;
 
@@ -45,12 +48,17 @@ const Tracker: React.FC = () => {
             prevScore: prev,
             toBreak: currentToBreak,
         };
-
+        
         if (isSetsMode){
-            if (prev + 1 === raceTo && player1Set !== undefined){
+            if (prev + 1 === raceTo){
                 const prevSet = player1Set;
                 action.prevSet = player1Set;
+                action.prevPlayer1Score = player1Score;
+                action.prevPlayer2Score = player2Score;
+
                 setPlayer1Set(prevSet + 1);
+                setPlayer1Score(0);
+                setPlayer2Score(0);
 
                 if (prevSet + 1 === raceSets){
                     const winnerValue = player1;
@@ -78,7 +86,7 @@ const Tracker: React.FC = () => {
         setActionHistory(history => [...history, action]);
     };
 
-    const incrementPlayer2 = async () => { //Increment player2 score, updates who to break
+    const incrementPlayer2 = () => { //Increment player2 score, updates who to break
         const prev = player2Score;
         const currentToBreak = toBreak;
 
@@ -93,10 +101,15 @@ const Tracker: React.FC = () => {
         };
 
         if (isSetsMode){
-            if (prev + 1 === raceTo && player2Set !== undefined){
+            if (prev + 1 === raceTo){
                 const prevSet = player2Set;
                 action.prevSet = player2Set;
+                action.prevPlayer1Score = player1Score;
+                action.prevPlayer2Score = player2Score;
+                
                 setPlayer2Set(prevSet + 1);
+                setPlayer1Score(0);
+                setPlayer2Score(0);
 
                 if (prevSet + 1 === raceSets){
                     const winnerValue = player2;
@@ -124,28 +137,28 @@ const Tracker: React.FC = () => {
         setActionHistory(history => [...history, action]);
     };
 
-    const handleUndo = async () => { //Undo button logic
+    const handleUndo = () => { //Undo button logic
         const lastAction = actionHistory[actionHistory.length - 1];
         if (!lastAction) return;
 
         if (lastAction.player === 'player1') {
             setPlayer1Score(lastAction.prevScore);
 
-            if (sets !== undefined && raceTo !== undefined && lastAction.prevSet !== undefined) {
+            if (sets !== undefined && raceTo !== undefined && lastAction.prevSet !== undefined 
+                && lastAction.prevPlayer1Score !== undefined && lastAction.prevPlayer2Score !== undefined){
                 setPlayer1Set(lastAction.prevSet);
-                
-                setPlayer1Score(player1Score-1);
-                setPlayer2Score(player2Score);
+                setPlayer1Score(lastAction.prevPlayer1Score);
+                setPlayer2Score(lastAction.prevPlayer2Score);
             }
         } 
         else if (lastAction.player === 'player2') {
             setPlayer2Score(lastAction.prevScore);
 
-            if (sets !== undefined && raceTo !== undefined && lastAction.prevSet !== undefined) {
-                setPlayer2Set(lastAction.prevSet);
-                
-                setPlayer1Score(player1Score);
-                setPlayer2Score(player2Score-1);
+            if (sets !== undefined && raceTo !== undefined && lastAction.prevSet !== undefined 
+                && lastAction.prevPlayer1Score !== undefined && lastAction.prevPlayer2Score !== undefined){
+                setPlayer1Set(lastAction.prevSet);
+                setPlayer1Score(lastAction.prevPlayer1Score);
+                setPlayer2Score(lastAction.prevPlayer2Score);
             }
         }
 
@@ -155,18 +168,29 @@ const Tracker: React.FC = () => {
     
     const handleWinner = (winnerValue: string) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
+        localStorage.clear();
     }
 
     const handleExit = () => {
         router.push('/');
+        localStorage.clear();
     }
 
     useEffect(() => {
         try{
-            const matchData = localStorage.getItem("guestMatch");
-
-            if (matchData){
-                console.log(matchData)
+            const matchDataString = localStorage.getItem("guestMatch");
+        
+            if (matchDataString){
+                const matchData = JSON.parse(matchDataString);
+                setPlayer1(matchData.finalPlayer1);
+                setPlayer2(matchData.finalPlayer2);
+                setRaceTo(parseInt(matchData.raceTo));
+                setBreakFormat(matchData.breakFormat);
+                setSets(matchData.sets);
+                setToBreak(matchData.toBreak);
+            }
+            else{
+                router.push('/');
             }
         }
         catch (err){
