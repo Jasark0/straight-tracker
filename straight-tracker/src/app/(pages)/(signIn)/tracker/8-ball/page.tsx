@@ -292,6 +292,12 @@ const Tracker: React.FC = () => {
         router.push(`/configure/8-ball?matchID=${matchID}`);
     }
 
+    const goToHistory = async () => {
+        await updatePoolMatch(player1Score, player2Score);
+
+        router.push('/history');
+    }
+
     const handleExit = () => {
         const winnerValue = winner;
         handleWinner(winnerValue);
@@ -406,7 +412,7 @@ const Tracker: React.FC = () => {
                         <img src="/hamburger-menu.png" className="hamburger-icon" />
                         <div className="dropdown-menu">
                             <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
-                            <div className="dropdown-item">Go to History</div>
+                            <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
                         </div>
                     </div>
                     <p className="game-name-text">
