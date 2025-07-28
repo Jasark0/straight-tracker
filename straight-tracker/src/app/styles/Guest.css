@@ -1,0 +1,19 @@
+.guest-selectgame-container{
+    display: flex;
+}
+
+.guest-suggestion-text{
+    display: flex;
+    font-size: 1rem;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+}
+
+.guest-warning-text{
+    display: flex;
+    font-size: 1rem;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+    color: red;
+    text-decoration: underline;
+}

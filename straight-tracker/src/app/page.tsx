@@ -58,6 +58,10 @@ export default function Home() {
         }
     };
 
+    const handleGuest = () => {
+        router.push('/guest/selectGame');
+    }
+
     const handleSubmitSuggestion = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -147,7 +151,7 @@ export default function Home() {
                         <p className="guest-subtext">
                             Want to give our tracker a shot but unsure about making an account?
                         </p>
-                        <button className="guest-button">🎯 Continue as a Guest — Start a Match</button>
+                        <button className="guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
                     </div>)}
                 </div>
             </section>
