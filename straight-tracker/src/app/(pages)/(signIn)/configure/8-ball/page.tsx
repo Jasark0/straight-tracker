@@ -219,6 +219,10 @@ const Select: React.FC = () => {
         router.push('/history');
     }
 
+    const handleReturnToTracker = () => {
+        router.push(`/tracker/8-ball?matchID=${matchID}`);
+    }
+
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
@@ -285,6 +289,7 @@ const Select: React.FC = () => {
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
+                <button className="submit-button" onClick={handleReturnToTracker}>back</button>
                 <form onSubmit={handleSubmit}>
                     <p className="game-name-message">Game name:</p>
                     <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
