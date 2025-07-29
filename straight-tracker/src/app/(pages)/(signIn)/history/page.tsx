@@ -210,7 +210,7 @@ export default function History() {
 
                 <div className="display-history-container">
                     <div className="filter-box">
-                        <p>Game to display:</p>
+                        <p className="filter-game-text">Game to display:</p>
                         <div className="filter-grid">
                             {['8-Ball', '9-Ball', '10-Ball', 'straight-pool'].map((type) => (
                                 <button
