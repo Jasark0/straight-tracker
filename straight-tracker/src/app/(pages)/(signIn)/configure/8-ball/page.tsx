@@ -234,7 +234,7 @@ const Select: React.FC = () => {
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
                 setRaceTo(json.poolMatch.race_to);
-                setBreakFormat(json.poolMatch.to_break == 0 ? "Winner Breaks" : "Alternate Breaks");
+                setBreakFormat(json.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks");
                 setToBreak(json.poolMatch.to_break);
                 
                 const raceCount = json.matchRace.length;
