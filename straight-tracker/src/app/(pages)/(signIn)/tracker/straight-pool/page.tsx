@@ -83,7 +83,7 @@ const Tracker: React.FC = () => {
         }  
 
         if (updatedScore === raceTo){
-            updateStraightMatch(updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
+            updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
             handleWinner(player1);
         }
 
@@ -124,7 +124,7 @@ const Tracker: React.FC = () => {
         setRack(rack + 1);
 
         if (updatedScore >= raceTo){
-            updateStraightMatch(updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
+            updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
             handleWinner(player1);
         }
 
@@ -227,7 +227,7 @@ const Tracker: React.FC = () => {
         }  
 
         if (updatedScore === raceTo){
-            updateStraightMatch(player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
+            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
             handleWinner(player2);
         }
 
@@ -268,7 +268,7 @@ const Tracker: React.FC = () => {
         setRack(rack + 1);
 
         if (updatedScore >= raceTo){
-            updateStraightMatch(player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
+            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
             handleWinner(player2);
         }
 
@@ -481,7 +481,7 @@ const Tracker: React.FC = () => {
         setActionHistory(prev => prev.slice(0, -1));
     }
 
-    const updateStraightMatch = async (updatedPlayer1Score: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
+    const updateStraightMatch = async (toShoot: string, rack: number, remainingBalls: number, updatedPlayer1Score: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
         updatedPlayer2Score: number, updatedPlayer2HighRun: number, updatedPlayer2CurrRun: number) => { //updates scores to database
         try {
             const res = await fetch('/api/updateStraightMatch', {
@@ -489,6 +489,9 @@ const Tracker: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     match_id: matchID,
+                    to_shoot: toShoot,
+                    rack,
+                    remaining_balls: remainingBalls,
                     player1_score: updatedPlayer1Score,
                     player1_high_run: updatedPlayer1HighRun,
                     player1_curr_run: updatedPlayer1CurrRun,
@@ -605,11 +608,11 @@ const Tracker: React.FC = () => {
         if (!matchID) return;
 
         const interval = setInterval(() => {
-            updateStraightMatch(player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
+            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
         }, 15000);
 
         return () => clearInterval(interval);
-    }, [matchID, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
+    }, [matchID, toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
 
     useEffect(() => { //Updating database with scores and runs on reload & leaving tab
         if (!matchID) return;
@@ -618,6 +621,9 @@ const Tracker: React.FC = () => {
             if (document.visibilityState === 'hidden') {
                 const payload = JSON.stringify({
                     match_id: matchID,
+                    to_shoot: toShoot,
+                    rack,
+                    remaining_balls: remainingBalls,
                     player1_score: player1Score,
                     player1_high_run: player1HighRun,
                     player1_curr_run: player1CurrRun,
@@ -636,7 +642,7 @@ const Tracker: React.FC = () => {
         return () => {
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [matchID, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
+    }, [matchID, toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
 
     if (loading){ //Loading screen
         return (
@@ -685,7 +691,7 @@ const Tracker: React.FC = () => {
                         High Run: {player1HighRun}
                     </div>
                     <div className="high-style player1-curr-high-run">
-                        Current High Run: {player1CurrRun}
+                        Current Run: {player1CurrRun}
                     </div>
                 </div>
 
