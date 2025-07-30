@@ -261,6 +261,13 @@ const Select: React.FC = () => {
 
     const determineShowBackVerification = () => {
         // check to make sure no values have been changed
+        // console.log(gameName == oldMatchInfo.poolMatch.game_name);
+        // console.log(player1 == oldMatchInfo.poolMatch.player1);
+        // console.log(player2 == oldMatchInfo.poolMatch.player2);
+        // console.log(parseInt(raceTo) == oldMatchInfo.poolMatch.race_to);
+        // console.log(enableSets == (oldMatchInfo.matchSets != null));
+        // console.log(breakFormat == (oldMatchInfo.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks"));
+        // console.log(!enableSets || (enableSets && parseInt(sets) == oldMatchInfo.matchSets.sets));
         if((
             gameName == oldMatchInfo.poolMatch.game_name &&
             player1 == oldMatchInfo.poolMatch.player1 &&
@@ -268,7 +275,7 @@ const Select: React.FC = () => {
             parseInt(raceTo) == oldMatchInfo.poolMatch.race_to &&
             enableSets == (oldMatchInfo.matchSets != null) &&
             breakFormat == (oldMatchInfo.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks"))) {
-            if((!enableSets || (enableSets && raceSets == oldMatchInfo.matchRace.length))) {
+            if((!enableSets || (enableSets && parseInt(sets) == oldMatchInfo.matchSets.sets))) {
                 handleReturnToTracker();
                 return;
             }
