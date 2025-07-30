@@ -224,7 +224,6 @@
 .hero-container{
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 8rem);
 }
 
 .hero-section{
@@ -340,7 +339,7 @@
   align-items: center;
   background: #0f0f0f;
   text-align: center;
-  padding: 6vw 4vw;
+  padding: 6vw 2vw;
 }
 
 .home-about-us-text{

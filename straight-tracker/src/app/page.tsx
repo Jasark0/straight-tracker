@@ -161,10 +161,10 @@ export default function Home() {
                     <div className="feature-card">📊 Analyze Match History</div>
                     <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
                 </div>
-        
-                <div className="section-divider"></div>
             </div>
             
+            <div className="section-divider"></div>
+
             <section className="image-showcase" id="learn-more">
                 <p className="home-about-us-text">About Us</p>
                 <div className="home-image-container">
