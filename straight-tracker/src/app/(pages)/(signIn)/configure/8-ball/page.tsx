@@ -18,7 +18,6 @@ const Select: React.FC = () => {
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
     const [sets, setSets] = useState('');
-    const [oldSets, setOldSets] = useState('');
     const [enableSets, setEnableSets] = useState(false);
     const [oddWarning, setOddWarning] = useState('');
     const [raceWarning, setRaceWarning] = useState('');
@@ -72,6 +71,14 @@ const Select: React.FC = () => {
     const [error, setError] = useState('');
 
     const toggleDropdown = () => setIsOpen(!isOpen);
+
+    const [minRaceVal, setMinRaceVal] = useState<number>(1);
+    const [minSetVal, setMinSetVal] = useState<number>(3);
+    const [playerAheadRace, setPlayerAheadRace] = useState<string>();
+    const [playerAheadSet, setPlayerAheadSet] = useState<string>();
+
+
+
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -92,7 +99,6 @@ const Select: React.FC = () => {
                 } 
                 else{
                     setOddWarning('');
-                    setOldSets(val);
                 }
             }
         }
@@ -100,9 +106,8 @@ const Select: React.FC = () => {
     
     const handleToggleSets = (checked: boolean) => {
         setEnableSets(checked);
-        console.log(oldSets);
         if (checked){
-            setSets(oldSets);
+            setSets(oldMatchInfo.matchSets.sets.toString());
         }   
         else{
             setSets('');
@@ -121,8 +126,7 @@ const Select: React.FC = () => {
             } 
             else{
                 const num = parseInt(val);
-                const minRaceVal = Math.max(player1Score, player2Score) + 1;
-                if (num < minRaceVal){
+                if (oldMatchInfo.matchSets == undefined && num < minRaceVal){
                     setRaceWarning(`New race to value too small.  Minimum value is ${minRaceVal}`);
                 } else {
                     setRaceWarning('');
@@ -261,13 +265,6 @@ const Select: React.FC = () => {
 
     const determineShowBackVerification = () => {
         // check to make sure no values have been changed
-        // console.log(gameName == oldMatchInfo.poolMatch.game_name);
-        // console.log(player1 == oldMatchInfo.poolMatch.player1);
-        // console.log(player2 == oldMatchInfo.poolMatch.player2);
-        // console.log(parseInt(raceTo) == oldMatchInfo.poolMatch.race_to);
-        // console.log(enableSets == (oldMatchInfo.matchSets != null));
-        // console.log(breakFormat == (oldMatchInfo.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks"));
-        // console.log(!enableSets || (enableSets && parseInt(sets) == oldMatchInfo.matchSets.sets));
         if((
             gameName == oldMatchInfo.poolMatch.game_name &&
             player1 == oldMatchInfo.poolMatch.player1 &&
@@ -313,8 +310,8 @@ const Select: React.FC = () => {
                 handleToggleSets(setsEnabled)
 
                 if (setsEnabled) {
-                    const p1SetWins = json.matchRace.filter((set: any) => set.winner === /* json.poolMatch.player1 */ "player1").length;
-                    const p2SetWins = json.matchRace.filter((set: any) => set.winner === /* json.poolMatch.player2 */ "player2").length;
+                    const p1SetWins = json.matchRace.filter((set: any) => set.winner === "player1").length;
+                    const p2SetWins = json.matchRace.filter((set: any) => set.winner === "player2").length;
 
                     setPlayer1Set(p1SetWins);
                     setPlayer2Set(p2SetWins);
@@ -324,8 +321,7 @@ const Select: React.FC = () => {
                 } 
                 
                 setSets(json.matchSets.sets || undefined); //Load sets last: this prevents rendering inconsistencies.
-                if(json.matchSets.sets)
-                    setOldSets(json.matchSets.sets);
+                
             }
             catch (err){
                 setError('Error');
@@ -336,6 +332,21 @@ const Select: React.FC = () => {
         }
         fetchMatch();
     }, [matchID]);
+
+    useEffect(() => {
+        const scoresReady = player1Score !== undefined && player2Score !== undefined;
+        const setsReady = !enableSets || (player1Set !== undefined && player2Set !== undefined);
+
+        if (!scoresReady || !setsReady) return;
+
+        setMinRaceVal(Math.max(player1Score, player2Score) + 1);
+        setPlayerAheadRace(player1Score > player2Score ? player1 : player2);
+
+        if (enableSets) {
+            setMinSetVal(Math.max(player1Set!, player2Set!) * 2 + 1);
+            setPlayerAheadSet(player1Set! > player2Set! ? player1 : player2);
+        }
+    }, [player1Score, player2Score, player1Set, player2Set, player1, player2, enableSets]);
 
     if(loading) { //Loading screen
         return (
@@ -359,19 +370,40 @@ const Select: React.FC = () => {
                 <button className="submit-button" onClick={() => determineShowBackVerification()}>back</button>
                 <form onSubmit={handleSubmit}>
                     <p className="game-name-message">Game name:</p>
-                    <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
+                    <input
+                        className="game-name-input"
+                        type="text"
+                        placeholder="Game Name (optional)"
+                        value={gameName}
+                        onChange={(e) => setGameName(e.target.value)}
+                        title="Please enter the name of your legendary 8-ball pool game."
+                    />
                     
                     <img src="/divider.png" className="divider-css"></img>
 
                     <div className="names-selection-box">
                         <div className="player-names">
                             <label className="player-names-label">Player 1:</label>
-                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => updatePlayerName(1, e.target.value)} />
+                            <input
+                                className="player-names-input"
+                                type="text"
+                                placeholder="Type your name"
+                                value={player1}
+                                onChange={(e) => updatePlayerName(1, e.target.value)}
+                                title="Please enter the name of player1."
+                            />
                         </div>
 
                         <div className="player-names">
                             <label className="player-names-label">Player 2:</label>
-                            <input className="player-names-input" type="text" placeholder="Type your name" value={player2} onChange={(e) => updatePlayerName(2, e.target.value)} />
+                            <input
+                                className="player-names-input"
+                                type="text"
+                                placeholder="Type your name"
+                                value={player2}
+                                onChange={(e) => updatePlayerName(2, e.target.value)}
+                                title="Please enter the name of player2."
+                            />
                         </div>
                     </div>
                     
@@ -386,7 +418,7 @@ const Select: React.FC = () => {
                                 value={raceTo}
                                 onChange={handleNewRace}
                                 required
-                                title="Please enter a number greater than 0."
+                                title={`Please enter at least ${minRaceVal} (${playerAheadRace} already won ${minRaceVal - 1} racks).`}
                             />
                             <label className="sets-toggle-label">
                             <input
@@ -407,14 +439,14 @@ const Select: React.FC = () => {
 
                             <div className="sets-info-box">
                                 <input
-                                className="sets-input"
-                                type="text"
-                                inputMode="numeric"
-                                pattern="^\d*$"
-                                value={sets}
-                                onChange={handleChange}
-                                required
-                                title="Please enter a positive odd number greater than or equal to 3."
+                                    className="sets-input"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="^\d*$"
+                                    value={sets}
+                                    onChange={handleChange}
+                                    required
+                                    title={`Please enter an odd number larger than ${minSetVal} (${playerAheadSet} already won ${(minSetVal - 1) / 2} sets).`}
                                 />
                             </div>
 
