@@ -4,16 +4,17 @@ import { supabase } from '../../../client'
 export async function POST(req: Request) {
     try{
         const body = await req.json();
-        const { match_id, player1_score, player1_high_run, player1_curr_run, player2_score, player2_high_run, player2_curr_run } = body;
+        const { match_id, to_shoot, rack, remaining_balls, player1_score, player1_high_run, player1_curr_run, player2_score, player2_high_run, player2_curr_run } = body;
 
-        if (!match_id || player1_score == null || player1_high_run == null || player1_curr_run == null || 
-            player2_score == null || player2_high_run == null || player2_curr_run == null){
+        if (!match_id || to_shoot === null || rack === null || remaining_balls === null || 
+            player1_score === null || player1_high_run === null || player1_curr_run === null || 
+            player2_score === null || player2_high_run === null || player2_curr_run === null){
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
         const { error } = await supabase
         .from('straight_pool_matches')
-        .update({ player1_score, player1_high_run, player1_curr_run, player2_score, player2_high_run, player2_curr_run })
+        .update({ to_shoot, rack, remaining_balls, player1_score, player1_high_run, player1_curr_run, player2_score, player2_high_run, player2_curr_run })
         .eq('match_id', match_id);
 
         if (error){
