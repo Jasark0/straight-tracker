@@ -25,11 +25,12 @@ const Select: React.FC = () => {
     const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">();
 
     const [lagPopup, setLagPopup] = useState(false);
-    const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
+    // const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
 
     const [id, setId] = useState<number>();
 
     const [toBreak, setToBreak] = useState('');
+    const [lagWinner, setLagWinner] = useState('');
     const [player1Score, setPlayer1Score] = useState<number>(0);
     const [player2Score, setPlayer2Score] = useState<number>(0);
 
@@ -135,6 +136,22 @@ const Select: React.FC = () => {
         await updateMatchConfig(null);
     };
 
+    const updatePlayerName = async (player: number, newName: string) => {
+        if(player == 1) {
+            if(lagWinner == player1)
+                setLagWinner(newName);
+            if(toBreak == player1)
+                setToBreak(newName);
+            setPlayer1(newName);
+        } else if(player == 2) {
+            if(lagWinner == player2)
+                setLagWinner(newName);
+            if(toBreak == player2)
+                setToBreak(newName);
+            setPlayer2(newName);
+        }
+    }
+
     const updateMatchConfig = async (finalLagWinner: string|null) => {
         try {
             if (!matchID) return;
@@ -235,6 +252,7 @@ const Select: React.FC = () => {
                 setPlayer2(json.poolMatch.player2);
                 setRaceTo(json.poolMatch.race_to);
                 setBreakFormat(json.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks");
+                setLagWinner(json.poolMatch.lag_winner);
                 setToBreak(json.poolMatch.to_break);
                 
                 const raceCount = json.matchRace.length;
@@ -299,12 +317,12 @@ const Select: React.FC = () => {
                     <div className="names-selection-box">
                         <div className="player-names">
                             <label className="player-names-label">Player 1:</label>
-                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => setPlayer1(e.target.value)} />
+                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => updatePlayerName(1, e.target.value)} />
                         </div>
 
                         <div className="player-names">
                             <label className="player-names-label">Player 2:</label>
-                            <input className="player-names-input" type="text" placeholder="Type your name" value={player2} onChange={(e) => setPlayer2(e.target.value)} />
+                            <input className="player-names-input" type="text" placeholder="Type your name" value={player2} onChange={(e) => updatePlayerName(2, e.target.value)} />
                         </div>
                     </div>
                     
