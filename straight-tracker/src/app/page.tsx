@@ -58,6 +58,10 @@ export default function Home() {
         }
     };
 
+    const handleGuest = () => {
+        router.push('/guest/selectGame');
+    }
+
     const handleSubmitSuggestion = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -137,29 +141,30 @@ export default function Home() {
                 </div>
             </header>
 
+            <div className="hero-container">
+                <section className={user ? "hero-section hero-auth" : "hero-section"}>
+                    <div className="hero-content">
+                        <p className="main-hero-heading"><span>Your Professional Pool/Billiards <br/> Score Tracker</span></p>
+                        <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
 
-            <section className={user ? "hero-section hero-auth" : "hero-section"}>
-                <div className="hero-content">
-                    <p className="main-hero-heading">Your Professional Pool/Billiards Score Tracker</p>
-                    <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
+                        {!user && (<div className="guest-access-box">
+                            <p className="guest-subtext">
+                                Want to give our tracker a shot but unsure about making an account?
+                            </p>
+                            <button className="guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
+                        </div>)}
+                    </div>
+                </section>
 
-                    {!user && (<div className="guest-access-box">
-                        <p className="guest-subtext">
-                            Want to give our tracker a shot but unsure about making an account?
-                        </p>
-                        <button className="guest-button">🎯 Continue as a Guest — Start a Match</button>
-                    </div>)}
+                <div className="hero-features">
+                    <div className="feature-card">🔥 Track Sets & Races</div>
+                    <div className="feature-card">📊 Analyze Match History</div>
+                    <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
                 </div>
-            </section>
-
-            <div className="hero-features">
-                <div className="feature-card">🔥 Track Sets & Races</div>
-                <div className="feature-card">📊 Analyze Match History</div>
-                <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
             </div>
-
-            <div className="section-divider"></div>
             
+            <div className="section-divider"></div>
+
             <section className="image-showcase" id="learn-more">
                 <p className="home-about-us-text">About Us</p>
                 <div className="home-image-container">

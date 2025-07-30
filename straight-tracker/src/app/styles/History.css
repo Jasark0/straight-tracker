@@ -257,12 +257,17 @@
 }
 
 .filter-box{
-  width: 35vh;
+  width: 18vw;
   height: 60vh;
   padding: 1rem;
-  background-color: #f4f4f4;
+  background-color: white;
   border-radius: 0.5rem;
   border: 2px solid #ccc;
+  overflow-y: auto;
+}
+
+.filter-game-text{
+  margin-top: 0;
 }
 
 .filter-grid{
@@ -330,6 +335,7 @@
 
 .date-filter-row{
   display: flex;
+  width: 100%;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }

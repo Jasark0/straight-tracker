@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { changeNickname, changePassword, changeUsername, getUserSession, updateAvatarInProfile } from '@/actions/auth';
+import { changeNickname, changePassword, changeUsername, getUserSession, updateAvatarInProfile, updateProfile } from '@/actions/auth';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Settings.css" // Make sure settings styles are imported
@@ -35,11 +35,18 @@ export default function SettingsPage() {
       const session = await getUserSession();
       setUser(session?.user);
 
-      console.log("User metadata:", session?.user?.user_metadata);
-
-      // When user data is fetched, initialize newNickname with the current nickname
-      setNewNickname(session?.user?.user_metadata?.nickname || "");
       setLoading(false);
+
+      if (session?.user) {
+        try {
+          const profileResult = await updateProfile();
+          if ( profileResult.status !== "success") {
+            console.warn("Profile sync warning:", profileResult.status);
+          }
+        } catch (error) {
+          console.error("Error updating profile:", error);
+        }
+      }
     };
     fetchUser();
   }, []);

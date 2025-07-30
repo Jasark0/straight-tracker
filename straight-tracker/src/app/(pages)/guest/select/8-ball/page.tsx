@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,7 +11,6 @@ import Header from '@/src/components/Header';
 const Select: React.FC = () => {
     const router = useRouter();
 
-    const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
@@ -25,7 +24,6 @@ const Select: React.FC = () => {
     const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
     
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -61,7 +59,7 @@ const Select: React.FC = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
         if (oddWarning){
@@ -80,75 +78,50 @@ const Select: React.FC = () => {
             return;
         }
         
-        await submitMatch(null);
+        submitMatch(null);
     };
 
-    const submitMatch = async (finalLagWinner: string|null) => {
-        try {
-            const res = await fetch('/api/createPoolMatch', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    game_type: 0,
-                    game_name: gameName,
-                    player1: player1,
-                    player2: player2,
-                    race_to: raceTo,
-                    break_format: breakFormat,
-                    lag_winner: finalLagWinner,
-                    sets: sets ? parseInt(sets) : null,
-                }),
-            });
+    const submitMatch = (finalLagWinner: string|null) => {
+        let finalPlayer1 = player1 && player1.trim() !== "" ? player1 : "Player1";
+        let finalPlayer2 = player2 && player2.trim() !== "" ? player2 : "Player2";
 
-            if (!res.ok) {
-                const errorData = await res.json();
-                console.error('API error:', errorData.error);
-                return;
-            }
-
-            const result = await res.json();
-
-            router.push(`/tracker/8-ball?matchID=${result.match_id}`);
-        } catch (err) {
-            console.error('Unexpected error:', err);
+        let toBreak;
+        
+        if (!finalLagWinner){
+            toBreak = Math.random() < 0.5 ? finalPlayer1 : finalPlayer2;
         }
+        else if (finalLagWinner === "player1"){
+            toBreak = finalPlayer1;
+        }
+        else if (finalLagWinner === "player2"){
+            toBreak = finalPlayer2;
+        }
+
+        const matchData = {
+            finalPlayer1,
+            finalPlayer2,
+            raceTo,
+            sets,
+            breakFormat,
+            toBreak,
+        }
+
+        try{
+            localStorage.setItem("guestMatch", JSON.stringify(matchData));
+        }
+        catch(err){
+            console.error("Failed to store guest match:", err);
+        }
+
+        router.push('/guest/tracker/8-ball');
     }
 
-    useEffect(() => {
-        const fetchNickname = async () => {
-            try{
-                const res = await fetch('/api/getNickname');
-                const json = await res.json();
-
-                if (!res.ok){
-                    setError(json.error);
-                }
-                
-                setPlayer1(json.nickname);
-                setIsLoading(false);
-            }
-            catch (err){
-                setError('Network error');
-                console.error(err);
-            }
-        }
-        fetchNickname();
-    }, []);
-
-    return !isLoading && (
-        //
+    return (
         <div className="select-page-box">
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
-                    <p className="game-name-message">What would your legendary 8-ball game name be today?</p>
-                    <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
-                    
-                    <img src="/divider.png" className="divider-css"></img>
-
                     <div className="names-selection-message">   
                         <p className="names-message">Players, Type Your Names.</p>
                     </div>
@@ -271,8 +244,7 @@ const Select: React.FC = () => {
                         <button className="continue-button" disabled={!lagWinnerSelected}
                             onClick={() => {
                                 setLagPopup(false);
-                                const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                                submitMatch(lagName);
+                                submitMatch(lagWinnerSelected);
                             }}
                         >
                             Continue
