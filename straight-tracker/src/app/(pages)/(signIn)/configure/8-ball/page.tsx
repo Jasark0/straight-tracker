@@ -39,11 +39,34 @@ const Select: React.FC = () => {
     const [player2Set, setPlayer2Set] = useState<number | undefined>();
 
     const [showWinnerVerificationModal, setShowWinnerVerificationModal] = useState(false);
+    const [showBackVerificationModal, setShowBackVerificationModal] = useState(false);
     const [playerToWin, setPlayerToWin] = useState('');
     const [playerToWinScore, setPlayerToWinScore] = useState<number | undefined>(0);
     const [playerToWinSets, setPlayerToWinSets] = useState<number | undefined>(0);
     const [isOpen, setIsOpen] = useState(false);
     const [winner, setWinner] = useState('');
+
+    const [oldMatchInfo, setOldMatchInfo] = useState({
+        "poolMatch": {
+            "match_id": 0,
+            "username": "",
+            "game_type": 0,
+            "game_name": "",
+            "player1": "",
+            "player2": "",
+            "race_to": 0,
+            "break_format": 0,
+            "lag_winner": null,
+            "to_break": "",
+            "winner": null,
+            "created_at": ""
+        },
+        "matchRace": [],
+        "matchSets": {
+            "match_id": 0,
+            "sets": 0
+        }
+    });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -236,6 +259,23 @@ const Select: React.FC = () => {
         router.push('/history');
     }
 
+    const determineShowBackVerification = () => {
+        // check to make sure no values have been changed
+        if((
+            gameName == oldMatchInfo.poolMatch.game_name &&
+            player1 == oldMatchInfo.poolMatch.player1 &&
+            player2 == oldMatchInfo.poolMatch.player2 &&
+            parseInt(raceTo) == oldMatchInfo.poolMatch.race_to &&
+            enableSets == (oldMatchInfo.matchSets != null) &&
+            breakFormat == (oldMatchInfo.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks"))) {
+            if((!enableSets || (enableSets && raceSets == oldMatchInfo.matchRace.length))) {
+                handleReturnToTracker();
+                return;
+            }
+        }
+        setShowBackVerificationModal(true);
+    }
+
     const handleReturnToTracker = () => {
         router.push(`/tracker/8-ball?matchID=${matchID}`);
     }
@@ -246,6 +286,8 @@ const Select: React.FC = () => {
                 if (!matchID) return;
                 const res = await fetch(`/api/getPoolMatch?matchID=${matchID}`);
                 const json = await res.json();
+
+                setOldMatchInfo(json);
 
                 setGameName(json.poolMatch.game_name);
                 setPlayer1(json.poolMatch.player1);
@@ -307,7 +349,7 @@ const Select: React.FC = () => {
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
-                <button className="submit-button" onClick={handleReturnToTracker}>back</button>
+                <button className="submit-button" onClick={() => determineShowBackVerification()}>back</button>
                 <form onSubmit={handleSubmit}>
                     <p className="game-name-message">Game name:</p>
                     <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
@@ -422,6 +464,21 @@ const Select: React.FC = () => {
                     </div>
                 </form>
             </div>
+        {showBackVerificationModal && (
+        <div className="details-modal-overlay" onClick={() => setShowBackVerificationModal(false)}>
+            <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
+                <p className="game-name-message">Are you sure you want to leave?  Your changes won't be saved.</p>
+                <div className="button-selection-box">
+                    <button type="button" className="submit-button" onClick={() => {handleReturnToTracker()}}>
+                        Yes
+                    </button>
+                    <button type="button" className="submit-button" onClick={() => {setShowBackVerificationModal(false)}}>
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
+        )}
         {showWinnerVerificationModal && (
             <div className="details-modal-overlay" onClick={() => setShowWinnerVerificationModal(false)}>
                 <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
