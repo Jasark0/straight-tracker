@@ -569,7 +569,6 @@ const Tracker: React.FC = () => {
                 </div>
             )}
         </div>
-
     )
 }
 
