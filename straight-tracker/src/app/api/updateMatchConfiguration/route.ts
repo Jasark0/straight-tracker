@@ -18,7 +18,6 @@ export async function PATCH(req: Request) {
         const body = await req.json();
         
         const {
-            game_type,
             game_name,
             player1,
             player2,
@@ -102,7 +101,6 @@ export async function PATCH(req: Request) {
         .update([
             {
                 username: username,
-                game_type: game_type,
                 game_name: game_name,
                 player1: player1,
                 player2: player2,

@@ -40,17 +40,28 @@ export async function POST(req: Request) {
         .from('pool_matches')
         .select('match_id', { count: 'exact' })
         .eq('username', username)
-        .eq('game_type', 0);
+        .eq('game_type', game_type);
 
         if (countError) {
-            return NextResponse.json({ error: 'Failed to count 8 Ball matches' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to count matches' }, { status: 500 });
         }
 
         let safeCount = 0;
         if (count !== null){
             safeCount = count;
         }
-        finalGameName = `8 Ball - Match ${safeCount + 1}`;
+
+        switch (game_type){
+            case 0:
+                finalGameName = `8 Ball - Match ${safeCount + 1}`;
+                break;
+            case 1:
+                finalGameName = `9 Ball - Match ${safeCount + 1}`;
+                break;
+            case 2:
+                finalGameName = `10 Ball - Match ${safeCount + 1}`;
+                break;
+        }
     }
 
     const finalPlayer1 = player1?.trim() ? player1 : "Player1";

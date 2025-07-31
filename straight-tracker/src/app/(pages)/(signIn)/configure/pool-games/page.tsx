@@ -13,6 +13,8 @@ const Select: React.FC = () => {
 
     const searchParams = useSearchParams();
     let matchID = searchParams.get('matchID');
+    
+    const [gameType, setGameType] = useState<number>();
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
@@ -197,7 +199,6 @@ const Select: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    game_type: 0,
                     game_name: gameName,
                     player1: player1,
                     player2: player2,
@@ -228,7 +229,21 @@ const Select: React.FC = () => {
                 }
             }
 
-            router.push(`/tracker/8-ball?matchID=${matchID}`);
+            let finalGameType;
+
+            switch (gameType){
+                case 0:
+                    finalGameType = 8;
+                    break;
+                case 1:
+                    finalGameType = 9;
+                    break;
+                case 2:
+                    finalGameType = 10;
+                    break;
+            }
+
+            router.push(`/tracker/${finalGameType}-ball?matchID=${matchID}`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }
@@ -301,6 +316,7 @@ const Select: React.FC = () => {
 
                 setOldMatchInfo(json);
 
+                setGameType(json.poolMatch.game_type);
                 setGameName(json.poolMatch.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);

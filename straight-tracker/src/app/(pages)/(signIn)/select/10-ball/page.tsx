@@ -2,7 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { getUserSession } from '@/actions/auth';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Header from '@/src/components/Header';
 
@@ -13,18 +15,66 @@ const Select: React.FC = () => {
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
-    const [sets, setSets] = useState('1');
+    const [sets, setSets] = useState('');
+    const [enableSets, setEnableSets] = useState(false);
+    const [oddWarning, setOddWarning] = useState('');
     const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
     const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
 
     const [lagPopup, setLagPopup] = useState(false);
     const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
-
-    const [user, setUser] = useState<any>(null);
     
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (/^\d*$/.test(val)) {
+            setSets(val);
+            
+            if (val === ''){
+                setOddWarning('');
+            } 
+            else{
+                const num = parseInt(val, 10);
+                if (num <= 0){
+                    setOddWarning('Please enter a number greater than 0.');
+                } 
+                else if (num % 2 === 0){
+                    setOddWarning('Only odd numbers are allowed (1, 3, 5, ...).');
+                } 
+                else{
+                    setOddWarning('');
+                }
+            }
+        }
+    };
+    
+    const handleToggleSets = (checked: boolean) => {
+        setEnableSets(checked);
+        if (checked){
+            setSets('3');
+        }   
+        else{
+            setSets('');
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        if (oddWarning){
+            toast.error('Fix the Best of (Sets): input.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+            return;
+        }
+
         if (breakMethod === 'lag'){
             setLagPopup(true);
             return;
@@ -35,19 +85,20 @@ const Select: React.FC = () => {
 
     const submitMatch = async (finalLagWinner: string|null) => {
         try {
-            const res = await fetch('/api/createMatch10', {
+            const res = await fetch('/api/createPoolMatch', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    gameName,
-                    player1,
-                    player2,
-                    raceTo,
-                    sets,
-                    breakFormat,
-                    lagWinner: finalLagWinner,
+                    game_type: 2,
+                    game_name: gameName,
+                    player1: player1,
+                    player2: player2,
+                    race_to: raceTo,
+                    break_format: breakFormat,
+                    lag_winner: finalLagWinner,
+                    sets: sets ? parseInt(sets) : null,
                 }),
             });
 
@@ -58,17 +109,39 @@ const Select: React.FC = () => {
             }
 
             const result = await res.json();
-            console.log('Match created:', result);
 
-            router.push('/tracker/10-ball');
+            router.push(`/tracker/10-ball?matchID=${result.match_id}`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }
     }
 
-    return (
-        <div className="page-box">
+    useEffect(() => {
+        const fetchNickname = async () => {
+            try{
+                const res = await fetch('/api/getNickname');
+                const json = await res.json();
+
+                if (!res.ok){
+                    setError(json.error);
+                }
+                
+                setPlayer1(json.nickname);
+                setIsLoading(false);
+            }
+            catch (err){
+                setError('Network error');
+                console.error(err);
+            }
+        }
+        fetchNickname();
+    }, []);
+
+    return !isLoading && (
+        //
+        <div className="select-page-box">
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
+            <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
                     <p className="game-name-message">What would your legendary 10-ball game name be today?</p>
@@ -83,7 +156,7 @@ const Select: React.FC = () => {
                     <div className="names-selection-box">
                         <div className="player-names">
                             <label className="player-names-label">Player 1:</label>
-                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => setPlayer1(e.target.value)} />
+                            <input className="player-names-input" type="text" placeholder="Type your name" value={player1} onChange={(e) => setPlayer1(e.target.value)}/>
                         </div>
 
                         <div className="player-names">
@@ -110,27 +183,39 @@ const Select: React.FC = () => {
                                 required
                                 title="Please enter a number greater than 0."
                             />
-
-                        </div>
-
-                        <div className="sets-box">
-                            <label className="sets-label">Race to Sets:</label>
+                            <label className="sets-toggle-label">
                             <input
+                                type="checkbox"
+                                checked={enableSets}
+                                onChange={(e) => handleToggleSets(e.target.checked)}
+                            />
+                                Enable Sets
+                            </label>
+                        </div>
+                        
+                        {enableSets && (
+                            <div className="sets-box">
+                            <div className="sets-info-box">
+                                <label className="sets-label">Best of (Sets):</label>
+                                <button type="button" className="sets-icon">i</button>
+                            </div>
+
+                            <div className="sets-info-box">
+                                <input
                                 className="sets-input"
                                 type="text"
                                 inputMode="numeric"
-                                pattern="^[1-9][0-9]*$"
+                                pattern="^\d*$"
                                 value={sets}
-                                onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d*$/.test(val)) {
-                                    setSets(val);
-                                }
-                                }}
+                                onChange={handleChange}
                                 required
-                                title="Please enter a number greater than 0."
-                            />
-                        </div>
+                                title="Please enter a positive odd number greater than or equal to 3."
+                                />
+                            </div>
+
+                            {oddWarning && <p className="warning-css">{oddWarning}</p>}
+                            </div>
+                        )}
                     </div>
 
 
@@ -169,26 +254,29 @@ const Select: React.FC = () => {
             </div>
 
             {lagPopup && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                    <p className="lag-text">Players, lag for break at this time.</p>
-                    <p className="lag-winner-text">Pick a lag winner:</p>
-                    <div className="lag-button-box">
-                        <button className={`player1-lag-button ${lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
-                        {player1 || 'player1'}
+                <div className="modal-overlay" onClick={() => {setLagPopup(false)}}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="lag-text">Players, lag for break at this time.</p>
+                        <p className="lag-winner-text">Pick a lag winner:</p>
+                        <div className="lag-button-box">
+                            <button className={`player1-lag-button ${ lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
+                                {player1 || 'Player1'}
+                            </button>
+                                
+                            <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
+                                {player2 || 'Player2'}
+                            </button>
+                        </div>
+
+                        <button className="continue-button" disabled={!lagWinnerSelected}
+                            onClick={() => {
+                                setLagPopup(false);
+                                const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
+                                submitMatch(lagName);
+                            }}
+                        >
+                            Continue
                         </button>
-                        <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
-                        {player2 || 'player2'}
-                        </button>
-                    </div>
-                    <button className="continue-button" disabled={!lagWinnerSelected} onClick={() => {
-                        setLagPopup(false);
-                        const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                        submitMatch(lagName);
-                        }}
-                    >
-                        Continue
-                    </button>
                     </div>
                 </div>
             )}

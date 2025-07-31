@@ -289,7 +289,7 @@ const Tracker: React.FC = () => {
     const handleConfigureGame = async () => {
         await updatePoolMatch(player1Score, player2Score);
 
-        router.push(`/configure/8-ball?matchID=${matchID}`);
+        router.push(`/configure/pool-games?matchID=${matchID}`);
     }
 
     const goToHistory = async () => {
@@ -540,9 +540,6 @@ const Tracker: React.FC = () => {
                         <div className="winner-button-box">
                             <button className="winner-button" onClick={handleExit}>
                                 exit match
-                            </button>
-                            <button className="winner-button">
-                                continue match
                             </button>
                         </div>
                     </div>

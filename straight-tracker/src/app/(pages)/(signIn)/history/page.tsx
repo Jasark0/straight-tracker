@@ -93,6 +93,24 @@ export default function History() {
         }
     }
 
+    const continuePoolMatchPage = (match: PoolMatch) => {
+        switch (match.game_type){
+            case 0:
+                router.push(`/tracker/8-ball?matchID=${match.match_id}`);
+                break;
+            case 1:
+                router.push(`/tracker/9-ball?matchID=${match.match_id}`);
+                break;
+            case 2:
+                router.push(`/tracker/10-ball?matchID=${match.match_id}`);
+                break;
+        }
+    }
+
+    const continueStraightMatchPage = (match: StraightMatch) => {
+        router.push(`/tracker/straight-pool?matchID=${match.match_id}`);
+    }
+
     const gameTypeMap: Record<string, number | "straight"> = {
         "8-Ball": 0,
         "9-Ball": 1,
@@ -309,7 +327,7 @@ export default function History() {
                                                         </span>
                                                         <span className="history-button-box">
                                                             {match.winner === null && (
-                                                                <button className="history-button continue" onClick={() => router.push(`/tracker/8-ball?matchID=${match.match_id}`)}>
+                                                                <button className="history-button continue" onClick={() => continuePoolMatchPage(match)}>
                                                                     Continue Match
                                                                 </button>
                                                             )}
@@ -355,7 +373,7 @@ export default function History() {
                                                         </span>
                                                         <span className="history-button-box">
                                                             {match.winner === null && (
-                                                                <button className="history-button continue" onClick={() => router.push(`/tracker/straight-pool?matchID=${match.match_id}`)}>
+                                                                <button className="history-button continue" onClick={() => {continueStraightMatchPage(match)}}>
                                                                     Continue Match
                                                                 </button>
                                                             )}
