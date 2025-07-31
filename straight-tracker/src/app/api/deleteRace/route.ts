@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client'
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 
 export async function DELETE(req: Request) {
     try {
@@ -10,7 +10,7 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: 'Missing raceID' }, { status: 400 });
         }
 
-        const { data: raceData, error: fetchError } = await supabase
+        const { data: raceData, error: fetchError } = await supabaseAdmin
             .from('pool_matches_race')
             .select('match_id')
             .eq('id', raceID)
@@ -22,7 +22,7 @@ export async function DELETE(req: Request) {
 
         const matchId = raceData.match_id;
 
-        const { error: deleteError } = await supabase
+        const { error: deleteError } = await supabaseAdmin
             .from('pool_matches_race')
             .delete()
             .eq('id', raceID);
@@ -31,7 +31,7 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: deleteError.message }, { status: 500 });
         }
 
-        const { data: latestRace } = await supabase
+        const { data: latestRace } = await supabaseAdmin
             .from('pool_matches_race')
             .select('id')
             .eq('match_id', matchId)
@@ -40,7 +40,7 @@ export async function DELETE(req: Request) {
             .single();
 
         if (latestRace){
-            await supabase
+            await supabaseAdmin
                 .from('pool_matches_race')
                 .update({ winner: null })
                 .eq('id', latestRace.id);

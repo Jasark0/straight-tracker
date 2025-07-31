@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client'
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 
 export async function POST(req: Request) {
     try{
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
         .from('straight_pool_matches')
         .update({ to_shoot, rack, remaining_balls, player1_score, player1_high_run, player1_curr_run, player2_score, player2_high_run, player2_curr_run })
         .eq('match_id', match_id);

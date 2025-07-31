@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client';
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { getUserSession } from '@/actions/auth';
 
 export async function GET(req: Request) {
@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const email = user?.email;
 
     
-    const { data: nickname, error: profileError } = await supabase
+    const { data: nickname, error: profileError } = await supabaseAdmin
         .from('profiles')
         .select('nickname')
         .eq('email', email)

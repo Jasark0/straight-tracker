@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client'
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { getUserSession } from '@/actions/auth';
 
 export async function POST(req: Request) {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     const email = user?.email;
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
         .select('username')
         .eq('email', email)
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     let finalGameName = game_name;
     
     if (!finalGameName) {
-        const { count, error: countError } = await supabase
+        const { count, error: countError } = await supabaseAdmin
         .from('straight_pool_matches')
         .select('match_id', { count: 'exact' })
         .eq('username', username)
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     const finalPlayer2 = player2?.trim() ? player2 : "Player2";
     const selectedLagWinner = lag_winner?.trim() ? lag_winner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
     
-    const { data: matchData, error: matchError } = await supabase
+    const { data: matchData, error: matchError } = await supabaseAdmin
     .from('straight_pool_matches')
     .insert([
         {

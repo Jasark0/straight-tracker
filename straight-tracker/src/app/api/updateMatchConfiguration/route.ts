@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client';
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { getUserSession } from '@/actions/auth';
 
 class ValidationError extends Error {
@@ -36,7 +36,7 @@ export async function PATCH(req: Request) {
     
         const email = user?.email;
     
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile, error: profileError } = await supabaseAdmin
             .from('profiles')
             .select('username')
             .eq('email', email)
@@ -48,7 +48,7 @@ export async function PATCH(req: Request) {
     
         const username = profile.username;
 
-        const { data: existingSets, error: setsCheckError } = await supabase
+        const { data: existingSets, error: setsCheckError } = await supabaseAdmin
             .from('pool_matches_sets')
             .select('match_id')
             .eq('match_id', matchID);
@@ -59,7 +59,7 @@ export async function PATCH(req: Request) {
 
         const wasSetsEnabled = existingSets && existingSets.length > 0;
 
-        const { data: allRaces, error: fetchRacesError } = await supabase
+        const { data: allRaces, error: fetchRacesError } = await supabaseAdmin
             .from('pool_matches_race')
             .select('player1_score, player2_score, winner')
             .eq('match_id', matchID);
@@ -96,7 +96,7 @@ export async function PATCH(req: Request) {
             }
         }
 
-        const { data: matchData, error: matchError } = await supabase
+        const { data: matchData, error: matchError } = await supabaseAdmin
         .from('pool_matches')
         .update([
             {
@@ -120,7 +120,7 @@ export async function PATCH(req: Request) {
 
         // No sets -> Enable sets
         if (!wasSetsEnabled && enableSets) {
-            const { error: insertError } = await supabase
+            const { error: insertError } = await supabaseAdmin
                 .from('pool_matches_sets')
                 .insert({
                     match_id: matchID,
@@ -134,17 +134,17 @@ export async function PATCH(req: Request) {
 
         // Enable Sets -> No sets
         else if (wasSetsEnabled && !enableSets) {
-            await supabase
+            await supabaseAdmin
                 .from('pool_matches_sets')
                 .delete()
                 .eq('match_id', matchID);
 
-            await supabase
+            await supabaseAdmin
                 .from('pool_matches_race')
                 .delete()
                 .eq('match_id', matchID);
             
-            const { error: insertRaceError } = await supabase
+            const { error: insertRaceError } = await supabaseAdmin
                 .from('pool_matches_race')
                 .insert({
                     match_id: matchID,
@@ -156,7 +156,7 @@ export async function PATCH(req: Request) {
                 return NextResponse.json({ error: 'Failed to insert new combined race' }, { status: 500 });
             }
         } else if (wasSetsEnabled && enableSets) {
-            const { error: updateSetError } = await supabase
+            const { error: updateSetError } = await supabaseAdmin
                 .from('pool_matches_sets')
                 .update({ sets: parseInt(sets) })
                 .eq('match_id', matchID);
