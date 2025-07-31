@@ -541,6 +541,18 @@ const Tracker: React.FC = () => {
         }
     }
 
+    const handleConfigureGame = async () => {
+        await updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
+
+        router.push(`/configure/straight-pool?matchID=${matchID}`);
+    }
+
+    const goToHistory = async () => {
+        await updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
+
+        router.push('/history');
+    }
+
     const handleExit = () => {
         const winnerValue = winner;
         handleWinner(winnerValue);
@@ -662,6 +674,14 @@ const Tracker: React.FC = () => {
         <div className="s-main-container">
             <Header></Header>
             <ToastContainer className="s-toast-warning"/>
+
+            <div className="hamburger-container">
+                <img src="/hamburger-menu.png" className="hamburger-icon" />
+                <div className="dropdown-menu">
+                    <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
+                    <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
+                </div>
+            </div>
 
             <p className="s-game-name-text">
                 Game Name: {gameName}
