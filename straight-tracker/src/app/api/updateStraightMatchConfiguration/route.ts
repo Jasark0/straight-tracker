@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client';
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { getUserSession } from '@/actions/auth';
 
 class ValidationError extends Error {
@@ -31,7 +31,7 @@ export async function PATCH(req: Request) {
     
         const email = user?.email;
     
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile, error: profileError } = await supabaseAdmin
             .from('profiles')
             .select('username')
             .eq('email', email)
@@ -43,7 +43,7 @@ export async function PATCH(req: Request) {
     
         const username = profile.username;
 
-        const { data: matchData, error: matchError } = await supabase
+        const { data: matchData, error: matchError } = await supabaseAdmin
         .from('straight_pool_matches')
         .update([
             {

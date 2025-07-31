@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client';
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { getUserSession } from '@/actions/auth';
 
 export async function GET(req: Request) {
@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const user = session?.user;
     const email = user?.email;
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
         .select('username')
         .eq('email', email)
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
     const username = profile.username;
 
-    const { data: allPoolMatches, error: matchesError } = await supabase
+    const { data: allPoolMatches, error: matchesError } = await supabaseAdmin
         .from('pool_matches')
         .select(`
             match_id,
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
 
-    const { data: allStraightMatches, error: straightMatchesError } = await supabase
+    const { data: allStraightMatches, error: straightMatchesError } = await supabaseAdmin
         .from('straight_pool_matches')
         .select(`
             match_id,

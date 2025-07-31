@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client'
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 
 export async function POST(req: Request) {
     try{
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
             updateData.winner = winner;
         }
 
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
         .from('pool_matches_race')
         .update(updateData)
         .eq('id', id);

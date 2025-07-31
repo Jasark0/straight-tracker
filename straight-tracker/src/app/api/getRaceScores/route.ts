@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../client';
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 
 export async function GET(req: Request) {
   try{
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Missing raceID' }, { status: 400 });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('pool_matches_race')
       .select('player1_score, player2_score')
       .eq('id', raceID)
