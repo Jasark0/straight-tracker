@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
 import { getUserSession, signOut } from '@/actions/auth';
 import { toast } from 'react-toastify';
@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
     const [user, setUser] = useState<any>(null);
     const [profileHovered, setProfileHovered] = useState(false);
 
@@ -84,12 +86,23 @@ export default function Home() {
             });
 
             const text = await res.text();
-            toast.success("Thank you for contacting us! We will read your suggestion/inquiry thoroughly and get back to you as soon as we can.");
+            if (text){
+                router.replace(window.location.pathname + '?success=1');
+            }
         } 
         catch (err){
             toast.error("Failed to send message.");
         }
     };
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('success') === '1') {
+            toast.success("Thank you for contacting us! We will read your suggestion/inquiry thoroughly and get back to you as soon as we can!");
+            
+            router.replace(window.location.pathname);
+        }
+    }, [searchParams]);
 
     return !isLoading && (
         <div className="home-page-container">

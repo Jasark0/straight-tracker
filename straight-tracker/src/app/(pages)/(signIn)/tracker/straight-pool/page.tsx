@@ -559,6 +559,23 @@ const Tracker: React.FC = () => {
         router.push('/history');
     }
 
+    useEffect(() => { //Toastify notification on configuring match success
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('success') === '1') {
+            toast.success("Match config updated successfully.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+
+            params.delete('success');
+            router.replace(`${window.location.pathname}?${params.toString()}`);
+        }
+    }, [])
+
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
@@ -656,112 +673,114 @@ const Tracker: React.FC = () => {
         };
     }, [matchID, toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
 
-    if (loading){ //Loading screen
-        return (
-            <div className="page-box">
-                <div className="loading-screen">
-                    <Header/>
-                    <div className="loading-content">
-                        <p>Loading match info...</p>
-                        <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="s-main-container">
             <Header></Header>
             <ToastContainer className="s-toast-warning"/>
 
-            <div className="hamburger-container">
-                <img src="/hamburger-menu.png" className="hamburger-icon" />
-                <div className="dropdown-menu">
-                    <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
-                    <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
-                </div>
-            </div>
-
-            <p className="s-game-name-text">
-                Game Name: {gameName}
-            </p>
-            <p className="s-race-to-text">
-                Race To: {raceTo} Balls
-            </p>
-
-            <img src="/divider.png" className="s-tracker-divider-css"></img>
-
-            <div className="s-player-container">
-                <div className="s-player1-container">
-                    <p id = "player1" className="s-player1-name">{player1}</p>
-                    <div className="s-score-container">
-                        <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
-                        <p className="s-player1-score">{player1Score}</p>
-                        <div className="s-increment-container">
-                            <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
-                            <div className="CR-container">
-                                <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
-                                <button className="CR-icon">i</button>
-                            </div>
+            {loading && (
+                <div className="page-box">
+                    <div className="loading-screen">
+                        <Header/>
+                        <div className="loading-content">
+                            <p>Loading match info...</p>
+                            <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
                         </div>
                     </div>
-        
-                    <div className="high-style player1-high-run">
-                        High Run: {player1HighRun}
-                    </div>
-                    <div className="high-style player1-curr-high-run">
-                        Current Run: {player1CurrRun}
-                    </div>
                 </div>
+            )}
 
-                <div className="remaining-turn-container">
-                    <div className="remaining-balls-container">
-                        <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
-                        <p className="remaining-balls-style">Remaining Balls</p>
-                        <p className="rack-number">(Rack {rack})</p>
+            {!loading && (
+                <>
+                    <div className="hamburger-container">
+                        <img src="/hamburger-menu.png" className="hamburger-icon" />
+                        <div className="dropdown-menu">
+                            <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
+                            <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
+                        </div>
                     </div>
-                    <p className="s-to-shoot-text"> 
-                        {toShoot} to shoot!
+
+                    <p className="s-game-name-text">
+                        Game Name: {gameName}
                     </p>
-                    <div className="arrow-container">
-                        <img src={toShoot === player1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
-                        <div className="player-turn-text-style" id="player-turn-text">
-                        </div>
-                        <div className="player-swap-text-container">
-                            <div className="player-swap-text-style">
-                                (Press 
-                            </div>
-                            <div className="player-swap-spacebar-text-style">
-                                spacebar
-                            </div>
-                            <div className="player-swap-text-style">
-                                to swap turn)
-                            </div>
-                        </div>
-                    </div>
-                    <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
-                </div>
+                    <p className="s-race-to-text">
+                        Race To: {raceTo} Balls
+                    </p>
 
-                <div className="s-player2-container">
-                    <p id = "player2" className="s-player2-name">{player2}</p>
-                    <div className="s-score-container">
-                        <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
-                        <p className="s-player2-score">{player2Score}</p>
-                        <div className="s-increment-container">
-                            <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
-                            <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
-                        </div>     
-                    </div>
+                    <img src="/divider.png" className="s-tracker-divider-css"></img>
 
-                    <div className="high-style player2-high-run">
-                        High Run: {player2HighRun}
+                    <div className="s-player-container">
+                        <div className="s-player1-container">
+                            <p id = "player1" className="s-player1-name">{player1}</p>
+                            <div className="s-score-container">
+                                <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
+                                <p className="s-player1-score">{player1Score}</p>
+                                <div className="s-increment-container">
+                                    <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
+                                    <div className="CR-container">
+                                        <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
+                                        <button className="CR-icon">i</button>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div className="high-style player1-high-run">
+                                High Run: {player1HighRun}
+                            </div>
+                            <div className="high-style player1-curr-high-run">
+                                Current Run: {player1CurrRun}
+                            </div>
+                        </div>
+
+                        <div className="remaining-turn-container">
+                            <div className="remaining-balls-container">
+                                <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
+                                <p className="remaining-balls-style">Remaining Balls</p>
+                                <p className="rack-number">(Rack {rack})</p>
+                            </div>
+                            <p className="s-to-shoot-text"> 
+                                {toShoot} to shoot!
+                            </p>
+                            <div className="arrow-container">
+                                <img src={toShoot === player1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
+                                <div className="player-turn-text-style" id="player-turn-text">
+                                </div>
+                                <div className="player-swap-text-container">
+                                    <div className="player-swap-text-style">
+                                        (Press 
+                                    </div>
+                                    <div className="player-swap-spacebar-text-style">
+                                        spacebar
+                                    </div>
+                                    <div className="player-swap-text-style">
+                                        to swap turn)
+                                    </div>
+                                </div>
+                            </div>
+                            <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                        </div>
+
+                        <div className="s-player2-container">
+                            <p id = "player2" className="s-player2-name">{player2}</p>
+                            <div className="s-score-container">
+                                <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
+                                <p className="s-player2-score">{player2Score}</p>
+                                <div className="s-increment-container">
+                                    <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
+                                    <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
+                                </div>     
+                            </div>
+
+                            <div className="high-style player2-high-run">
+                                High Run: {player2HighRun}
+                            </div>
+                            <div className="high-style player2-curr-high-run">
+                                Current High Run: {player2CurrRun}
+                            </div>
+                        </div>
                     </div>
-                    <div className="high-style player2-curr-high-run">
-                        Current High Run: {player2CurrRun}
-                    </div>
-                </div>
-            </div>
+                </>
+            )}
 
             {winner && (
                 <div className="winner-modal">

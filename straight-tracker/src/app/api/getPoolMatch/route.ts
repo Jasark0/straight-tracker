@@ -4,25 +4,10 @@ import { getUserSession } from '@/actions/auth';
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
-    const game_type = searchParams.get('gameType');
     const match_id = searchParams.get('matchID');
 
-    if (!game_type || !match_id) {
+    if (!match_id) {
         return NextResponse.json({ error: 'Missing game type/match ID' }, { status: 400 });
-    }
-
-    let finalGameType;
-
-    switch (parseInt(game_type)){
-        case 8:
-            finalGameType = 0;
-            break;
-        case 9:
-            finalGameType = 1;
-            break;
-        case 10:
-            finalGameType = 2;
-            break;
     }
 
     const session = await getUserSession();
@@ -49,7 +34,7 @@ export async function GET(req: Request) {
         .eq('username', username)
         .single();
 
-    if (matchError || !poolMatch || poolMatch.winner != null || poolMatch.game_type != finalGameType) {
+    if (matchError || !poolMatch || poolMatch.winner != null ) {
         return NextResponse.json({ redirect: '/history' });
     }
 

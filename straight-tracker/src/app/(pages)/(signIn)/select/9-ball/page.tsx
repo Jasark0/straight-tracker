@@ -110,7 +110,7 @@ const Select: React.FC = () => {
 
             const result = await res.json();
 
-            router.push(`/tracker/9-ball?matchID=${result.match_id}`);
+            router.push(`/tracker/pool-games?matchID=${result.match_id}`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }

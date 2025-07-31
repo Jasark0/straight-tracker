@@ -14,10 +14,11 @@ export async function POST(req: Request){
         });
 
         const mailOptions = {
-            from: email,
+            from: 'straighttrackerinfo@gmail.com',
             to: 'straighttrackerinfo@gmail.com',
+            replyTo: email,
             subject: `Suggestion from ${name}`,
-            text: message,
+            text: "Name: " + name + "\n" + "Email: " + email + "\n\n" + message,
         };
 
         await transporter.sendMail(mailOptions);

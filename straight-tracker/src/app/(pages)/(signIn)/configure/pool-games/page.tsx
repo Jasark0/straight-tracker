@@ -229,21 +229,7 @@ const Select: React.FC = () => {
                 }
             }
 
-            let finalGameType;
-
-            switch (gameType){
-                case 0:
-                    finalGameType = 8;
-                    break;
-                case 1:
-                    finalGameType = 9;
-                    break;
-                case 2:
-                    finalGameType = 10;
-                    break;
-            }
-
-            router.push(`/tracker/${finalGameType}-ball?matchID=${matchID}`);
+            router.push(`/tracker/pool-games?matchID=${matchID}&success=1`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }
@@ -304,7 +290,7 @@ const Select: React.FC = () => {
     }
 
     const handleReturnToTracker = () => {
-        router.push(`/tracker/8-ball?matchID=${matchID}`);
+        router.push(`/tracker/pool-games?matchID=${matchID}`);
     }
 
     useEffect(() => { //Get match info

@@ -92,22 +92,8 @@ export default function History() {
         }
     }
 
-    const continuePoolMatchPage = (match: PoolMatch) => {
-        let finalGameType;
-
-        switch (match.game_type){
-            case 0:
-                finalGameType = 8;
-                break;
-            case 1:
-                finalGameType = 9;
-                break;
-            case 2:
-                finalGameType = 10;
-                break;
-        }
-        
-        router.push(`/tracker/${finalGameType}-ball?matchID=${match.match_id}`);
+    const continuePoolMatchPage = (match: PoolMatch) => {    
+        router.push(`/tracker/pool-games?matchID=${match.match_id}`);
     }
 
     const continueStraightMatchPage = (match: StraightMatch) => {
@@ -227,8 +213,10 @@ export default function History() {
             <Header className={`home-title-box ${showSelectModal ? "blurred" : ""}`}>
             </Header>
             <div className={`history-box ${showSelectModal ? "blurred" : ""}`}>
-                <button className="new-game" onClick={() => setShowSelectModal(true)}>+ New Game</button>
-
+                <div className="new-game-container">
+                    <button className="new-game" onClick={() => setShowSelectModal(true)}>+ New Game</button>
+                </div>
+                
                 <div className="display-history-container">
                     <div className="filter-box">
                         <p className="filter-game-text">Game to display:</p>

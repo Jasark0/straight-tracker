@@ -1,16 +1,18 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Header from '@/src/components/Header';
 
 const Tracker: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
-
     const searchParams = useSearchParams();
+
     const matchID = searchParams.get('matchID');
     const [id, setId] = useState<number>();
     const [gameName, setGameName] = useState('');
@@ -304,6 +306,23 @@ const Tracker: React.FC = () => {
         router.push('/history');
     }
 
+    useEffect(() => { //Toastify notification on configuring match success
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('success') === '1') {
+            toast.success("Match config updated successfully.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+            });
+
+            params.delete('success');
+            router.replace(`${window.location.pathname}?${params.toString()}`);
+        }
+    }, [])
+
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
@@ -369,7 +388,6 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Updating database with scores on reload & leaving tab
         if (!id) return;
 
-        
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
                 const payload = JSON.stringify({
@@ -391,146 +409,147 @@ const Tracker: React.FC = () => {
         };
     }, [id, player1Score, player2Score]);
 
-    if (loading){ //Loading screen
-        return (
-            <div className="page-box">
-                <div className="loading-screen">
-                    <Header/>
-                    <div className="loading-content">
-                        <p>Loading match info...</p>
-                        <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
 
     return (
         <div className="tracker-page-box">
+            <ToastContainer className="s-toast-warning"/>
             <Header></Header>
-            <div className="tracker-box">
-                <div className="game-name-box">
-                    <div className="hamburger-container">
-                        <img src="/hamburger-menu.png" className="hamburger-icon" />
-                        <div className="dropdown-menu">
-                            <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
-                            <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
+    
+            {loading && (
+                <div className="page-box">
+                    <div className="loading-screen">
+                        <div className="loading-content">
+                            <p>Loading match info...</p>
+                            <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
                         </div>
                     </div>
-                    <p className="game-name-text">
-                        {gameName}  
-                    </p>
                 </div>
-                
-                <div className="race-text-box">
-                    <p className="race-text">Race to {raceTo}</p>
-                    {sets && (
-                        <div className="race-text-box">
-                            <p className="race-text">-</p>
-                            <p className="race-text">Best of {sets} Sets</p>
-                        </div>
-                    )}
-                </div>
-                
-                
-                <div className="rack-box">
-                    <p className="rack-text">
-                        (
-                    </p>
-                    {sets !== undefined && (
-                        <div className="rack-box">
-                            <p className="rack-text">
-                                Set {player1Set !== undefined && player2Set !== undefined ? player1Set + player2Set + 1: 1}
-                            </p>
+            )}
 
-                            <p className="rack-text">
-                                -
-                            </p>
-                        </div>
-                    )}
-                    
-                    <p className="rack-text">
-                        Rack {player1Score + player2Score + 1}
-                    </p>
-
-                    <p className="rack-text">
-                        )
-                    </p>
-                </div>
-
-                <img src="/divider.png" className="tracker-divider-css"></img>
-
-                <div className="to-break-box">
-                    <p className="to-break-player-text">
-                        {toBreak}
-                    </p>
-                    
-                    <p className="to-break-text">
-                        to break!
-                    </p>
-                </div>
-                
-                
-                <div className="score-box">
-                    <div className="player1-box">
-                        <p className="player1-text">
-                            {player1}
-                        </p>
-
-                        <div className="player1-score-box">
-                            <p className="player1-score">
-                                {player1Score}
-                            </p>
-                            <button className="player1-increment" onClick={incrementPlayer1}>
-                                +
-                            </button>
-                        </div>
-
-                        {sets && (
-                            <div className="player1-sets-box">
-                                <p className="player1-set">
-                                    {player1Set}
-                                </p>
-                                <p className="player1-set-text">
-                                    Sets
-                                </p>
+            {!loading && (
+                <div className="tracker-box">
+                    <div className="game-name-box">
+                        <div className="hamburger-container">
+                            <img src="/hamburger-menu.png" className="hamburger-icon"/>
+                            <div className="dropdown-menu">
+                                <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
+                                <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
                             </div>
-                        )}    
-                    </div>
-
-                    <div className="player2-box">
-                        <p className="player2-text">
-                            {player2}
-                        </p>
-
-                        <div className="player2-score-box">
-                            <p className="player2-score">
-                                {player2Score}
-                            </p>
-                            <button className="player2-increment" onClick={incrementPlayer2}>
-                                +
-                            </button>
                         </div>
-
+                        <p className="game-name-text">
+                            {gameName}  
+                        </p>
+                    </div>
+                    
+                    <div className="race-text-box">
+                        <p className="race-text">Race to {raceTo}</p>
                         {sets && (
-                            <div className="player2-sets-box">
-                                <p className="player2-set">
-                                    {player2Set}
-                                </p>
-                                <p className="player2-set-text"> 
-                                    Sets
-                                </p>
+                            <div className="race-text-box">
+                                <p className="race-text">-</p>
+                                <p className="race-text">Best of {sets} Sets</p>
                             </div>
                         )}
                     </div>
-                </div>
-            
+                    
+                    
+                    <div className="rack-box">
+                        <p className="rack-text">
+                            (
+                        </p>
+                        {sets !== undefined && (
+                            <div className="rack-box">
+                                <p className="rack-text">
+                                    Set {player1Set !== undefined && player2Set !== undefined ? player1Set + player2Set + 1: 1}
+                                </p>
 
-                <div className={sets ? 'undo-set-box' : 'undo-box'}>
-                    <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
-                </div>
-            </div>
+                                <p className="rack-text">
+                                    -
+                                </p>
+                            </div>
+                        )}
+                        
+                        <p className="rack-text">
+                            Rack {player1Score + player2Score + 1}
+                        </p>
+
+                        <p className="rack-text">
+                            )
+                        </p>
+                    </div>
+
+                    <img src="/divider.png" className="tracker-divider-css"></img>
+
+                    <div className="to-break-box">
+                        <p className="to-break-player-text">
+                            {toBreak}
+                        </p>
+                        
+                        <p className="to-break-text">
+                            to break!
+                        </p>
+                    </div>
+                    
+                    
+                    <div className="score-box">
+                        <div className="player1-box">
+                            <p className="player1-text">
+                                {player1}
+                            </p>
+
+                            <div className="player1-score-box">
+                                <p className="player1-score">
+                                    {player1Score}
+                                </p>
+                                <button className="player1-increment" onClick={incrementPlayer1}>
+                                    +
+                                </button>
+                            </div>
+
+                            {sets && (
+                                <div className="player1-sets-box">
+                                    <p className="player1-set">
+                                        {player1Set}
+                                    </p>
+                                    <p className="player1-set-text">
+                                        Sets
+                                    </p>
+                                </div>
+                            )}    
+                        </div>
+
+                        <div className="player2-box">
+                            <p className="player2-text">
+                                {player2}
+                            </p>
+
+                            <div className="player2-score-box">
+                                <p className="player2-score">
+                                    {player2Score}
+                                </p>
+                                <button className="player2-increment" onClick={incrementPlayer2}>
+                                    +
+                                </button>
+                            </div>
+
+                            {sets && (
+                                <div className="player2-sets-box">
+                                    <p className="player2-set">
+                                        {player2Set}
+                                    </p>
+                                    <p className="player2-set-text"> 
+                                        Sets
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                
+
+                    <div className={sets ? 'undo-set-box' : 'undo-box'}>
+                        <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                    </div>
+                </div>     
+            )}
 
             {winner && (
                 <div className="winner-modal">
@@ -549,7 +568,6 @@ const Tracker: React.FC = () => {
                     </div>
                 </div>
             )}
-
         </div>
 
     )

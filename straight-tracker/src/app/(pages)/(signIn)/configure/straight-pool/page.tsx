@@ -152,7 +152,7 @@ const Select: React.FC = () => {
                 }
             }
 
-            router.push(`/tracker/straight-pool?matchID=${matchID}`);
+            router.push(`/tracker/straight-pool?matchID=${matchID}&success=1`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }

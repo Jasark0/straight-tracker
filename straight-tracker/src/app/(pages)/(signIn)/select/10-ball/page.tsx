@@ -110,7 +110,7 @@ const Select: React.FC = () => {
 
             const result = await res.json();
 
-            router.push(`/tracker/10-ball?matchID=${result.match_id}`);
+            router.push(`/tracker/pool-games?matchID=${result.match_id}`);
         } catch (err) {
             console.error('Unexpected error:', err);
         }
@@ -138,7 +138,6 @@ const Select: React.FC = () => {
     }, []);
 
     return !isLoading && (
-        //
         <div className="select-page-box">
             <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <ToastContainer/>
