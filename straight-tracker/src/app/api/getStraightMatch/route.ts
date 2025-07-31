@@ -35,6 +35,7 @@ export async function GET(req: Request) {
             player2,
             race_to,
             to_shoot,
+            lag_winner,
             rack,
             remaining_balls,
             player1_score,

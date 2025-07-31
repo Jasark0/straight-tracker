@@ -21,7 +21,9 @@ export async function PATCH(req: Request) {
             game_name,
             player1,
             player2,
-            race_to
+            race_to,
+            lag_winner,
+            to_shoot
         } = body;
     
         const session = await getUserSession();
@@ -50,6 +52,8 @@ export async function PATCH(req: Request) {
                 player1: player1,
                 player2: player2,
                 race_to: parseInt(race_to),
+                lag_winner: lag_winner,
+                to_shoot: to_shoot,
                 winner: null,
             },
         ])

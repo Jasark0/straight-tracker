@@ -18,6 +18,8 @@ const Select: React.FC = () => {
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState('5');
     const [raceWarning, setRaceWarning] = useState('');
+    const [toShoot, setToShoot] = useState('');
+    const [lagWinner, setLagWinner] = useState('');
 
     const [lagPopup, setLagPopup] = useState(false);
 
@@ -40,6 +42,7 @@ const Select: React.FC = () => {
         "player2": "",
         "race_to": 0,
         "to_shoot": "",
+        "lag_winner": "",
         "rack": 1,
         "remaining_balls": 15,
         "player1_score": 0,
@@ -98,8 +101,16 @@ const Select: React.FC = () => {
 
     const updatePlayerName = async (player: number, newName: string) => {
         if(player == 1) {
+            if(lagWinner === player1)
+                setLagWinner(newName);
+            if(toShoot === player1)
+                setToShoot(newName);
             setPlayer1(newName);
         } else if(player == 2) {
+            if(lagWinner === player2)
+                setLagWinner(newName);
+            if(toShoot === player2)
+                setToShoot(newName);
             setPlayer2(newName);
         }
     }
@@ -117,7 +128,9 @@ const Select: React.FC = () => {
                     game_name: gameName,
                     player1: player1,
                     player2: player2,
-                    race_to: parseInt(raceTo)
+                    race_to: parseInt(raceTo),
+                    lag_winner: lagWinner,
+                    to_shoot: toShoot
                 }),
             });
 
@@ -213,6 +226,8 @@ const Select: React.FC = () => {
                 setPlayer1(json.straightMatch.player1);
                 setPlayer2(json.straightMatch.player2);
                 setRaceTo(json.straightMatch.race_to);
+                setToShoot(json.straightMatch.to_shoot);
+                setLagWinner(json.straightMatch.lag_winner);
                 setPlayer1Score(json.straightMatch.player1_score);
                 setPlayer2Score(json.straightMatch.player2_score);
             }
