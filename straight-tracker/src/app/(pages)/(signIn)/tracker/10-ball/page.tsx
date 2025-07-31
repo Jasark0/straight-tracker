@@ -2,12 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import Header from '@/src/components/Header';
 
 const Tracker: React.FC = () => {
     const router = useRouter();
+    const pathname = usePathname();
 
     const searchParams = useSearchParams();
     const matchID = searchParams.get('matchID');
@@ -307,7 +308,11 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
-                const res = await fetch(`/api/getPoolMatch?matchID=${matchID}`);
+                const segments = pathname.split('/');
+                const URLGameType = segments[2]; 
+                const URLGameTypeNumber = URLGameType?.split('-')[0];
+
+                const res = await fetch(`/api/getPoolMatch?matchID=${matchID}&gameType=${parseInt(URLGameTypeNumber)}`);
                 const json = await res.json();
                 
                 if (json.redirect) {

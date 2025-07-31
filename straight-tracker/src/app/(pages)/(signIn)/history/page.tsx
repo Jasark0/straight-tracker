@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useMemo } from 'react'
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import Header from '@/src/components/Header';
