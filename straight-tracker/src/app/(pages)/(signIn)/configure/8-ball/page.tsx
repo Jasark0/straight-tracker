@@ -107,7 +107,7 @@ const Select: React.FC = () => {
     const handleToggleSets = (checked: boolean) => {
         setEnableSets(checked);
         if (checked){
-            setSets(oldMatchInfo.matchSets.sets.toString());
+            setSets(oldMatchInfo.matchSets?.sets.toString());
         }   
         else{
             setSets('');
@@ -117,7 +117,6 @@ const Select: React.FC = () => {
     const handleNewRace = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
 
-
         if (/^\d*$/.test(val)) {
             setRaceTo(val);
             
@@ -126,7 +125,8 @@ const Select: React.FC = () => {
             } 
             else{
                 const num = parseInt(val);
-                if (oldMatchInfo.matchSets == undefined && num < minRaceVal){
+
+                if (!(oldMatchInfo.matchSets !== null && !enableSets) && num < minRaceVal){
                     setRaceWarning(`New race to value too small.  Minimum value is ${minRaceVal}`);
                 } else {
                     setRaceWarning('');
@@ -159,21 +159,29 @@ const Select: React.FC = () => {
             });
             return;
         }
-        
+
         await updateMatchConfig(null);
+
+        toast.success("Match config updated successfully.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+        });
     };
 
     const updatePlayerName = async (player: number, newName: string) => {
-        if(player == 1) {
-            if(lagWinner == player1)
+        if(player === 1) {
+            if(lagWinner === player1)
                 setLagWinner(newName);
-            if(toBreak == player1)
+            if(toBreak === player1)
                 setToBreak(newName);
             setPlayer1(newName);
-        } else if(player == 2) {
-            if(lagWinner == player2)
+        } else if(player === 2) {
+            if(lagWinner === player2)
                 setLagWinner(newName);
-            if(toBreak == player2)
+            if(toBreak === player2)
                 setToBreak(newName);
             setPlayer2(newName);
         }
@@ -194,7 +202,7 @@ const Select: React.FC = () => {
                     player1: player1,
                     player2: player2,
                     race_to: parseInt(raceTo),
-                    break_format: breakFormat == "Winner Breaks" ? 0 : 1,
+                    break_format: breakFormat === "Winner Breaks" ? 0 : 1,
                     lag_winner: finalLagWinner,
                     to_break: toBreak,
                     enableSets: enableSets,
@@ -205,7 +213,7 @@ const Select: React.FC = () => {
             if (!res.ok) {
                 const { type, error } = await res.json();
                 if (type === 'validation_error') {
-                    console.warn('Validation failed:', error);
+                    console.error('Validation failed:', error);
                     toast.error(error, {
                         position: "top-right",
                         autoClose: 3000,
@@ -266,13 +274,13 @@ const Select: React.FC = () => {
     const determineShowBackVerification = () => {
         // check to make sure no values have been changed
         if((
-            gameName == oldMatchInfo.poolMatch.game_name &&
-            player1 == oldMatchInfo.poolMatch.player1 &&
-            player2 == oldMatchInfo.poolMatch.player2 &&
-            parseInt(raceTo) == oldMatchInfo.poolMatch.race_to &&
-            enableSets == (oldMatchInfo.matchSets != null) &&
-            breakFormat == (oldMatchInfo.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks"))) {
-            if((!enableSets || (enableSets && parseInt(sets) == oldMatchInfo.matchSets.sets))) {
+            gameName === oldMatchInfo.poolMatch.game_name &&
+            player1 === oldMatchInfo.poolMatch.player1 &&
+            player2 === oldMatchInfo.poolMatch.player2 &&
+            parseInt(raceTo) === oldMatchInfo.poolMatch.race_to &&
+            enableSets === (oldMatchInfo.matchSets != null) &&
+            breakFormat === (oldMatchInfo.poolMatch.break_format === 0 ? "Winner Breaks" : "Alternate Breaks"))) {
+            if((!enableSets || (enableSets && parseInt(sets) === oldMatchInfo.matchSets.sets))) {
                 handleReturnToTracker();
                 return;
             }
@@ -297,7 +305,7 @@ const Select: React.FC = () => {
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
                 setRaceTo(json.poolMatch.race_to);
-                setBreakFormat(json.poolMatch.break_format == 0 ? "Winner Breaks" : "Alternate Breaks");
+                setBreakFormat(json.poolMatch.break_format === 0 ? "Winner Breaks" : "Alternate Breaks");
                 setLagWinner(json.poolMatch.lag_winner);
                 setToBreak(json.poolMatch.to_break);
                 
@@ -443,7 +451,7 @@ const Select: React.FC = () => {
                                     type="text"
                                     inputMode="numeric"
                                     pattern="^\d*$"
-                                    value={sets}
+                                    value={sets || ''}
                                     onChange={handleChange}
                                     required
                                     title={`Please enter an odd number larger than ${minSetVal} (${playerAheadSet} already won ${(minSetVal - 1) / 2} sets).`}

@@ -117,7 +117,7 @@ export async function PATCH(req: Request) {
         .select(); 
         
         if (matchError || !matchData || matchData.length === 0) {
-            return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to update match' }, { status: 500 });
         }
 
         // No sets -> Enable sets
