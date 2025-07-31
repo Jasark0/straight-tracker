@@ -94,17 +94,21 @@ export default function History() {
     }
 
     const continuePoolMatchPage = (match: PoolMatch) => {
+        let finalGameType;
+
         switch (match.game_type){
             case 0:
-                router.push(`/tracker/8-ball?matchID=${match.match_id}`);
+                finalGameType = 8;
                 break;
             case 1:
-                router.push(`/tracker/9-ball?matchID=${match.match_id}`);
+                finalGameType = 9;
                 break;
             case 2:
-                router.push(`/tracker/10-ball?matchID=${match.match_id}`);
+                finalGameType = 10;
                 break;
         }
+        
+        router.push(`/tracker/${finalGameType}-ball?matchID=${match.match_id}`);
     }
 
     const continueStraightMatchPage = (match: StraightMatch) => {
