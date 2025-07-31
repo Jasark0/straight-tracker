@@ -35,7 +35,7 @@ export async function GET(req: Request) {
         .eq('username', username)
         .single();
 
-    if (matchError || !poolMatch) {
+    if (matchError || !poolMatch || poolMatch.winner != null) {
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
 
