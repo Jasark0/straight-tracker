@@ -2,35 +2,20 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
-import { getUserSession, signOut } from '@/actions/auth';
+import { getUserSession } from '@/actions/auth';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import Header from '@/src/components/Header'
+import Loading from '@/src/components/PageLoading'
 
 export default function Home() {
     const router = useRouter();
 
     const [user, setUser] = useState<any>(null);
-    const [profileHovered, setProfileHovered] = useState(false);
-
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const session = await getUserSession();
-            setUser(session?.user);
-            setIsLoading(false);
-        };
-        fetchUser();
-    }, []);
-
-    const homePage = () => {
-        router.push('/');
-    }
-
-    const signinPage = () => {
-        router.push('/signin');
-    }
+    
+    const [loading, setLoading] = useState(true);
   
     const signupPage = () => {
         if (user){
@@ -39,25 +24,6 @@ export default function Home() {
         }
         router.push('signup');
     }
-
-    const settingsPage = () => {
-        router.push('/settings');
-    }
-
-    const handleHistory = async () => {
-        router.push('/history');
-    }
-
-    const handleSignOut = async () => {
-        try{
-            await signOut();
-            window.location.reload();
-        } 
-        catch (error){
-            const session = await getUserSession();
-            setUser(session?.user || null);
-        }
-    };
 
     const handleGuest = () => {
         router.push('/guest/selectGame');
@@ -98,56 +64,23 @@ export default function Home() {
         }
     };
 
-    return !isLoading && (
+    useEffect(() => {
+        const fetchUser = async () => {
+            const session = await getUserSession();
+            setUser(session?.user);
+            setLoading(false);
+        };
+        fetchUser();
+    }, []);
+
+    if (loading){
+        return <Loading/>;
+    }
+
+    return (
         <div className="home-page-container">  
             <ToastContainer className="home-toast-container"/>
-
-            <header className="home-title-container">
-                <div className="home-header-logo-container" onClick={homePage}>
-                    <img src="/straight-header-logo.png" className="home-header-logo-css"></img>
-                    <img src="/straight-header-logo-text.png" className="home-header-logo-text-css"></img>
-                </div>
-                <div className="login-box">
-                    {isLoading ? (
-                    <div>Loading...</div>
-                    ) : user ? (
-                    <div className="home-header-buttons-box">
-                        <button className="contact-us-button" onClick={() => document.getElementById("contact-us")?.scrollIntoView({ behavior: 'smooth' })}>
-                            Contact Us
-                        </button>
-                        <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
-                            Learn More
-                        </button>
-                        <button className="my-games-css" onClick={handleHistory}>
-                            My Games
-                        </button>
-                        <div className="profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
-                            <img src="default-profile-picture.jpg" className="profile-css"></img>
-                            {profileHovered && (
-                                <div className="profile-dropdown-menu">
-                                    <button className="profile-dropdown-button" onClick={settingsPage}><span className="dropdown-icon">⚙️</span>Settings</button>
-                                    <div className="dropdown-divider"></div>
-                                    <button className="profile-dropdown-button sign-out" onClick={handleSignOut}><span className="dropdown-icon">⏻</span>Sign Out</button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    ) : (
-                        <div className="home-header-buttons-box">
-                            <button className="contact-us-button" onClick={() => document.getElementById("contact-us")?.scrollIntoView({ behavior: 'smooth' })}>
-                                Contact Us
-                            </button>
-                            <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
-                                Learn More
-                            </button>
-                            <button className="sign-in-button" onClick={signinPage}>
-                                ↪ Sign In
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </header>
-
+            
             <div className="hero-container">
                 <section className={user ? "hero-section hero-auth" : "hero-section"}>
                     <div className="hero-content">
@@ -189,7 +122,7 @@ export default function Home() {
                 <div className="home-image-container">
                     <p className="image-caption">
                         Currently, we have released 8-ball, 9-ball, 10-ball, straight pool (14.1 continuous). Our mission is to cover 
-                        all professional/popular cue sports such as snooker, one pocket, and the billiards fans.
+                        all professional/popular cue sports such as snooker, one pocket, and carom games for the billiards fans.
                     </p>
                     <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="snooker-image" />
                 </div>

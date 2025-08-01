@@ -6,8 +6,6 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Header from '@/src/components/Header';
-
 const Tracker: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
@@ -413,8 +411,7 @@ const Tracker: React.FC = () => {
     return (
         <div className="tracker-page-box">
             <ToastContainer className="s-toast-warning"/>
-            <Header></Header>
-    
+            
             {loading && (
                 <div className="page-box">
                     <div className="loading-screen">

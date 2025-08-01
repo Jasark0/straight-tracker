@@ -3,8 +3,6 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import Header from '@/src/components/Header';
-
 const Tracker: React.FC = () => {
     const router = useRouter();
 
@@ -199,7 +197,6 @@ const Tracker: React.FC = () => {
 
     return (
         <div className="tracker-page-box">
-            <Header></Header>
             <div className="tracker-box">
                 <div className="race-text-box">
                     <p className="race-text">Race to {raceTo}</p>

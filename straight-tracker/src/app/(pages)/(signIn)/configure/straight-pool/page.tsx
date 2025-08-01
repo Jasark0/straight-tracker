@@ -6,8 +6,6 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Header from '@/src/components/Header';
-
 const Select: React.FC = () => {
     const router = useRouter();
 
@@ -254,7 +252,6 @@ const Select: React.FC = () => {
         return (
             <div className="page-box">
                 <div className="loading-screen">
-                    <Header/>
                     <div className="loading-content">
                         <p>Loading match configuration...</p>
                         <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
@@ -266,7 +263,6 @@ const Select: React.FC = () => {
 
     return (
         <div className="select-page-box">
-            <Header className={`home-title-box ${lagPopup ? "blurred" : ""}`}></Header>
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <button className="submit-button" onClick={() => determineShowBackVerification()}>back</button>

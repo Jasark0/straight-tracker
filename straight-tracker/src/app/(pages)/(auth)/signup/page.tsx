@@ -3,7 +3,6 @@
 import { redirect, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { signInWithGoogle, signUp } from '@/actions/auth';
-import Header from '@/src/components/Header';
 
 const Signup: React.FC = () => {
     const router = useRouter();
@@ -102,8 +101,6 @@ const Signup: React.FC = () => {
 
     return (
         <div className="signup-page-box">
-            <Header/>
-
             <div className="sign-up-box">
                 <p className="title-text-css">Create an Account</p>
                 <form onSubmit={handleSubmit}>

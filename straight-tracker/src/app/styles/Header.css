@@ -1,9 +1,11 @@
+/* Header CSS */
+
 .header-title-container{
   display: flex;
   position: fixed;
   align-items: center;
   justify-content: space-between;
-  height: 12vh;
+  height: 6rem;
   background-color: hsl(198, 55%, 75%);
   left: 0;
   right: 0;
@@ -22,7 +24,7 @@
 
 .header-logo-css{
   display: flex;
-  width: 15vh;
+  width: 5.5rem;
   margin-right: -2vh;
 } 
 
@@ -30,25 +32,175 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 9rem;
 }
 
 .header-logo-container:hover .header-logo-text-css {
   transform: scale(1.03);
   transition: transform 0.3s ease-in-out;
+} 
+
+.login-box{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5vw;
 }
 
-/* Smaller Screen Media CSS */
-
-@media (max-width: 768px) {
-  .home-title-container {
-    height: 8vh;
-    padding: 0 2vw;
-  }
-  .header-logo-css {
-    width: 10vh;
-  }
-  .my-games-css, .sign-in-button {
-    font-size: 1.25rem;
-    padding: 1vh 2vh;
-  }
+.header-buttons-box{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 2.3vw;
 }
+
+.contact-us-button, .learn-more-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  border: none;
+  background: hsl(198, 55%, 75%);
+  color: black;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.contact-us-button:hover, .learn-more-button:hover {
+  color: #0f0f0f;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.sign-in-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1vw 2.2vw;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border-radius: 20px;
+  border: none;
+  background: hsl(198, 55%, 75%);
+  color: black;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.sign-in-button:hover {
+  color: #0f0f0f;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.my-games-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.4vw;
+  font-weight: 500;
+  padding: 0.6vw 1.6vw;
+  background-color: hsl(198, 55%, 75%);
+  color: black;
+  border: 1px solid black;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.my-games-css:hover{
+  background-color: hsl(198, 65%, 60%);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-container{
+  position: relative;
+  display: inline-block;
+}
+
+.profile-css{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.6vw;
+  width: 3.6vw;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  object-fit: cover;
+}
+
+.profile-css:hover{
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: hsl(198, 70%, 55%);
+}
+
+.profile-dropdown-menu{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%; 
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 0.4vw 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-dropdown-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding-top: 0.5vw;
+  padding-bottom: 0.5vw;
+  padding-right: 2vw;
+  font-family: 'Inter', sans-serif;
+  font-size: 1vw;
+  gap: 0.5vw;
+}
+
+.profile-dropdown-button.sign-out{
+  margin-left: 0.2vw;
+  color: red;
+}
+
+.profile-dropdown-button:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-icon {
+  font-size: 1.1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #a8a8a8;
+  width: 100%;
+  border-radius: 1px;
+}
+
+.sign-up-css:hover{
+  outline: none;
+  background-color: rgb(90, 255, 145);
+  color: rgb(0, 0, 0);
+  transition: 0.15s ease;
+}
+

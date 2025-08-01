@@ -8,8 +8,6 @@ import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Settings.css" // Make sure settings styles are imported
 import { Edit } from "lucide-react"; // Import Edit icon
 import { forgotPassword } from '@/actions/auth'; // Import forgotPassword action
-
-import Header from '@/src/components/Header';
 import Avatar from './avatar';
 // No longer importing Settings component
 
@@ -146,8 +144,6 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-page-box">
-      <Header className={`home-title-box ${showChangePasswordModal ? "blurred" : ""}`} />
-
       <div className={`settings-container ${showChangePasswordModal ? "blurred" : ""}`}>
         <div className="settings-header">
           <h1 className="settings-title">Settings</h1>

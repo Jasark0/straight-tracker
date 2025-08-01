@@ -3,11 +3,9 @@
 import { redirect, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { forgotPassword, resetPassword, signIn, signInWithGoogle } from '@/actions/auth';
-import Header from '@/src/components/Header';
 
 const Forgotpassword: React.FC = () => {
     const router = useRouter();
-    
 
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -33,8 +31,6 @@ const Forgotpassword: React.FC = () => {
 
     return (
         <div className="signin-page-box">
-            <Header />
-
             <div className="sign-up-box">
                 <p className="title-text-css">Reset Password</p>
                 <form onSubmit={handleSubmit}>

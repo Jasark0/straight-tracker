@@ -3,8 +3,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import Header from '@/src/components/Header';
-
 export default function selectGame(){
     const router = useRouter();
 
@@ -31,7 +29,6 @@ export default function selectGame(){
 
     return (
         <div className="guest-selectgame-container">
-            <Header/>
             <div className="modal-overlay">
                 <div className="modal-content" onClick={gameSelect}>
                     <h2>Select a Game Type</h2>

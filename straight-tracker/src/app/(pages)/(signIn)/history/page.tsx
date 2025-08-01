@@ -2,9 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useMemo } from 'react'
+import { getUserSession } from '@/actions/auth';
 import "react-datepicker/dist/react-datepicker.css";
-
-import Header from '@/src/components/Header';
 
 export default function History() {
     type PoolMatch = {
@@ -42,6 +41,8 @@ export default function History() {
     
     const router = useRouter();
 
+    const [user, setUser] = useState<any>(null);
+
     const [selectedGameType, setSelectedGameType] = useState('8-Ball');
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); //Sets a delay between new user search terms
@@ -62,6 +63,7 @@ export default function History() {
     const [showDeletePoolModal, setShowDeletePoolModal] = useState(false);
     const [showDeleteStraightModal, setShowDeleteStraightModal] = useState(false);
 
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     const gameSelect = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -210,8 +212,6 @@ export default function History() {
 
     return (
         <div className="history-page-box">
-            <Header className={`home-title-box ${showSelectModal ? "blurred" : ""}`}>
-            </Header>
             <div className={`history-box ${showSelectModal ? "blurred" : ""}`}>
                 <div className="new-game-container">
                     <button className="new-game" onClick={() => setShowSelectModal(true)}>+ New Game</button>
