@@ -1,13 +1,11 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getUserSession, signOut } from '@/actions/auth';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import ContactSuccessToast from '@/src/components/ContactParamsReader'
 
 export default function Home() {
     const router = useRouter();
@@ -88,7 +86,11 @@ export default function Home() {
 
             const text = await res.text();
             if (text){
-                router.replace(window.location.pathname + '?success=1');
+                nameInput.value = "";
+                emailInput.value = "";
+                messageInput.value = "";
+
+                toast.success("Thank you for contacting us! We will read your suggestion/inquiry thoroughly and get back to you as soon as we can!");
             }
         } 
         catch (err){
@@ -98,10 +100,6 @@ export default function Home() {
 
     return !isLoading && (
         <div className="home-page-container">  
-            <Suspense fallback={null}>
-                <ContactSuccessToast/>
-            </Suspense>
-
             <ToastContainer className="home-toast-container"/>
 
             <header className="home-title-container">
