@@ -134,6 +134,12 @@ export default function SettingsPage() {
     setLoading(false);
   };
 
+  const censorEmail = (email: string) => {
+    const [localPart, domain] = email.split('@');
+    const censoredLocalPart = localPart.length > 2 ? localPart[0] + '*'.repeat(localPart.length - 2) + localPart[localPart.length - 1] : localPart;
+    return `${censoredLocalPart}@${domain}`;
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -214,7 +220,7 @@ export default function SettingsPage() {
               <div className="settings-fieldRow">
                 <div className="settings-fieldContent">
                   <span className="settings-fieldLabel">Email: </span>
-                  <span className="settings-fieldValue">{email}</span>
+                  <span className="settings-fieldValue">{censorEmail(email)}</span>
                 </div>
                 {/* <button className="settings-editButton" onClick={() => setShowChangeEmailModal(true)}>
                   <Edit className="settings-editIcon" />
