@@ -21,6 +21,7 @@ const Forgotpassword: React.FC = () => {
         const result = await forgotPassword(formData);
 
         if ( result.status === "success") {
+            alert("Forgot Password sent! Please check your email and click the link to reset your password.");
             router.push("/");
         } else {
             setError(result.status);

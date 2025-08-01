@@ -30,7 +30,6 @@ const Signup: React.FC = () => {
         const result = await signUp(formData);
 
         if (result.status === "success") {
-            // Simple HTML alert popup
             alert("Email verification sent! Please check your email and click the verification link to activate your account.");
             router.push("/signin");
         } else {
