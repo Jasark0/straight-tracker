@@ -2,11 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { headers } from "next/headers";
-import { NextResponse, userAgent } from "next/server";
-import { create } from "domain";
 
 export async function getUserSession() {
     const supabase = await createClient();
@@ -48,7 +46,7 @@ export async function signUp(formData : FormData) {
         }
     });
 
-    const {data: existingUser} = await supabase
+    const {data: existingUser} = await supabaseAdmin
     .from("profiles")
     .insert([{
         id: data.user?.id,
@@ -87,7 +85,7 @@ export async function signIn(formData : FormData) {
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
 
     if ( !isEmail) {
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
         .select('email')
         .eq('username', identifier)
@@ -228,7 +226,7 @@ export async function changeNickname(formData: FormData) {
         return { status: error?.message || "User not found." };
     }
 
-    const { error: profileError } = await supabase
+    const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .update({ nickname: nickname })
         .eq('id', user.id);
@@ -261,7 +259,7 @@ export async function changeUsername(formData: FormData) {
         return { status: error?.message || "User not found." };
     }
 
-    const { data: existingProfile, error: profileError } = await supabase
+    const { data: existingProfile, error: profileError } = await supabaseAdmin
         .from('profiles')
         .update({ username: username })
         .eq('id', user.id)
@@ -279,7 +277,7 @@ export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string
         return { status: "User not found or session expired." };
     }
 
-    const { error: profileError } = await supabase
+    const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .update({ avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url })
         .eq('id', user.id); 
@@ -319,7 +317,7 @@ export async function updateProfile() {
         email: user.email,
     }
     
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
         .update(updateData)
         .eq('id', user.id)

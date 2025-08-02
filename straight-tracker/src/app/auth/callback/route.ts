@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 // The client you created from the Server-Side Auth instructions
 import { createClient } from '@/utils/supabase/server'
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 
 export async function GET(request: Request) {
     const { searchParams, origin} = new URL(request.url);
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
             }
 
             // Check if user exists in profiles table
-            const { data: existingUser } = await supabase
+            const { data: existingUser } = await supabaseAdmin
                 .from("profiles")
                 .select("*")
                 .eq("email", data?.user?.email)
@@ -38,10 +39,10 @@ export async function GET(request: Request) {
             if (!existingUser) {
                 // Create a random number for user identificaiton oauth
                 let idIsUnique = false;
-                let randomId = Math.floor(Math.random() * 1000000000);
+                let randomId = Math.floor(Math.random() * 1000);
                 // Check if the random ID is unique
                 while ( idIsUnique === false) {
-                    const {data: usernameID} = await supabase
+                    const {data: usernameID} = await supabaseAdmin
                     .from("profiles")
                     .select("username")
                     .contains("username", data?.user?.email+randomId.toString());
@@ -60,7 +61,7 @@ export async function GET(request: Request) {
 
 
                 // Insert the new user into the profiles table
-                const { error: dbError } = await supabase.from("profiles").insert({
+                const { error: dbError } = await supabaseAdmin.from("profiles").insert({
                     id: data?.user?.id,
                     email: data?.user?.email,
                     username: username, // Use email prefix as username if not set
