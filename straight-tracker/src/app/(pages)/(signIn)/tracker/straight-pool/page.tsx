@@ -4,10 +4,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import Header from '@/src/components/Header';
 
 const Tracker: React.FC = () => {
     const router = useRouter();
@@ -675,13 +672,9 @@ const Tracker: React.FC = () => {
 
     return (
         <div className="s-main-container">
-            <Header></Header>
-            <ToastContainer className="s-toast-warning"/>
-
             {loading && (
                 <div className="page-box">
                     <div className="loading-screen">
-                        <Header/>
                         <div className="loading-content">
                             <p>Loading match info...</p>
                             <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>

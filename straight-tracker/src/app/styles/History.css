@@ -1,57 +1,56 @@
-.history-page-box{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 16vh);
-  padding-top: 10vh;
+.history-page-container{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: calc(100vh - 6rem);
+    padding-top: 6rem;
 }
 
-.history-box{
-  display: flex;
-  flex-direction: column;
-  color: black;
+.history-container{
+    display: flex;
+    flex-direction: column;
+    color: black;
 }
 
 .blurred {
-  filter: blur(4px);
+    filter: blur(4px);
 }
 
-.new-game-container{
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
+.history-new-game-container{
+    display: flex;
+    justify-content: flex-end;
 }
 
-.new-game{
-  display: flex;
-  width: 25vh;
-  height: 7vh;
-  border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  margin: 3vh 0;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s ease;
+.history-new-game-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15rem;
+    height: 4rem;
+    margin: 2rem 0;
+    font-size: 1.4rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
-.new-game:hover{
+.history-new-game-button:hover{
     background-color: #348bf0;
 }
 
-.modal-overlay, .delete-modal-overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); 
+.history-select, modal-overlay, .delete-modal-overlay {
+    display: flex;
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); 
 }
 
 .modal-content, .delete-modal-content{

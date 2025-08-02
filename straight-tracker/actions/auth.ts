@@ -123,11 +123,7 @@ export async function signOut() {
 
     if (error) {
         console.error("Error signing out:", error);
-        return redirect("/error");
     }
-
-    revalidatePath("/", "layout");
-    redirect("/");
 }
 
 export async function signInWithGoogle() {

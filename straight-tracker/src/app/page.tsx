@@ -2,35 +2,19 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
-import { getUserSession, signOut } from '@/actions/auth';
+import { getUserSession } from '@/actions/auth';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import Loading from '@/src/components/PageLoading'
 
 export default function Home() {
     const router = useRouter();
 
     const [user, setUser] = useState<any>(null);
-    const [profileHovered, setProfileHovered] = useState(false);
-
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const session = await getUserSession();
-            setUser(session?.user);
-            setIsLoading(false);
-        };
-        fetchUser();
-    }, []);
-
-    const homePage = () => {
-        router.push('/');
-    }
-
-    const signinPage = () => {
-        router.push('/signin');
-    }
+    
+    const [loading, setLoading] = useState(true);
   
     const signupPage = () => {
         if (user){
@@ -39,25 +23,6 @@ export default function Home() {
         }
         router.push('signup');
     }
-
-    const settingsPage = () => {
-        router.push('/settings');
-    }
-
-    const handleHistory = async () => {
-        router.push('/history');
-    }
-
-    const handleSignOut = async () => {
-        try{
-            await signOut();
-            window.location.reload();
-        } 
-        catch (error){
-            const session = await getUserSession();
-            setUser(session?.user || null);
-        }
-    };
 
     const handleGuest = () => {
         router.push('/guest/selectGame');
@@ -98,108 +63,74 @@ export default function Home() {
         }
     };
 
-    return !isLoading && (
+    useEffect(() => {
+        const fetchUser = async () => {
+            const session = await getUserSession();
+            setUser(session?.user);
+            setLoading(false);
+        };
+        fetchUser();
+    }, []);
+
+    if (loading){
+        return <Loading/>;
+    }
+
+    return (
         <div className="home-page-container">  
-            <ToastContainer className="home-toast-container"/>
+            <ToastContainer className="home-toast"/>
+            <div className="home-center-container">
+                <section className={user ? "home-center-section home-center-auth" : "home-center-section"}>
+                    <div className="home-center-content">
+                        <p className="home-center-text"><span>Your Professional Pool/Billiards <br/> Score Tracker</span></p>
+                        <button className="home-get-started-button" onClick={signupPage}>🎱 Get Started</button>
 
-            <header className="home-title-container">
-                <div className="home-header-logo-container" onClick={homePage}>
-                    <img src="/straight-header-logo.png" className="home-header-logo-css"></img>
-                    <img src="/straight-header-logo-text.png" className="home-header-logo-text-css"></img>
-                </div>
-                <div className="login-box">
-                    {isLoading ? (
-                    <div>Loading...</div>
-                    ) : user ? (
-                    <div className="home-header-buttons-box">
-                        <button className="contact-us-button" onClick={() => document.getElementById("contact-us")?.scrollIntoView({ behavior: 'smooth' })}>
-                            Contact Us
-                        </button>
-                        <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
-                            Learn More
-                        </button>
-                        <button className="my-games-css" onClick={handleHistory}>
-                            My Games
-                        </button>
-                        <div className="profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
-                            <img src="default-profile-picture.jpg" className="profile-css"></img>
-                            {profileHovered && (
-                                <div className="profile-dropdown-menu">
-                                    <button className="profile-dropdown-button" onClick={settingsPage}><span className="dropdown-icon">⚙️</span>Settings</button>
-                                    <div className="dropdown-divider"></div>
-                                    <button className="profile-dropdown-button sign-out" onClick={handleSignOut}><span className="dropdown-icon">⏻</span>Sign Out</button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    ) : (
-                        <div className="home-header-buttons-box">
-                            <button className="contact-us-button" onClick={() => document.getElementById("contact-us")?.scrollIntoView({ behavior: 'smooth' })}>
-                                Contact Us
-                            </button>
-                            <button className="learn-more-button" onClick={() => document.getElementById("learn-more")?.scrollIntoView({ behavior: 'smooth' })}>
-                                Learn More
-                            </button>
-                            <button className="sign-in-button" onClick={signinPage}>
-                                ↪ Sign In
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </header>
-
-            <div className="hero-container">
-                <section className={user ? "hero-section hero-auth" : "hero-section"}>
-                    <div className="hero-content">
-                        <p className="main-hero-heading"><span>Your Professional Pool/Billiards <br/> Score Tracker</span></p>
-                        <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
-
-                        {!user && (<div className="guest-access-box">
-                            <p className="guest-subtext">
+                        {!user && (<div className="home-guest-container">
+                            <p className="home-guest-text">
                                 Want to give our tracker a shot but unsure about making an account?
                             </p>
-                            <button className="guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
+                            <button className="home-guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
                         </div>)}
                     </div>
                 </section>
 
-                <div className="hero-features">
-                    <div className="feature-card">🔥 Track Sets & Races</div>
-                    <div className="feature-card">📊 Analyze Match History</div>
-                    <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
+                <div className="home-features-container">
+                    <div className="home-feature-card">🔥 Track Sets & Races</div>
+                    <div className="home-feature-card">📊 Analyze Match History</div>
+                    <div className="home-feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
                 </div>
             </div>
             
-            <div className="section-divider"></div>
+            <div className="home-section-divider"></div>
 
-            <section className="image-showcase" id="learn-more">
+            <section className="home-about-us-container" id="learn-more">
                 <p className="home-about-us-text">About Us</p>
                 <div className="home-image-container">
-                    <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
-                    <p className="image-caption">
+                    <img src="/8-ball-homepage.jpg" alt="Pool Table" className="home-pool-image"/>
+                    <p className="home-pool-image-caption">
                         We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
                         your scores will be saved and ready to continue serious long races.
                     </p>
                 </div>
             </section>
 
-            <div className="section-divider"></div>
+            <div className="home-section-divider"></div>
 
-            <section className="image-showcase">
+            <section className="home-about-us-container">
                 <div className="home-image-container">
-                    <p className="image-caption">
+                    <p className="home-snooker-image-caption">
                         Currently, we have released 8-ball, 9-ball, 10-ball, straight pool (14.1 continuous). Our mission is to cover 
-                        all professional/popular cue sports such as snooker, one pocket, and the billiards fans.
+                        all professional/popular cue sports such as snooker, one pocket, and carom games for the billiards fans.
                     </p>
-                    <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="snooker-image" />
+                    <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="home-snooker-image"/>
                 </div>
             </section>
 
-            <div className="section-divider"></div>
+            <div className="home-section-divider"></div>
 
-            <section className="suggestion-box-container" id="contact-us">
-                <p className="suggestion-contact-us-text">Contact Us</p>
-                <form className="suggestion-form" onSubmit={handleSubmitSuggestion}>
+            <section className="home-suggestion-container" id="contact-us">
+                <p className="home-contact-us-text">Contact Us</p>
+                <form className="home-suggestion-form" onSubmit={handleSubmitSuggestion}>
                     <label>Name</label>
                     <input type="text" id="name" name="name" required />
 

@@ -3,7 +3,6 @@
 import { redirect, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { forgotPassword, resetPassword, signIn, signInWithGoogle } from '@/actions/auth';
-import Header from '@/src/components/Header';
 
 const Changepassword: React.FC = () => {
     const router = useRouter();
@@ -40,8 +39,6 @@ const Changepassword: React.FC = () => {
 
     return (
         <div className="signin-page-box">
-            <Header />
-
             <div className="sign-up-box">
                 <p className="title-text-css">Change Password</p>
                 <form onSubmit={handleSubmit}>
