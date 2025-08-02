@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Header from '@/src/components/Header'
 import Loading from '@/src/components/PageLoading'
 
 export default function Home() {
@@ -79,60 +78,59 @@ export default function Home() {
 
     return (
         <div className="home-page-container">  
-            <ToastContainer className="home-toast-container"/>
-            
-            <div className="hero-container">
-                <section className={user ? "hero-section hero-auth" : "hero-section"}>
-                    <div className="hero-content">
-                        <p className="main-hero-heading"><span>Your Professional Pool/Billiards <br/> Score Tracker</span></p>
-                        <button className="get-started-button" onClick={signupPage}>🎱 Get Started</button>
+            <ToastContainer className="home-toast"/>
+            <div className="home-center-container">
+                <section className={user ? "home-center-section home-center-auth" : "home-center-section"}>
+                    <div className="home-center-content">
+                        <p className="home-center-text"><span>Your Professional Pool/Billiards <br/> Score Tracker</span></p>
+                        <button className="home-get-started-button" onClick={signupPage}>🎱 Get Started</button>
 
-                        {!user && (<div className="guest-access-box">
-                            <p className="guest-subtext">
+                        {!user && (<div className="home-guest-container">
+                            <p className="home-guest-text">
                                 Want to give our tracker a shot but unsure about making an account?
                             </p>
-                            <button className="guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
+                            <button className="home-guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
                         </div>)}
                     </div>
                 </section>
 
-                <div className="hero-features">
-                    <div className="feature-card">🔥 Track Sets & Races</div>
-                    <div className="feature-card">📊 Analyze Match History</div>
-                    <div className="feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
+                <div className="home-features-container">
+                    <div className="home-feature-card">🔥 Track Sets & Races</div>
+                    <div className="home-feature-card">📊 Analyze Match History</div>
+                    <div className="home-feature-card">🌐 Real-time Multiplayer (Coming Soon!)</div>
                 </div>
             </div>
             
-            <div className="section-divider"></div>
+            <div className="home-section-divider"></div>
 
-            <section className="image-showcase" id="learn-more">
+            <section className="home-about-us-container" id="learn-more">
                 <p className="home-about-us-text">About Us</p>
                 <div className="home-image-container">
-                    <img src="/8-ball-homepage.jpg" alt="Pool Table" className="pool-image" />
-                    <p className="image-caption">
+                    <img src="/8-ball-homepage.jpg" alt="Pool Table" className="home-pool-image"/>
+                    <p className="home-pool-image-caption">
                         We offer a variety of games to allow users to track scores — whether you're playing a race or sets, 
                         your scores will be saved and ready to continue serious long races.
                     </p>
                 </div>
             </section>
 
-            <div className="section-divider"></div>
+            <div className="home-section-divider"></div>
 
-            <section className="image-showcase">
+            <section className="home-about-us-container">
                 <div className="home-image-container">
-                    <p className="image-caption">
+                    <p className="home-snooker-image-caption">
                         Currently, we have released 8-ball, 9-ball, 10-ball, straight pool (14.1 continuous). Our mission is to cover 
                         all professional/popular cue sports such as snooker, one pocket, and carom games for the billiards fans.
                     </p>
-                    <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="snooker-image" />
+                    <img src="/snooker-homepage.jpg" alt="Straight Pool Table" className="home-snooker-image"/>
                 </div>
             </section>
 
-            <div className="section-divider"></div>
+            <div className="home-section-divider"></div>
 
-            <section className="suggestion-box-container" id="contact-us">
-                <p className="suggestion-contact-us-text">Contact Us</p>
-                <form className="suggestion-form" onSubmit={handleSubmitSuggestion}>
+            <section className="home-suggestion-container" id="contact-us">
+                <p className="home-contact-us-text">Contact Us</p>
+                <form className="home-suggestion-form" onSubmit={handleSubmitSuggestion}>
                     <label>Name</label>
                     <input type="text" id="name" name="name" required />
 

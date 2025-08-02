@@ -30,9 +30,13 @@ export default async function RootLayout({
 
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className={`${inter.className}`}>
+            <div>
                 <Header user={user}/>
-                {children}
+                <main>
+                    {children}
+                </main>
+            </div>
             </body>
         </html>
     )
