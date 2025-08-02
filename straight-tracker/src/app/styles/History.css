@@ -1,3 +1,5 @@
+/* History Page CSS */
+
 .history-page-container{
     display: flex;
     align-items: flex-start;
@@ -15,6 +17,13 @@
 .blurred {
     filter: blur(4px);
 }
+
+.history-toast{
+    margin-top: 6rem;
+}
+
+
+/* New Game CSS */
 
 .history-new-game-container{
     display: flex;
@@ -41,7 +50,225 @@
     background-color: #348bf0;
 }
 
-.history-select, modal-overlay, .delete-modal-overlay {
+
+/* History Page Content CSS */
+
+.history-content-container{
+    display: flex;
+    gap: 1rem;
+}
+
+
+/* Filter CSS */
+
+.history-filter-container{
+  width: 18vw;
+  height: 60vh;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 2px solid #ccc;
+  overflow-y: auto;
+}
+
+.history-filter-game-text{
+  margin-top: 0;
+}
+
+.history-filter-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2vh;
+}
+
+.history-filter-game-button{
+  display: block;
+  width: 100%;
+  height: 4rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.history-filter-game-button.active{
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.history-filter-game-button.smaller-font{
+  font-size: 0.9rem;
+}
+
+.history-search-container{
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 3vh;
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 3vh;
+}
+
+.history-search-icon{
+  position: absolute;
+  left: 10px;
+  font-size: 1rem;
+  color: gray;
+  pointer-events: none; 
+  height: 100%;
+}
+
+.history-search-input{
+  padding: 0.5rem 0.75rem 0.5rem 2rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.history-date-container{
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.history-date-input{
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  background-color: #fff;
+}
+
+
+/* History Matches Display CSS */
+
+.history-matches-container{
+  width: 55vw;
+  height: 60vh;
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.history-no-match-text{
+  display: flex;
+  font-size: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.history-match-container{
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.history-match-row-container{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.history-match-game-type-text{
+  font-size: 1.7rem;
+}
+
+.history-match-created-at-text{
+  font-size: 1.3rem;
+}
+
+.history-match-game-name-text{
+  font-size: 1rem;
+}
+
+.history-match-score-text{
+  font-size: 1rem;
+}
+
+.history-match-current-sets-text{
+  color: rgb(0, 0, 255);
+  font-weight: 550;
+}
+
+.history-match-current-scores-text{
+  color: red;
+  font-weight: 550;
+}
+
+/* .history-race-to-text{
+    font-size: 1.25rem;
+} */
+
+.history-match-player-name-text{
+  font-size: 1.2rem;
+}
+
+.history-match-button-container{
+  display: flex;
+  flex-direction: row;
+  gap: 2vh;
+}
+
+.history-match-button{
+  display: flex;
+  flex-direction: row;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.history-match-button.continue{
+  background-color: #4caf50;
+  color: white;
+}
+
+.history-match-button.view{
+  background-color: #2196f3;
+  color: white;
+}
+
+.history-match-button.delete{
+  background-color: #ee1616;
+  color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.history-select-modal, .history-delete-modal{
     display: flex;
     position: fixed;
     align-items: center;
@@ -53,7 +280,7 @@
     background-color: rgba(0, 0, 0, 0.6); 
 }
 
-.modal-content, .delete-modal-content{
+.history-select-modal-content, .history-delete-modal-content{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,7 +293,7 @@
   text-align: center;
 }
 
-.details-modal-overlay {
+.history-details-modal{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -79,7 +306,7 @@
   padding-top: 5vh;
 }
 
-.details-modal-content{
+.history-details-content{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,7 +321,7 @@
   overflow-y: auto;
 }
 
-.modal-game-type-text{
+.history-details-game-type-text{
   font-size: 2rem;
   font-weight: 600;
   margin-top: 0;
@@ -103,65 +330,65 @@
   text-underline-offset: 0.25em;
 }
 
-.modal-game-name-text{
+.history-details-game-name-text{
   font-size: 1.5rem;
   margin-top: 0;
   margin-bottom: 1vh;
 }
 
-.modal-player-names-box{
+.history-details-player-names-container{
   display: flex;
   flex-direction: row;
   gap: 1vh;
 }
 
-.modal-player-names-text{
+.history-details-player-names-text{
   font-size: 1.4rem;
   margin: 0;
 }
 
-.modal-vs-text{
+.history-details-vs-text{
   margin-top: 0.5vh;
   margin-bottom: 0;
 }
 
-.modal-lag-winner-text{
+.history-details-lag-winner-text{
   font-size: 1.7rem;
   margin-top: 0.5vh;
   margin-top: 2vh;
   margin-bottom: 0;
 }
 
-.modal-winner-text{
+.history-details-winner-text{
   font-size: 2rem;
   margin-top: 0.5vh;
   margin-top: 2vh;
   margin-bottom: 2vh;
 }
 
-.modal-race-to-text{
+.history-details-race-to-text{
   font-size: 1.75rem;
   margin-top: 1vh;
   margin-bottom: 0;
 }
 
-.modal-all-scores-text, .modal-race-score-text{
+.history-details-all-scores-text, .history-details-race-score-text{
   font-size: 1.5rem;
   margin-bottom: 0.5vh;
 }
 
-.modal-sets-grid{
+.history-details-sets-grid{
   display: grid;
   gap: 2vh;
   justify-content: center;
 }
 
-.modal-sets-scores-text{
+.history-sets-scores-text{
   font-size: 1.25rem;
   margin: 0;
 }
 
-.modal-race-scores-text{
+.history-race-scores-text{
   color: #ee1616;
   font-size: 2.25rem;
   margin: 0;
@@ -256,201 +483,15 @@
   background-color: #f0f0f0;
 }
 
-.display-history-container{
-  display: flex;
-  gap: 1rem;
-}
 
-.filter-box{
-  width: 18vw;
-  height: 60vh;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  border: 2px solid #ccc;
-  overflow-y: auto;
-}
 
-.filter-game-text{
-  margin-top: 0;
-}
 
-.filter-grid{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 2vh;
-}
 
-.filter-button{
-  display: block;
-  width: 100%;
-  height: 4rem;
-  font-size: 1.3rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  text-align: center;
-  transition: 0.3s ease;
-}
 
-.filter-button.active{
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
 
-.filter-button.smaller-font{
-  font-size: 0.9rem;
-}
 
-.search-input-wrapper{
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 3vh;
-  width: 100%;
-  margin-top: 1.5rem;
-  margin-bottom: 3vh;
-}
 
-.search-icon{
-  position: absolute;
-  left: 10px;
-  font-size: 1rem;
-  color: gray;
-  pointer-events: none; 
-  height: 100%;
-}
 
-.search-input{
-  padding:  0.5rem 0.75rem 0.5rem 2rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-  height: 100%;
-}
 
-.date-filter-row{
-  display: flex;
-  width: 100%;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
 
-.date-input{
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.3rem;
-  font-size: 0.9rem;
-  background-color: #fff;
-}
 
-.display-history-box{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.history-placeholder-box{
-  width: 55vw;
-  height: 60vh;
-  background-color: white;
-  border: 2px solid #ccc;
-  border-radius: 12px;
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-.no-match-history-text{
-  display: flex;
-  font-size: 1.75rem;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.history-item{
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.history-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.game-type-text{
-  font-size: 1.7rem;
-}
-
-.created-at-text{
-  font-size: 1.3rem;
-}
-
-.history-game-name-text, .history-race-to-text{
-  font-size: 1.25rem;
-}
-
-.history-player-name-text{
-  font-size: 1.2rem;
-}
-
-.history-score-text{
-  font-size: 1.4rem;
-}
-
-.current-player-sets-css{
-  color: rgb(0, 0, 255);
-  font-weight: 550;
-}
-
-.current-player-scores-css{
-  color: red;
-  font-weight: 550;
-}
-
-.history-button-box{
-  display: flex;
-  flex-direction: row;
-  gap: 2vh;
-}
-
-.history-button{
-  display: flex;
-  flex-direction: row;
-  padding: 0.4rem 0.75rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.history-button.continue{
-  background-color: #4caf50;
-  color: white;
-}
-
-.history-button.view{
-  background-color: #2196f3;
-  color: white;
-}
-
-.history-button.delete{
-  background-color: #ee1616;
-  color: white;
-}
