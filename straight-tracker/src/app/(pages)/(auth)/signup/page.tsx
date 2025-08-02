@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { signInWithGoogle, signUp } from '@/actions/auth';
 
@@ -17,26 +17,20 @@ const Signup: React.FC = () => {
     const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
     const [emailAvailable, setEmailAvailable] = useState <boolean|null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [showVerificationPopup, setShowVerificationPopup] = useState<boolean>(false);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
         setError(null);
 
         const formData = new FormData(event.currentTarget);
         const result = await signUp(formData);
 
         if (result.status === "success") {
-            // Simple HTML alert popup
             alert("Email verification sent! Please check your email and click the verification link to activate your account.");
             router.push("/signin");
         } else {
             setError(result.status);
         }
-
-        setLoading(false);
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,21 +84,16 @@ const Signup: React.FC = () => {
         return () => clearTimeout(handler);
     }, [formData.email]);
 
-    const homePage = () => {
-        router.push('/');
-    }
     const signInPage = () => {
         router.push('/signin');
     }
 
-
-
     return (
-        <div className="signup-page-box">
-            <div className="sign-up-box">
-                <p className="title-text-css">Create an Account</p>
+        <div className="signup-page-container">
+            <div className="signup-container">
+                <p className="signup-title-text">Create an Account</p>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="signup-form-group">
                         <label>Username</label>
                         <input type="text" 
                         placeholder="Your username" 
@@ -115,8 +104,10 @@ const Signup: React.FC = () => {
                         onChange={handleChange}
                     />
                     </div>
-                    {usernameAvailable === false && <p className="username-taken-css">Username is taken.</p>}
-                    <div className="form-group">
+
+                    {usernameAvailable === false && <p className="signup-username-taken-text">Username is taken.</p>}
+
+                    <div className="signup-form-group">
                         <label>Email</label>
                         <input 
                         type="email" 
@@ -126,8 +117,10 @@ const Signup: React.FC = () => {
                         onChange={handleChange}
                         />
                     </div>
-                    {emailAvailable === false && <p className="email-taken-css">Email is used.</p>}
-                    <div className="form-group">
+
+                    {emailAvailable === false && <p className="signup-email-taken-text">Email is used.</p>}
+
+                    <div className="signup-form-group">
                         <label>Nickname</label>
                         <input type="text" 
                         placeholder="Your nickname (Optional)" 
@@ -137,7 +130,8 @@ const Signup: React.FC = () => {
                         onChange={handleChange}
                     />
                     </div>
-                    <div className="form-group">
+
+                    <div className="signup-form-group">
                         <label>Password</label>
                         <input 
                         type="password" 
@@ -146,7 +140,8 @@ const Signup: React.FC = () => {
                         onChange={handleChange}
                         />
                     </div>
-                    <div className="form-group">
+
+                    <div className="signup-form-group">
                         <label>Confirm Password</label>
                         <input 
                         type="password" 
@@ -158,16 +153,16 @@ const Signup: React.FC = () => {
                         onChange={handleChange}
                         />
                     </div>
-                    {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="submit-btn">Sign Up</button>
+
+                    {error && <p className="signup-error-message">{error}</p>}
+
+                    <button type="submit" className="signup-button">Sign Up</button>
                 </form>
-                <p className="already-text-css" onClick={signInPage}>
-                    Already have an account?
-                </p>
-                <p className="or-css">
-                    or
-                </p>
-                <img src="google.png" className="google-css" onClick={signInWithGoogle}></img>
+
+                <p className="signup-already-text" onClick={signInPage}>Already have an account?</p>
+                <p className="signup-or-text">or</p>
+
+                <img src="google.png" className="signup-google-icon" onClick={signInWithGoogle}></img>
             </div>
         </div>
     )

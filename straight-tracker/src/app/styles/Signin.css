@@ -1,22 +1,108 @@
-.signin-page-box{
+/* Sign In Page CSS */
+
+.signin-page-container{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    
-    min-height: calc(100vh - 16vh);
-    margin-top: 14vh;
+    height: calc(100vh - 6rem);
+    padding-top: 6rem;
 }
 
-.dont-text-css{
+.signin-container{
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 30vw;
+    padding: 3rem 4rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.signin-title-text{
+    margin-bottom: 2rem;
+    font-size: 2rem;
     text-align: center;
-    color: rgb(78, 78, 255);
+    color: #333;
+}
+
+.signin-form-group{
+    margin-bottom: 1rem;
+}
+
+.signin-form-group label{
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: black;
+}
+
+.signin-form-group input{
+    width: 25vw;
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.signin-error-message{
+    display: flex;
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: red;
+}
+
+.signin-button{
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    color: white;
+    background-color: #0077ff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signin-button:hover{
+    background-color: #005fdd;
+}
+
+.signin-dont-text, .signin-forgot-text{
+    display: flex;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    color: #3531ff;
     cursor: pointer;
     transition: 0.2s ease;
 }
 
-.dont-text-css:hover {
-    color: rgb(40, 40, 200);
+.signin-dont-text:hover, .signin-forgot-text:hover{
     text-decoration: underline;
+    color: #1313ff;
+}
+
+.signin-or-text{
+    display: flex;
+    text-align: center;
+    color: #8a8a8a;
+}
+
+.signin-google-icon{
+    width: 5rem;
+    height: 5rem;
+    border: 1px solid rgb(196, 196, 196);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+    transition: 0.15s ease;
+}
+
+.signin-google-icon:hover{
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }

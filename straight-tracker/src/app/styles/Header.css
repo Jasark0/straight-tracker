@@ -41,6 +41,9 @@
     transform: scale(1.06);
 }
 
+
+/* Header Buttons CSS */
+
 .header-info-container{
     display: flex;
     align-items: center;

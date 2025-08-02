@@ -1,117 +1,117 @@
-.signup-page-box{
+.signup-page-container{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    
-    min-height: calc(100vh - 16vh);
-    margin-top: 14vh;
+    height: calc(100vh - 6rem);
+    padding-top: 6rem;
 }
 
-.sign-up-box {
+.signup-container{
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 30px;
-    width: 60vh;
+    justify-content: flex-start;
+    width: 30vw;
+    padding: 2rem 4rem;
     border: 1px solid #ccc;
     border-radius: 10px;
     background-color: #f1f1f1;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
 }
 
-.title-text-css{
+.signup-title-text{
+    margin: 0;
+    font-size: 2rem;
     text-align: center;
-    font-size: 3vh;
-    font-weight: 500;
-    margin-bottom: 20px;
     color: #333;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.signup-form-group{
+    margin-bottom: 0.75rem;
 }
 
-.form-group label {
+.signup-form-group label{
     display: block;
+    margin-bottom: 0.2rem;
     font-weight: 500;
-    margin-bottom: 5px;
     color: black;
 }
 
-.form-group input {
-    width: 50vh;
-    padding: 10px;
-    font-size: 15px;
-    border-radius: 6px;
+.signup-form-group input{
+    width: 25vw;
+    padding: 0.75rem;
+    font-size: 1rem;
     border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
-.username-taken-css{
+.signup-username-taken-text{
+    font-size: 1rem;
     color: red;
-    font-size: 12px;
 }
 
-.email-taken-css{
+.signup-email-taken-text{
+    font-size: 1rem;
     color: red;
-    font-size: 12px;
 }
 
-.error-message {
+.signup-error-message{
     display: flex;
-    color: red;
-    font-size: 14px;
+    margin-top: 0.4rem;
+    font-size: 1rem;
     font-weight: 500;
-    margin-top: 5px;
+    color: red;
 }
 
-.submit-btn {
+.signup-button{
     width: 100%;
-    padding: 12px;
-    background-color: #0077ff;
+    padding: 1rem;
+    font-size: 1.2rem;
     color: white;
+    background-color: #0077ff;
     border: none;
     border-radius: 6px;
-    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.submit-btn:hover {
+.signup-button:hover{
     background-color: #005fdd;
 }
 
-.or-css{
+.signup-already-text{
     display: flex;
+    margin-bottom: 0.5rem;
     text-align: center;
-    color: rgb(122, 122, 122);
-}
-
-.already-text-css{
-    display: flex;
-    text-align: center;
-    color: rgb(78, 78, 255);
+    color: #3531ff;
     cursor: pointer;
     transition: 0.2s ease;
 }
 
-.already-text-css:hover {
-    color: rgb(40, 40, 200);
+.signup-already-text:hover{
     text-decoration: underline;
+    color: #1313ff;
 }
 
-.google-css {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+.signup-or-text{
+    display: flex;
+    text-align: center;
+    color: #8a8a8a;
+}
+
+.signup-google-icon{
+    width: 5rem;
+    height: 5rem;
     border: 1px solid rgb(196, 196, 196);
+    border-radius: 50%;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     object-fit: cover;
     transition: 0.15s ease;
 }
 
-.google-css:hover{
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+.signup-google-icon:hover{
     cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
