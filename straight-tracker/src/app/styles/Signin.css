@@ -9,6 +9,10 @@
     padding-top: 6rem;
 }
 
+.signin-toast{
+    margin-top: 6rem;
+}
+
 .signin-container{
     display: flex;
     flex-direction: column;

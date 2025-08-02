@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Tracker: React.FC = () => {
@@ -673,8 +672,6 @@ const Tracker: React.FC = () => {
 
     return (
         <div className="s-main-container">
-            <ToastContainer className="s-toast-warning"/>
-
             {loading && (
                 <div className="page-box">
                     <div className="loading-screen">

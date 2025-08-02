@@ -41,8 +41,6 @@ export default function History() {
     
     const router = useRouter();
 
-    const [user, setUser] = useState<any>(null);
-
     const [selectedGameType, setSelectedGameType] = useState('8-Ball');
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); //Sets a delay between new user search terms
@@ -114,7 +112,7 @@ export default function History() {
         2: "10-Ball",
     };
     
-    const deletePoolMatch = async () =>{
+    const deletePoolMatch = async () => {
         await fetch(`/api/deletePoolMatch?matchID=${selectedPoolMatch?.match_id}`, {
             method: 'DELETE',
         });
@@ -122,7 +120,7 @@ export default function History() {
         window.location.reload();
     }
 
-    const deleteStraightMatch = async () =>{
+    const deleteStraightMatch = async () => {
         await fetch(`/api/deleteStraightMatch?matchID=${selectedStraightMatch?.match_id}`, {
             method: 'DELETE',
         });
@@ -163,7 +161,7 @@ export default function History() {
             }));
     }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, debouncedPlayerName]);
 
-    useEffect(() => {
+    useEffect(() => { //Get all matches
         const fetchAllMatches = async () => {
             try{
                 const res = await fetch('/api/getAllMatches');
@@ -184,7 +182,7 @@ export default function History() {
         fetchAllMatches();
     }, []);
     
-    useEffect(() => {
+    useEffect(() => { //Set a timeout to search game name
         if (searchTerm === "") {
             setDebouncedSearchTerm("");
             return;
@@ -197,7 +195,7 @@ export default function History() {
         return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    useEffect(() => {
+    useEffect(() => { //Set a timeout to search player name
         if (playerName === "") {
             setDebouncedPlayerName("");
             return;
@@ -211,10 +209,10 @@ export default function History() {
     }, [playerName]);
 
     return (
-        <div className="history-page-box">
-            <div className={`history-box ${showSelectModal ? "blurred" : ""}`}>
-                <div className="new-game-container">
-                    <button className="new-game" onClick={() => setShowSelectModal(true)}>+ New Game</button>
+        <div className="history-page-container">
+            <div className={`history-container ${showSelectModal ? "blurred" : ""}`}>
+                <div className="history-new-game-container">
+                    <button className="history-new-game-button" onClick={() => setShowSelectModal(true)}>+ New Game</button>
                 </div>
                 
                 <div className="display-history-container">

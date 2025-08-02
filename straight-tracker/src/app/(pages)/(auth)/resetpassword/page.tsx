@@ -1,42 +1,38 @@
 "use client";
 
-import { redirect, useRouter, useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import { forgotPassword, resetPassword, signIn, signInWithGoogle } from '@/actions/auth';
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useState } from 'react'
+import { resetPassword } from '@/actions/auth';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Resetpassword: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setLoading(true);
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setError(null);
 
-        const formData = new FormData(event.currentTarget);
-        const result = await resetPassword(
-            formData,
-        searchParams.get("code") as string);
+        const formData = new FormData(e.currentTarget);
+        const result = await resetPassword(formData, searchParams.get("code") as string);
 
-        if ( result.status === "success") {
-            router.push("/");
-        } else {
-            setError(result.status);
+        if (result.status === "success"){
+            router.push('/history?success=1');
+        } 
+        else{
+            toast.error('Error resetting password.');
         }
     }
 
-    const signUpPage = () => {
-        router.push('/signup');
-    }
-
     return (
-        <div className="signin-page-box">
-            <div className="sign-up-box">
-                <p className="title-text-css">Reset Password</p>
+        <div className="signin-page-container">
+            <ToastContainer className="signin-toast"/>
+            <div className="signin-container">
+                <p className="signin-title-text">Reset Password</p>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="signin-form-group">
                         <label>New Password</label>
                         <input
                             type="password"
@@ -45,8 +41,8 @@ const Resetpassword: React.FC = () => {
                             name="password"
                         />
                     </div>
-                    {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="submit-btn">Reset Password</button>
+                    {error && <p className="signin-error-message">{error}</p>}
+                    <button type="submit" className="signin-button">Reset Password</button>
                 </form>
             </div>
 

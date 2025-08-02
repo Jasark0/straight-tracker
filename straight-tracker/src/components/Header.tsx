@@ -51,7 +51,7 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
 
     return (
         <>
-            <ToastContainer/>
+            {isHomePage && (<ToastContainer className="home-toast"/>)}
             <header className="header-container">
                 <div className="header-logo-container" onClick={homePage}>
                     <img src="/straight-header-logo.png" className="header-logo"></img>
