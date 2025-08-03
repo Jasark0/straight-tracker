@@ -788,9 +788,6 @@ const Tracker: React.FC = () => {
                             <button className="winner-button" onClick={handleExit}>
                                 exit match
                             </button>
-                            <button className="winner-button">
-                                continue match
-                            </button>
                         </div>
                     </div>
                 </div>

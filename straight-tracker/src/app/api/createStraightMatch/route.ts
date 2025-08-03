@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('username')
+        .select('id')
         .eq('email', email)
         .single();
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const username = profile.username;
+    const user_id = profile.id;
 
     let finalGameName = game_name;
     
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         const { count, error: countError } = await supabaseAdmin
         .from('straight_pool_matches')
         .select('match_id', { count: 'exact' })
-        .eq('username', username)
+        .eq('user_id', user_id)
 
         if (countError) {
             return NextResponse.json({ error: 'Failed to count straight pool matches' }, { status: 500 });
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     .from('straight_pool_matches')
     .insert([
         {
-            username,
+            user_id,
             game_name: finalGameName,
             player1: finalPlayer1,
             player2: finalPlayer2,

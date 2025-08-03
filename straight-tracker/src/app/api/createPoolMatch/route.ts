@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('username')
+        .select('id')
         .eq('email', email)
         .single();
 
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const username = profile.username;
+    const user_id = profile.id;
 
     let finalGameName = game_name;
     
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         const { count, error: countError } = await supabaseAdmin
         .from('pool_matches')
         .select('match_id', { count: 'exact' })
-        .eq('username', username)
+        .eq('user_id', user_id)
         .eq('game_type', game_type);
 
         if (countError) {
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     .from('pool_matches')
     .insert([
         {
-            username,
+            user_id,
             game_type: game_type,
             game_name: finalGameName,
             player1: finalPlayer1,
