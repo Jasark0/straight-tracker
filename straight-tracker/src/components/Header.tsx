@@ -79,7 +79,7 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
 
                         {user && (
                             <div className="header-profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
-                                <img src="/default-profile-picture.jpg" className="header-profile"></img>
+                                <img src={user.user_metadata?.avatar_url || "/default-profile-picture.jpg"} className="header-profile"></img>
                                 {profileHovered && (
                                     <div className="header-profile-dropdown">
                                         <button className="header-profile-dropdown-button" onClick={settingsPage}><span className="header-profile-dropdown-icon">⚙️</span>Settings</button>
