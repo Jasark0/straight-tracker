@@ -5,11 +5,10 @@ import React, { useEffect, useState } from 'react'
 import { changeNickname, changePassword, changeUsername, getUserSession, updateAvatarInProfile, updateProfile } from '@/actions/auth';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
-import "@/src/app/styles/Settings.css" // Make sure settings styles are imported
-import { Edit } from "lucide-react"; // Import Edit icon
-import { forgotPassword } from '@/actions/auth'; // Import forgotPassword action
+import "@/src/app/styles/Settings.css"
+import { Edit } from "lucide-react"; 
 import Avatar from './avatar';
-// No longer importing Settings component
+
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -76,7 +75,6 @@ export default function SettingsPage() {
     setLoading(true);
     setError(null);
 
-    // Security Check: Ensure the entered email matches the logged-in user's email
     if (user && resetEmail.toLowerCase() !== user.email.toLowerCase()) {
       setError("The email provided does not match your account's email.");
       setLoading(false);
@@ -378,7 +376,7 @@ export default function SettingsPage() {
                     onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeNicknameModal(false)}>
-                <span>&times;</span> {/* A simple 'x' for the close icon */}
+                <span>&times;</span> 
               </button>
               <h4 className="modal-title">Change Nickname</h4>
             </div>
