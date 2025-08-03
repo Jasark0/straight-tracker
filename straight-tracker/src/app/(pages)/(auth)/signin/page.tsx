@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { signIn, signInWithGoogle } from '@/actions/auth';
+import { resendVerificationEmail, signIn, signInWithGoogle } from '@/actions/auth';
+
 
 const Signin: React.FC = () => {
     const router = useRouter();
@@ -18,7 +19,18 @@ const Signin: React.FC = () => {
 
         if (result.status === "success") {
             router.push("/");
-        } else {
+        } else if (result.status === "Email not confirmed"){
+            const resultt = await resendVerificationEmail(formData.get("identifier") as string);
+                if ( resultt.status === "success") {
+                    setError("Email not confirmed. A new verification email has been sent to your inbox.");
+                }
+                else
+                {
+                    setError(resultt.status);
+                }
+            
+        } else
+        {
             setError(result.status);
         }
     }

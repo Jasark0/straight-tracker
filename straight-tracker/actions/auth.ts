@@ -16,6 +16,39 @@ export async function getUserSession() {
     return { status: "success", user: data?.user };
 }
 
+export async function resendVerificationEmail(identifier: string) {
+    const supabase = await createClient();
+
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+
+    let email = identifier;
+    if (!isEmail) {
+        const { data: profile, error: profileError } = await supabaseAdmin
+            .from('profiles')
+            .select('email')
+            .eq('username', identifier)
+            .single();
+
+        if (profileError || !profile) {
+            return {
+                status: "Username not found.",
+            };
+        }
+
+        email = profile.email;
+    }
+
+    const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+    });
+    
+    if (error) {
+        return { status: "For security reasons, a new verification email can't be requested until " + error.message.substring(error.message.indexOf("after ") + 6) };
+    }
+    return { status: "success" };
+}
+
 export async function signUp(formData : FormData) {
     const supabase = await createClient();
     const origin = (await headers()).get("origin");
@@ -275,8 +308,8 @@ export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string
 
     const { error: profileError } = await supabaseAdmin
         .from('profiles')
-        .update({ avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url })
-        .eq('id', user.id); 
+        .update({ avatar_url: process.env.NEXT_PUBLIC_SUPABASE_URL+"/storage/v1/object/public/avatars/" + avatar_url })
+        .eq('id', user.id);
 
     if (profileError) {
         console.error("Error updating profile:", profileError);
@@ -285,7 +318,7 @@ export async function updateAvatarInProfile({ avatar_url }: { avatar_url: string
 
     const { data: updatedUser, error: userError } = await supabase.auth.updateUser({
         data: {
-            avatar_url: "https://bhkzaxomtzmzofjxxcmr.supabase.co/storage/v1/object/public/avatars/" + avatar_url,
+            avatar_url: process.env.NEXT_PUBLIC_SUPABASE_URL+"/storage/v1/object/public/avatars/" + avatar_url,
         },
     });
 

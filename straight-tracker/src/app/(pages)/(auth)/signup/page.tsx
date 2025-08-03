@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { signInWithGoogle, signUp } from '@/actions/auth';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup: React.FC = () => {
     const router = useRouter();
@@ -23,13 +25,14 @@ const Signup: React.FC = () => {
         setError(null);
 
         const formData = new FormData(event.currentTarget);
-        const result = await signUp(formData);
+        const result = await signUp(formData); 
 
         if (result.status === "success") {
-            alert("Email verification sent! Please check your email and click the verification link to activate your account.");
-            router.push("/signin");
+            toast.success("Email verification sent! Please check your email and click the verification link to activate your account.");
+            // router.push("/signin");
         } else {
             setError(result.status);
+            
         }
     };
 
@@ -90,6 +93,7 @@ const Signup: React.FC = () => {
 
     return (
         <div className="signup-page-container">
+            <ToastContainer className="signin-toast"/>
             <div className="signup-container">
                 <p className="signup-title-text">Create an Account</p>
                 <form onSubmit={handleSubmit}>
