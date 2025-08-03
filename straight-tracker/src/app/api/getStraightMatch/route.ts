@@ -16,7 +16,7 @@ export async function GET(req: Request) {
 
     const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('username')
+        .select('id')
         .eq('email', email)
         .single();
 
@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     }
 
 
-    const username = profile.username;
+    const user_id = profile.id;
 
     const { data: straightMatch, error: matchError } = await supabaseAdmin
         .from('straight_pool_matches')
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
             player2_curr_run
             `)
         .eq('match_id', match_id)
-        .eq('username', username)
+        .eq('user_id', user_id)
         .single();
 
     if (matchError || !straightMatch) {

@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
     const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('username')
+        .select('id')
         .eq('email', email)
         .single();
 
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const username = profile.username;
+    const user_id = profile.id;
 
     const { data: allPoolMatches, error: matchesError } = await supabaseAdmin
         .from('pool_matches')
@@ -40,10 +40,10 @@ export async function GET(req: Request) {
                 sets
             )
         `)
-        .eq('username', username)
+        .eq('user_id', user_id)
         .order('created_at', { ascending: false });
-
-    if (matchesError || !allPoolMatches) {
+    
+    if (matchesError || !allPoolMatches){
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
 
@@ -62,8 +62,12 @@ export async function GET(req: Request) {
             winner,
             created_at
         `)
-        .eq('username', username)
+        .eq('user_id', user_id)
         .order('created_at', { ascending: false });
+
+    if (straightMatchesError || !allStraightMatches){
+        return NextResponse.json({ redirect: '/history' }, { status: 403 });
+    }
 
     return NextResponse.json({ allPoolMatches, allStraightMatches }, { status: 200 });
 }
