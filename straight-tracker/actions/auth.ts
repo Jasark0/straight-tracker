@@ -281,6 +281,7 @@ export async function changeUsername(formData: FormData) {
     const { data: { user }, error } = await supabase.auth.updateUser({
         data: {
             username: username,
+            display_name: username,
         },
     });
 

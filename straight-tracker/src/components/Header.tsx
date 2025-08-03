@@ -48,6 +48,7 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
     const isHistoryPage = pathname === '/history';
     const isSignIn = pathname === '/signin';
     const isSignUp = pathname === '/signup';
+    const isConfirmSign = pathname === '/confirm-signup';
 
     return (
         <>
@@ -90,7 +91,7 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
                             </div>
                         )}
                         
-                        {(!isSignIn && !isSignUp) && !user && (
+                        {(!isSignIn && !isSignUp && !isConfirmSign) && !user && (
                             <button className="header-sign-in-button" onClick={signinPage}>
                                 ↪ Sign In
                             </button>

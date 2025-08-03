@@ -1,0 +1,234 @@
+/* Confirm Signup Page Styles */
+.confirm-signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 6rem);
+    padding: 2rem 1rem;
+    padding-top: 6rem;
+}
+
+.confirm-signup-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.confirm-signup-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.confirm-signup-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+    object-fit: contain;
+}
+
+.confirm-signup-title {
+    margin: 0 0 1rem 0;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.confirm-signup-subtitle {
+    margin: 0;
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+.confirm-signup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+.alert-error {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #16a34a;
+}
+
+.alert-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.alert-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.alert-icon-error {
+    color: #dc2626;
+}
+
+.alert-icon-success {
+    color: #16a34a;
+}
+
+.alert-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.alert-content p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Confirmation Section */
+.confirmation-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem 0;
+}
+
+.confirmation-icon {
+    width: 48px;
+    height: 48px;
+    color: #0077ff;
+}
+
+.confirmation-text {
+    margin: 0;
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Confirm Button */
+.confirm-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background-color: #0077ff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover:not(:disabled) {
+    background-color: #005fdd;
+}
+
+.confirm-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Footer */
+.confirm-footer {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e5e5;
+}
+
+.confirm-footer p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.confirm-footer a {
+    color: #0077ff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.confirm-footer a:hover {
+    color: #005fdd;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .confirm-signup-container {
+        padding: 1rem;
+        padding-top: 6rem;
+    }
+
+    .confirm-signup-card {
+        padding: 1.5rem;
+    }
+
+    .confirm-signup-title {
+        font-size: 1.75rem;
+    }
+
+    .confirm-signup-logo {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .confirm-signup-card {
+        padding: 1rem;
+    }
+
+    .confirm-signup-title {
+        font-size: 1.5rem;
+    }
+
+    .confirm-signup-subtitle {
+        font-size: 0.9rem;
+    }
+}

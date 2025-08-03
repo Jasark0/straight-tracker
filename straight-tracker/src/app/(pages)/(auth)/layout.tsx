@@ -5,6 +5,7 @@ import "@/src/app/styles/General.css"
 import "@/src/app/styles/Header.css"
 import "@/src/app/styles/Signin.css"
 import "@/src/app/styles/Signup.css"
+import "@/src/app/styles/ConfirmSignup.css"
 
 export default async function AuthLayout({
   children,

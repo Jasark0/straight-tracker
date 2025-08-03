@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { signInWithGoogle, signUp } from '@/actions/auth';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ReactiveButton from 'reactive-button';
 
 const Signup: React.FC = () => {
     const router = useRouter();
@@ -19,20 +20,93 @@ const Signup: React.FC = () => {
     const [usernameAvailable, setUsernameAvailable] = useState <boolean|null>(null);
     const [emailAvailable, setEmailAvailable] = useState <boolean|null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [state, setState] = useState('idle');
+    const [isErrorVisible, setIsErrorVisible] = useState(false);
+    const [errorAnimationClass, setErrorAnimationClass] = useState('');
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
+    
+    let reactiveButtonColor = 'blue';
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const resetStates = () => {
+        setState('idle');
+        setError(null);
+        
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+        
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+            abortControllerRef.current = null;
+        }
+    }
+
+    const onClickHandler = (callback: () => void) => {
+        setState('loading');
+        
+        abortControllerRef.current = new AbortController();
+        
+        timeoutRef.current = setTimeout(() => { 
+            if (!abortControllerRef.current?.signal.aborted) {
+                callback();
+            }
+        }, 2500); 
+    }
+
+    const onError = (errorMessage: string) => {
+        setState('error');
+        setError(errorMessage);
+        
+        setErrorAnimationClass('entering');
+        setIsErrorVisible(true);
+        
+        setTimeout(() => {
+            setErrorAnimationClass('visible bounce-in');
+        }, 50);
+        
+        setTimeout(() => {
+            setErrorAnimationClass('exiting');
+            
+            setTimeout(() => {
+                setError(null);
+                setIsErrorVisible(false);
+                setErrorAnimationClass('');
+                resetStates();
+            }, 400); 
+        }, 2500); 
+    }
+
+    const handleSubmit = async (formData: FormData) => {
         setError(null);
 
-        const formData = new FormData(event.currentTarget);
-        const result = await signUp(formData); 
+        if (abortControllerRef.current?.signal.aborted) {
+            return;
+        }
+        
+        try {
+            const result = await signUp(formData); 
 
-        if (result.status === "success") {
-            toast.success("Email verification sent! Please check your email and click the verification link to activate your account.");
-            // router.push("/signin");
-        } else {
-            setError(result.status);
-            
+            if (abortControllerRef.current?.signal.aborted) {
+                return;
+            }
+
+            if (result.status === "success") {
+                setState('success');
+                setTimeout(() => {
+                    if (!abortControllerRef.current?.signal.aborted) {
+                        toast.success("Email verification sent! Please check your email and click the verification link to activate your account.");
+                        resetStates();
+                    }
+                }, 1000);
+            } else {
+                onError(result.status);
+            }
+        } catch (error) {
+            if (!abortControllerRef.current?.signal.aborted) {
+                onError("An error occurred during signup.");
+            }
         }
     };
 
@@ -91,12 +165,26 @@ const Signup: React.FC = () => {
         router.push('/signin');
     }
 
+    if (state === 'error') {
+        reactiveButtonColor = 'red';
+    } else if (state === 'success') {
+        reactiveButtonColor = 'green';
+    } else if (state === 'loading') {
+        reactiveButtonColor = 'blue';
+    } else if (state === 'idle') {
+        reactiveButtonColor = 'blue';
+    }
+
     return (
         <div className="signup-page-container">
             <ToastContainer className="signin-toast"/>
             <div className="signup-container">
                 <p className="signup-title-text">Create an Account</p>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    onClickHandler(() => handleSubmit(formData));
+                }}>
                     <div className="signup-form-group">
                         <label>Username</label>
                         <input type="text" 
@@ -158,9 +246,22 @@ const Signup: React.FC = () => {
                         />
                     </div>
 
-                    {error && <p className="signup-error-message">{error}</p>}
+                    {error && <p className={`signup-error-message ${errorAnimationClass}`}>{error}</p>}
 
-                    <button type="submit" className="signup-button">Sign Up</button>
+                    <ReactiveButton 
+                        type="submit"
+                        idleText="Sign Up"
+                        loadingText="Signing Up..."
+                        successText="Success!"
+                        errorText="Error"
+                        buttonState={state}
+                        rounded={true}
+                        shadow={true}
+                        width={"100%"}
+                        size='large'
+                        color={reactiveButtonColor}
+                        className="signup-button"
+                    />
                 </form>
 
                 <p className="signup-already-text" onClick={signInPage}>Already have an account?</p>
