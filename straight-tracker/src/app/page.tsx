@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
 import { getUserSession } from '@/actions/auth';
 import { toast } from 'react-toastify';
@@ -11,6 +11,7 @@ import Loading from '@/src/components/PageLoading'
 
 export default function Home() {
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const [user, setUser] = useState<any>(null);
     
@@ -70,7 +71,18 @@ export default function Home() {
             setLoading(false);
         };
         fetchUser();
-    }, []);
+
+        const message = searchParams.get('message');
+        if (message === 'verification_confirmed') {
+            toast.success("🎉 Verification confirmed, enjoy!",
+                { autoClose: 10000 }
+            );
+            
+            const url = new URL(window.location.href);
+            url.searchParams.delete('message');
+            window.history.replaceState({}, '', url.toString());
+        }
+    }, [searchParams]);
 
     if (loading){
         return <Loading/>;

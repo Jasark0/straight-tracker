@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         if (type === 'signup') {
             const { error } = await supabase.auth.verifyOtp({
                 token_hash: token,
-                type: 'email'
+                type: 'email',
             });
 
             if (error) {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.redirect(new URL(`/confirm-signup?error=${encodeURIComponent(error.message)}`, request.url));
             }
 
-            return NextResponse.redirect(new URL('/confirm-signup?success=true', request.url));
+            return NextResponse.redirect(new URL('/?message=verification_confirmed', request.url));
         } else {
             return NextResponse.redirect(new URL('/confirm-signup?error=Unsupported confirmation type', request.url));
         }
