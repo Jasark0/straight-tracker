@@ -6,8 +6,11 @@ import { changeNickname, changePassword, changeUsername, getUserSession, updateA
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Settings.css"
-import { Edit } from "lucide-react"; 
+import { Edit } from "lucide-react";
 import Avatar from './avatar';
+import { toast ,ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ReactiveButton from 'reactive-button';
 
 
 export default function SettingsPage() {
@@ -27,6 +30,10 @@ export default function SettingsPage() {
   const [currentEmail, setCurrentEmail] = useState("");
   const [avatar_url, setAvatarUrl] = useState("");
   const [isSelecting, setIsSelecting] = useState(false);
+  const [state, setState] = useState('idle');
+  const [isErrorVisible, setIsErrorVisible] = useState(false);
+  const [errorAnimationClass, setErrorAnimationClass] = useState('');
+  let reactiveButtonColor = 'blue';
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -38,7 +45,7 @@ export default function SettingsPage() {
       if (session?.user) {
         try {
           const profileResult = await updateProfile();
-          if ( profileResult.status !== "success") {
+          if (profileResult.status !== "success") {
             console.warn("Profile sync warning:", profileResult.status);
           }
         } catch (error) {
@@ -50,7 +57,43 @@ export default function SettingsPage() {
   }, []);
 
 
-  
+  const resetStates = () => {
+    setState('idle');
+    setError(null);
+  }
+
+  const onClickHandler = (callback: () => void) => {
+    setState('loading');
+    setTimeout(() => { 
+      callback();
+    }, 2500); 
+  }
+
+  const onError = (errorMessage: string) => {
+    setState('error');
+    setError(errorMessage);
+    
+    setErrorAnimationClass('entering');
+    setIsErrorVisible(true);
+    
+    setTimeout(() => {
+      setErrorAnimationClass('visible bounce-in');
+    }, 50);
+    
+    setTimeout(() => {
+      setErrorAnimationClass('exiting');
+      
+      setTimeout(() => {
+        setError(null);
+        setIsErrorVisible(false);
+        setErrorAnimationClass('');
+        resetStates();
+      }, 400); 
+    }, 2500); 
+  }
+
+
+
   const handleMouseDown = () => {
     setIsSelecting(true);
   };
@@ -62,7 +105,7 @@ export default function SettingsPage() {
   const handleOverlayClick = (e: React.MouseEvent, closeModal: () => void) => {
     if (isSelecting) {
       return;
-    } 
+    }
 
     closeModal();
   }
@@ -72,12 +115,10 @@ export default function SettingsPage() {
 
   const handlePasswordReset = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
     setError(null);
 
     if (user && resetEmail.toLowerCase() !== user.email.toLowerCase()) {
-      setError("The email provided does not match your account's email.");
-      setLoading(false);
+      onError("The email provided does not match your account's email.");
       return;
     }
 
@@ -87,22 +128,23 @@ export default function SettingsPage() {
     const result = await changePassword(formData);
 
     if (result.status === "success") {
-      setShowChangePasswordModal(false);
-      alert("Password reset email sent! Please check your inbox.");
+      setState('success');
+      setTimeout(() => {
+        setShowChangePasswordModal(false);
+        toast.success("Password reset email sent! Please check your inbox.");
+      }, 1000);
     } else {
-      setError(result.status);
+      onError(result.status);
     }
-    setLoading(false);
   };
 
   const handleChangeNickname = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
     setError(null);
+    setState('loading');
 
     if (!newNickname || newNickname.trim() === "") {
-      setError("Nickname cannot be empty.");
-      setLoading(false);
+      onError("Nickname cannot be empty.");
       return;
     }
 
@@ -112,24 +154,24 @@ export default function SettingsPage() {
     const result = await changeNickname(formData);
 
     if (result.status === "success") {
-      setShowChangeNicknameModal(false);
-      alert("Nickname updated successfully!");
+      setState('success');
+      setTimeout(() => {
+        setShowChangeNicknameModal(false);
+        toast.success("Nickname updated successfully!");
+      }, 1000);
       const session = await getUserSession();
       setUser(session?.user);
     } else {
-      setError(result.status);
+      onError(result.status);
     }
-    setLoading(false);
   };
 
-    const handleChangeUsername = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleChangeUsername = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
     setError(null);
 
     if (!newUsername || newUsername.trim() === "") {
-      setError("Username cannot be empty.");
-      setLoading(false);
+      onError("Username cannot be empty.");
       return;
     }
 
@@ -139,14 +181,16 @@ export default function SettingsPage() {
     const result = await changeUsername(formData);
 
     if (result.status === "success") {
-      setShowChangeUsernameModal(false);
-      alert("Username updated successfully!");
+      setState('success');
+      setTimeout(() => {
+        setShowChangeUsernameModal(false);
+        toast.success("Username updated successfully!");
+      }, 1000);
       const session = await getUserSession();
       setUser(session?.user);
     } else {
-      setError(result.status);
+      onError(result.status);
     }
-    setLoading(false);
   };
 
   const censorEmail = (email: string) => {
@@ -160,14 +204,27 @@ export default function SettingsPage() {
     return <div>Loading...</div>;
   }
 
+  if (state === 'error') {
+    reactiveButtonColor ='red';
+  } else if (state === 'success') {
+    reactiveButtonColor ='green';
+  }
+  else if (state === 'loading') {
+    reactiveButtonColor ='blue';
+  }
+  else if (state === 'idle') {
+    reactiveButtonColor ='blue';
+  }
+
   const nickname = user?.user_metadata?.nickname;
   const username = user?.user_metadata?.username;
   const email = user?.email || "No Email";
-  const profileImage = user?.user_metadata?.avatar_url;
+  const profileImage = user?.user_metadata?.avatar_url || "/default-profile-picture.jpg";
 
   return (
     <div className="settings-page-box">
-      <div className={`settings-container ${showChangePasswordModal ? "blurred" : ""}`}>
+      <ToastContainer className="signin-toast" />
+      <div className={`settings-container ${(showChangePasswordModal || showChangeNicknameModal || showChangeUsernameModal)  ? "blurred" : ""}`}>
         <div className="settings-header">
           <h1 className="settings-title">Settings</h1>
           <p className="settings-subtitle">
@@ -215,7 +272,7 @@ export default function SettingsPage() {
                   <span className="settings-fieldLabel">Nickname: </span>
                   <span className="settings-fieldValue">{nickname}</span>
                 </div>
-                <button className="settings-editButton" onClick={() => setShowChangeNicknameModal(true)}>
+                <button className="settings-editButton" onClick={() => {setShowChangeNicknameModal(true); resetStates();}}>
                   <Edit className="settings-editIcon" />
                 </button>
               </div>
@@ -225,7 +282,7 @@ export default function SettingsPage() {
                   <span className="settings-fieldLabel">Username: </span>
                   <span className="settings-fieldValue">{username}</span>
                 </div>
-                <button className="settings-editButton" onClick={() => setShowChangeUsernameModal(true)}>
+                <button className="settings-editButton" onClick={() => {setShowChangeUsernameModal(true); resetStates();}}>
                   <Edit className="settings-editIcon" />
                 </button>
               </div>
@@ -245,7 +302,7 @@ export default function SettingsPage() {
                   <span className="settings-fieldLabel">Password: </span>
                   <span className="settings-fieldValue">*********</span>
                 </div>
-                <button className="settings-editButton" onClick={() => setShowChangePasswordModal(true)}>
+                <button className="settings-editButton" onClick={() => {setShowChangePasswordModal(true); resetStates();}}>
                   <Edit className="settings-editIcon" />
                 </button>
               </div>
@@ -257,15 +314,18 @@ export default function SettingsPage() {
       {showChangeUsernameModal && (
         <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeUsernameModal(false))}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}>
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeUsernameModal(false)}>
-                <span>&times;</span> {/* A simple 'x' for the close icon */}
+                <span>&times;</span> 
               </button>
               <h4 className="modal-title">Change Username</h4>
             </div>
-            <form onSubmit={handleChangeUsername}>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              onClickHandler(() => handleChangeUsername(e));
+            }}>
               <div className="settings-modal-body">
                 <input
                   type="text"
@@ -281,9 +341,25 @@ export default function SettingsPage() {
 
               </div>
               <div className="settings-modal-footer">
-                <button type="submit" className="settings-btn">Save</button>
+                <ReactiveButton 
+                  type="submit"
+                  idleText="Update"
+                  loadingText="Updating..."
+                  successText="Updated"
+                  errorText="Error"
+                  buttonState={state}
+                  rounded={true}
+                  shadow={true}
+                  width={"100%"}
+                  size='large'
+                  color={reactiveButtonColor}
+                />
               </div>
-              {error && <p className="error-message">{error}</p>}
+              {error && (
+                <p className={`error-message ${errorAnimationClass}`}>
+                  {error}
+                </p>
+              )}
             </form>
           </div>
         </div>
@@ -293,17 +369,20 @@ export default function SettingsPage() {
       {showChangeEmailModal && (
         <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeEmailModal(false))}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}>
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeEmailModal(false)}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
               </button>
               <h4 className="modal-title">Change Email</h4>
             </div>
-            <form onSubmit={handleEmailChange}>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              onClickHandler(() => handleEmailChange(e));
+            }}>
               <div className="settings-modal-body">
-                
+
                 <div className="settings-form-group">
                   <input
                     type="email"
@@ -324,10 +403,26 @@ export default function SettingsPage() {
                     onChange={(e) => setNewEmail(e.target.value)}
                   />
                 </div>
-                {error && <p className="error-message">{error}</p>}
               </div>
               <div className="settings-modal-footer">
-                <button type="submit" className="settings-btn">Update</button>
+                <ReactiveButton
+                  type="submit"
+                  idleText="Update"
+                  loadingText="Updating..."
+                  successText="Updated"
+                  errorText="Error"
+                  buttonState={state}
+                  rounded={true}
+                  shadow={true}
+                  width={"100%"}
+                  size='large'
+                  color={reactiveButtonColor}
+                />
+                {error && (
+                  <p className={`error-message ${errorAnimationClass}`}>
+                    {error}
+                  </p>
+                )}
               </div>
             </form>
           </div>
@@ -337,15 +432,18 @@ export default function SettingsPage() {
       {showChangePasswordModal && (
         <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangePasswordModal(false))}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}>
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangePasswordModal(false)}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
               </button>
               <h4 className="modal-title">Change Password</h4>
             </div>
-            <form onSubmit={handlePasswordReset}>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              onClickHandler(() => handlePasswordReset(e));
+            }}>
               <div className="settings-modal-body">
                 <div className="settings-form-group">
                   <input
@@ -358,11 +456,27 @@ export default function SettingsPage() {
                     onChange={(e) => setResetEmail(e.target.value)}
                   />
                 </div>
-                {error && <p className="error-message">{error}</p>}
               </div>
               <div className="settings-modal-footer">
-                <button type="submit" className="settings-btn">Update</button>
+                <ReactiveButton 
+                  type="submit"
+                  idleText="Update"
+                  loadingText="Updating..."
+                  successText="Updated"
+                  errorText="Error"
+                  buttonState={state}
+                  rounded={true}
+                  shadow={true}
+                  width={"100%"}
+                  size='large'
+                  color={reactiveButtonColor}
+                />
               </div>
+              {error && (
+                <p className={`error-message ${errorAnimationClass}`}>
+                  {error}
+                </p>
+              )}
             </form>
           </div>
         </div>
@@ -370,17 +484,22 @@ export default function SettingsPage() {
 
 
       {showChangeNicknameModal && (
-        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeNicknameModal(false))}>
+        <div className="modal-overlay" onClick={(e) => {
+          handleOverlayClick(e, () => setShowChangeNicknameModal(false));
+        }}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}>
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeNicknameModal(false)}>
-                <span>&times;</span> 
+                <span>&times;</span>
               </button>
               <h4 className="modal-title">Change Nickname</h4>
             </div>
-            <form onSubmit={handleChangeNickname}>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              onClickHandler(() => handleChangeNickname(e));
+            }}>
               <div className="settings-modal-body">
                 <input
                   type="text"
@@ -398,9 +517,25 @@ export default function SettingsPage() {
                 </p>
               </div>
               <div className="settings-modal-footer">
-                <button type="submit" className="settings-btn">Save</button>
+                <ReactiveButton 
+                  type="submit"
+                  idleText="Save"
+                  loadingText="Saving..."
+                  successText="Saved"
+                  errorText="Error"
+                  buttonState={state}
+                  rounded={true}
+                  shadow={true}
+                  width={"100%"}
+                  size='large'
+                  color={reactiveButtonColor}
+                />
               </div>
-              {error && <p className="error-message">{error}</p>}
+              {error && (
+                <p className={`error-message ${errorAnimationClass}`}>
+                  {error}
+                </p>
+              )}
             </form>
           </div>
         </div>
