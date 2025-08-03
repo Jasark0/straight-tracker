@@ -351,7 +351,7 @@ export default function History() {
                                         return (
                                             <div key={match.match_id} className="history-match-container">
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-type-text">Straight Pool (14.1 Continous)</span>
+                                                    <span className="history-match-game-type-text">Straight Pool (14.1 Continuous)</span>
                                                     <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 

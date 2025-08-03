@@ -508,36 +508,37 @@ const Select: React.FC = () => {
                     </div>
                 </form>
             </div>
-        {showBackVerificationModal && (
-        <div className="details-modal-overlay" onClick={() => setShowBackVerificationModal(false)}>
-            <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
-                <p className="game-name-message">Are you sure you want to leave?  Your changes won't be saved.</p>
-                <div className="button-selection-box">
-                    <button type="button" className="submit-button" onClick={() => {handleReturnToTracker()}}>
-                        Yes
-                    </button>
-                    <button type="button" className="submit-button" onClick={() => {setShowBackVerificationModal(false)}}>
-                        No
-                    </button>
-                </div>
-            </div>
-        </div>
-        )}
-        {showWinnerVerificationModal && (
-            <div className="details-modal-overlay" onClick={() => setShowWinnerVerificationModal(false)}>
-                <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
-                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}{raceSets && playerToWinSets != null ? ` and won ${playerToWinSets} sets` : ''}.</p>
-                    <div className="button-selection-box">
-                        <button type="button" className="submit-button" onClick={() => {handleExit()}}>
-                            Yes
-                        </button>
-                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(false)}}>
-                            No
-                        </button>
+
+            {showBackVerificationModal && (
+                <div className="history-details-modal" onClick={() => setShowBackVerificationModal(false)}>
+                    <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="game-name-message">Are you sure you want to leave?  Your changes won't be saved.</p>
+                        <div className="button-selection-box">
+                            <button type="button" className="submit-button" onClick={() => {handleReturnToTracker()}}>
+                                Yes
+                            </button>
+                            <button type="button" className="submit-button" onClick={() => {setShowBackVerificationModal(false)}}>
+                                No
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )}
+            )}
+            {showWinnerVerificationModal && (
+                <div className="history-details-modal" onClick={() => setShowWinnerVerificationModal(false)}>
+                    <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}{raceSets && playerToWinSets != null ? ` and won ${playerToWinSets} sets` : ''}.</p>
+                        <div className="button-selection-box">
+                            <button type="button" className="submit-button" onClick={() => {handleExit()}}>
+                                Yes
+                            </button>
+                            <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(false)}}>
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

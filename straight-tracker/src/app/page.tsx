@@ -137,7 +137,7 @@ export default function Home() {
                     <label>Email</label>
                     <input type="email" id="email" name="email" required />
 
-                    <label>Suggestions / Inquires</label>
+                    <label>Suggestions / Inquiries</label>
                     <textarea id="message" name="message" rows={8} required />
 
                     <button type="submit">Submit</button>
