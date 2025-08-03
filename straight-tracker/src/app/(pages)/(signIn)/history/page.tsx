@@ -75,17 +75,17 @@ export default function History() {
         }
     }
 
-    const selectPage = () => {
-        if (selectedGame === "8 Ball"){
+    const selectPage = (selectedGameType: string) => {
+        if (selectedGameType === "8 Ball"){
             router.push('/select/8-ball');
         }
-        else if (selectedGame === "9 Ball"){
+        else if (selectedGameType === "9 Ball"){
             router.push('/select/9-ball'); 
         }
-        else if (selectedGame === "10 Ball"){
+        else if (selectedGameType === "10 Ball"){
             router.push('/select/10-ball');
         }
-        else if (selectedGame === "Straight Pool (14.1 Continuous)"){
+        else if (selectedGameType === "Straight Pool (14.1 Continuous)"){
             router.push('/select/straight-pool'); 
         }
     }
@@ -403,20 +403,17 @@ export default function History() {
             {showSelectModal && (
                 <div className="history-select-modal" onClick={() => setShowSelectModal(false)}>
                     <div className="history-select-modal-content" onClick={gameSelect}>
+                        <div className="history-select-modal-close" onClick={() => setShowSelectModal(false)}>
+                            &times;
+                        </div>
                         <h2>Select a Game Type</h2>
-                        <div className="game-options">
+                        <div className="history-select-game-options">
                             {["8 Ball", "9 Ball", "10 Ball", "Straight Pool (14.1 Continuous)"].map((game) => (
-                                <button className={`game-option ${selectedGame === game ? "selected" : ""}`} key={game} onClick={() => setSelectedGame(game)}>
+                                <button className="history-select-game-option" key={game} onClick={() => selectPage(game)}>
                                     {game}
                                 </button>
                             ))}
                         </div>
-
-                        {selectedGame && (
-                            <div className="confirm-footer">
-                                <button className="next-button" onClick={selectPage}>Next</button>
-                            </div>
-                        )}
                     </div>
                 </div>
             )}
@@ -424,30 +421,24 @@ export default function History() {
             {showPoolDetailsModal && selectedPoolMatch && (
                 <div className="history-details-modal" onClick={() => setShowPoolDetailsModal(false)}>
                     <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="history-details-modal-close" onClick={() => setShowPoolDetailsModal(false)}>
+                            &times;
+                        </div>
                         <p className="history-details-game-type-text">
                             Game Type: {gameTypeLabels[selectedPoolMatch.game_type] ?? "None"}
                         </p>
                         <p className="history-details-game-name-text">
                             Game Name: {selectedPoolMatch.game_name}
                         </p>
-                        <div className="history-details-player-names-container">
-                            <p className="history-details-player-names-text">
-                                {selectedPoolMatch.player1}
-                            </p>
-                            <p className="history-details-vs-text">
-                                vs.
-                            </p>
-                            <p className="history-details-player-names-text">
-                                {selectedPoolMatch.player2}
-                            </p>
-                        </div>
-                        <p className="history-details-lag-winner-text">
-                            Lag Winner: {selectedPoolMatch.lag_winner}
+                        <p className="history-details-player-names-text">
+                            {selectedPoolMatch.player1} vs. {selectedPoolMatch.player2}
                         </p>
                         <p className="history-details-winner-text">
-                            Winner: {selectedPoolMatch.winner || "In Progress"}
+                            Lag Winner: {selectedPoolMatch.lag_winner}, Winner: {selectedPoolMatch.winner || "In Progress"}
                         </p>
+
                         <img src="/divider.png" className="divider-css"></img>
+
                         <p className="history-details-race-to-text">
                             Race to {selectedPoolMatch.race_to}
                             {selectedPoolMatch.pool_matches_sets?.sets !== null && selectedPoolMatch.pool_matches_sets?.sets !== undefined && (
@@ -460,8 +451,8 @@ export default function History() {
                                 {selectedPoolMatch.pool_matches_race?.length > 0 && (
                                     <div className="history-details-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedPoolMatch.pool_matches_race.length, 5)}, 1fr)`}}>
                                         {selectedPoolMatch.pool_matches_race.map((race, index) => (
-                                            <p className="history-sets-scores-text" key={index}>
-                                                Set {index + 1}: <span className="current-player-scores-css">{race.player1_score}</span> - <span className="current-player-scores-css">{race.player2_score}</span>
+                                            <p className="history-details-sets-scores-text" key={index}>
+                                                Set {index + 1}: <span className="history-match-current-scores-text">{race.player1_score}</span> - <span className="history-match-current-scores-text">{race.player2_score}</span>
                                             </p>
                                         ))}
                                     </div>
@@ -469,9 +460,9 @@ export default function History() {
                             </>
                         ) : (
                             <>
-                                <p className="history-race-score-text">Score:</p>
+                                <p className="history-details-race-score-text">Score:</p>
                                 {selectedPoolMatch.pool_matches_race?.[0] && (
-                                    <p className="modal-race-scores-text">
+                                    <p className="history-details-race-scores-text">
                                         {selectedPoolMatch.pool_matches_race[0].player1_score} - {selectedPoolMatch.pool_matches_race[0].player2_score}
                                     </p>
                                 )}
@@ -484,17 +475,17 @@ export default function History() {
             {showDeletePoolModal && (
                 <div className="history-delete-modal" onClick={() => {setShowDeletePoolModal(false)}}>
                     <div className="history-delete-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <p className="delete-warning-text">
+                        <p className="history-delete-warning-text">
                             Are you sure you want to delete this match?
                         </p>
-                        <p className="delete-warning-text">
+                        <p className="history-delete-warning-text">
                             This action is irreversible!
                         </p>
-                        <div className="delete-button-box">
-                            <div className="delete-confirm-button" onClick={deletePoolMatch}>
+                        <div className="history-delete-button-container">
+                            <div className="history-delete-confirm-button" onClick={deletePoolMatch}>
                                 Confirm Delete
                             </div>
-                            <div className="delete-cancel-button" onClick={() => {setShowDeletePoolModal(false)}}>
+                            <div className="history-delete-cancel-button" onClick={() => {setShowDeletePoolModal(false)}}>
                                 Cancel
                             </div>
                         </div>
@@ -503,58 +494,50 @@ export default function History() {
             )}
 
             {showStraightDetailsModal && selectedStraightMatch && (
-                <div className="details-modal-overlay" onClick={() => setShowStraightDetailsModal(false)}>
-                    <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <p className="modal-game-type-text">
+                <div className="history-details-modal" onClick={() => setShowStraightDetailsModal(false)}>
+                    <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="history-details-game-type-text">
                             Game Type: Straight Pool (14.1 Continuous)
                         </p>
-                        <p className="modal-game-name-text">
+                        <p className="history-details-game-name-text">
                             Game Name: {selectedStraightMatch.game_name}
                         </p>
-                        <div className="modal-player-names-box">
-                            <p className="modal-player-names-text">
-                                {selectedStraightMatch.player1}
-                            </p>
-                            <p className="modal-vs-text">
-                                vs.
-                            </p>
-                            <p className="modal-player-names-text">
-                                {selectedStraightMatch.player2}
+                        <div className="history-details-player-names-container">
+                            <p className="history-details-player-names-text">
+                                {selectedStraightMatch.player1} vs. {selectedStraightMatch.player2}
                             </p>
                         </div>
-                        <p className="modal-winner-text">
+                        <p className="history-details-winner-text">
                             Winner: {selectedStraightMatch.winner || "In Progress"}
                         </p>
 
                         <img src="/divider.png" className="divider-css"></img>
 
-                        <p className="modal-race-to-text">
+                        <p className="history-details-race-to-text">
                             Race to {selectedStraightMatch.race_to}
                         </p>
-
-                        <p className="modal-race-score-text">Score:</p>
-
-                        <p className="modal-race-scores-text">
+                        <p className="history-details-race-score-text">Score:</p>
+                        <p className="history-details-race-scores-text">
                             {selectedStraightMatch.player1_score} - {selectedStraightMatch.player2_score}
                         </p>
                     </div>
                 </div>
             )}
-
+            
             {showDeleteStraightModal && (
-                <div className="delete-modal-overlay" onClick={() => {setShowDeleteStraightModal(false)}}>
-                    <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <p className="delete-warning-text">
+                <div className="history-delete-modal" onClick={() => {setShowDeleteStraightModal(false)}}>
+                    <div className="history-delete-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <p className="history-delete-warning-text">
                             Are you sure you want to delete this match?
                         </p>
-                        <p className="delete-warning-text">
+                        <p className="history-delete-warning-text">
                             This action is irreversible!
                         </p>
-                        <div className="delete-button-box">
-                            <div className="delete-confirm-button" onClick={deleteStraightMatch}>
+                        <div className="history-delete-button-container">
+                            <div className="history-delete-confirm-button" onClick={deleteStraightMatch}>
                                 Confirm Delete
                             </div>
-                            <div className="delete-cancel-button" onClick={() => {setShowDeleteStraightModal(false)}}>
+                            <div className="history-delete-cancel-button" onClick={() => {setShowDeleteStraightModal(false)}}>
                                 Cancel
                             </div>
                         </div>

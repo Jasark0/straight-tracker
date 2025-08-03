@@ -62,425 +62,502 @@
 /* Filter CSS */
 
 .history-filter-container{
-  width: 18vw;
-  height: 60vh;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  border: 2px solid #ccc;
-  overflow-y: auto;
+    width: 18vw;
+    height: 35rem;
+    padding: 1rem;
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 0.5rem;
+    overflow-y: auto;
 }
 
 .history-filter-game-text{
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .history-filter-grid{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 2vh;
+    display: grid;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .history-filter-game-button{
-  display: block;
-  width: 100%;
-  height: 4rem;
-  font-size: 1.3rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  text-align: center;
-  transition: 0.3s ease;
+    display: block;
+    width: 100%;
+    height: 4rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    text-align: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: 0.3s ease;
 }
 
 .history-filter-game-button.active{
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+    color: white;
+    background-color: #007bff;
+    border-color: #007bff;
 }
 
 .history-filter-game-button.smaller-font{
-  font-size: 0.9rem;
+    font-size: 0.9rem;
 }
 
 .history-search-container{
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 3vh;
-  width: 100%;
-  margin-top: 1.5rem;
-  margin-bottom: 3vh;
+    display: flex;
+    position: relative;
+    align-items: center;
+    width: 100%;
+    height: 3vh;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .history-search-icon{
-  position: absolute;
-  left: 10px;
-  font-size: 1rem;
-  color: gray;
-  pointer-events: none; 
-  height: 100%;
+    position: absolute;
+    left: 10px;
+    height: 100%;
+    font-size: 1rem;
+    color: gray;
+    pointer-events: none; 
 }
 
 .history-search-input{
-  padding: 0.5rem 0.75rem 0.5rem 2rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
 .history-date-container{
-  display: flex;
-  width: 100%;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+    display: flex;
+    width: 100%;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
 }
 
 .history-date-input{
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.3rem;
-  font-size: 0.9rem;
-  background-color: #fff;
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
 }
 
 
 /* History Matches Display CSS */
 
 .history-matches-container{
-  width: 55vw;
-  height: 60vh;
-  background-color: white;
-  border: 2px solid #ccc;
-  border-radius: 12px;
-  overflow-y: auto;
-  padding: 1rem;
+    width: 55vw;
+    height: 35rem;
+    padding: 1rem;
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    overflow-y: auto;
 }
 
 .history-no-match-text{
-  display: flex;
-  font-size: 1.75rem;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.75rem;
 }
 
 .history-match-container{
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .history-match-row-container{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
 }
 
 .history-match-game-type-text{
-  font-size: 1.7rem;
+    font-size: 1.7rem;
 }
 
 .history-match-created-at-text{
-  font-size: 1.3rem;
+    font-size: 1.3rem;
 }
 
 .history-match-game-name-text{
-  font-size: 1rem;
+    font-size: 1rem;
 }
 
 .history-match-score-text{
-  font-size: 1rem;
+    font-size: 1rem;
 }
 
 .history-match-current-sets-text{
-  color: rgb(0, 0, 255);
-  font-weight: 550;
+    font-weight: 550;
+    color: rgb(0, 0, 255);
 }
 
 .history-match-current-scores-text{
-  color: red;
-  font-weight: 550;
+    font-weight: 550;
+    color: red;
 }
 
-/* .history-race-to-text{
-    font-size: 1.25rem;
-} */
-
 .history-match-player-name-text{
-  font-size: 1.2rem;
+    font-size: 1.2rem;
 }
 
 .history-match-button-container{
-  display: flex;
-  flex-direction: row;
-  gap: 2vh;
+    display: flex;
+    flex-direction: row;
+    gap: 2vh;
 }
 
 .history-match-button{
-  display: flex;
-  flex-direction: row;
-  padding: 0.4rem 0.75rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
+    display: flex;
+    flex-direction: row;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .history-match-button.continue{
-  background-color: #4caf50;
-  color: white;
+    color: white;
+    background-color: #4caf50;
 }
 
 .history-match-button.view{
-  background-color: #2196f3;
-  color: white;
+    color: white;
+    background-color: #2196f3;
 }
 
 .history-match-button.delete{
-  background-color: #ee1616;
-  color: white;
+    color: white;
+    background-color: #ee1616;
 }
 
 
+/* Select Modal CSS */
+
+.history-select-modal{
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.history-select-modal-content{
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    padding: 3rem 3rem;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.3s ease-in-out;
+}
+
+.history-select-modal-content h2{
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.history-select-modal-close{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.history-select-modal-close:hover{
+    color: #333;
+    transform: scale(1.1);
+}
+
+.history-select-game-options{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+}
+
+.history-select-game-option{
+    background-color: #dadada;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.history-select-game-option:hover{
+    background-color: #bfdbfe;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-select-game-option.selected{
+    background-color: #2563eb;
+    color: white;
+    font-weight: 600;
+}
+
+@keyframes fadeInUp{
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 
+/* Details Modal CSS */
 
-
-
-
-
-
-
-
-
-.history-select-modal, .history-delete-modal{
+.history-details-modal{
     display: flex;
     position: fixed;
     align-items: center;
     justify-content: center;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); 
-}
-
-.history-select-modal-content, .history-delete-modal-content{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 40%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  text-align: center;
-}
-
-.history-details-modal{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); 
-  padding-top: 5vh;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
 }
 
 .history-details-content{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 40%;
-  text-align: center;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  max-height: 60vh;
-  overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    justify-content: flex-start;
+    width: 90%;
+    max-width: 50rem;
+    max-height: 80vh;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    animation: fadeInUp 0.3s ease;
+}
+
+.history-details-modal-close{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.history-details-modal-close:hover{
+    color: #444;
+    transform: scale(1.1);
 }
 
 .history-details-game-type-text{
-  font-size: 2rem;
-  font-weight: 600;
-  margin-top: 0;
-  margin-bottom: 1vh;
-  text-decoration: underline;
-  text-underline-offset: 0.25em;
+    margin: 0 0 1rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
 }
 
-.history-details-game-name-text{
-  font-size: 1.5rem;
-  margin-top: 0;
-  margin-bottom: 1vh;
-}
-
-.history-details-player-names-container{
-  display: flex;
-  flex-direction: row;
-  gap: 1vh;
-}
-
+.history-details-game-name-text,
 .history-details-player-names-text{
-  font-size: 1.4rem;
-  margin: 0;
-}
-
-.history-details-vs-text{
-  margin-top: 0.5vh;
-  margin-bottom: 0;
-}
-
-.history-details-lag-winner-text{
-  font-size: 1.7rem;
-  margin-top: 0.5vh;
-  margin-top: 2vh;
-  margin-bottom: 0;
+    margin: 0 0 1rem;
+    font-size: 1.4rem;
+    font-weight: 500;
 }
 
 .history-details-winner-text{
-  font-size: 2rem;
-  margin-top: 0.5vh;
-  margin-top: 2vh;
-  margin-bottom: 2vh;
+    margin: 1rem 0 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2563eb;
 }
 
 .history-details-race-to-text{
-  font-size: 1.75rem;
-  margin-top: 1vh;
-  margin-bottom: 0;
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    font-weight: 500;
 }
 
-.history-details-all-scores-text, .history-details-race-score-text{
-  font-size: 1.5rem;
-  margin-bottom: 0.5vh;
+.history-details-all-scores-text,
+.history-details-race-score-text{
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
 }
 
 .history-details-sets-grid{
-  display: grid;
-  gap: 2vh;
-  justify-content: center;
+    display: grid;
+    justify-content: center;
+    gap: 0.75rem;
 }
 
-.history-sets-scores-text{
-  font-size: 1.25rem;
-  margin: 0;
+.history-details-sets-scores-text{
+    padding: 0.5rem 1rem;
+    margin: 0;
+    font-size: 1.1rem;
+    background-color: #d3d3d3;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.history-race-scores-text{
-  color: #ee1616;
-  font-size: 2.25rem;
-  margin: 0;
+.history-details-race-scores-text{
+    margin: 0.5rem 0 1.5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d32f2f;
 }
 
-.delete-warning-text{
-  font-size: 1.7rem;
-  margin: 1vh;
+.history-match-current-scores-text{
+    font-weight: 600;
 }
 
-.delete-button-box{
-  display: flex;
-  flex-direction: row;
-  gap: 5vh;
-  margin-top: 8vh;
+@keyframes fadeInUp{
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.delete-confirm-button{
-  background-color: #ee1616;
-  color: white;
-  padding: 3vh 4vh;
-  border-radius: 4px;
-  font-size: 1.25rem;
-  cursor: pointer;
+.history-details-content::-webkit-scrollbar{
+    width: 8px;
 }
 
-.delete-cancel-button{
-  background-color: #c8e6ff;
-  padding: 3vh 4vh;
-  border-radius: 4px;
-  font-size: 1.1rem;
-  cursor: pointer;
+.history-details-content::-webkit-scrollbar-thumb{
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
 }
 
-.game-options{
-  display: grid;
-  width: 50%;
-  gap: 1rem;
-  grid-template-columns: 1fr;
+
+/* Delete Modal CSS */
+
+.history-delete-modal{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
 }
 
-.game-option{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  border-radius: 10px;
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: 0.3s;
+.history-delete-modal-content{
+    width: 90%;
+    max-width: 500px;
+    padding: 2.5rem;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-.game-option:hover{
-  background-color: #e0e0ff;
+.history-delete-warning-text{
+    margin: 1rem 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
 }
 
-.game-option.selected{
-  background-color: rgb(137, 205, 236);
+.history-delete-button-container{
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+    gap: 1.5rem;
 }
 
-.confirm-footer{
-  margin-top: 2rem;
-  text-align: right;
+.history-delete-confirm-button{
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background-color: #d32f2f;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.next-button{
-  display: flex;
-  padding: 1.5vh 5vh;
-  border-radius: 10px;
-  border: 1px solid #afafaf;
-  align-items: center;
-  justify-content: center;
+.history-delete-confirm-button:hover{
+    background-color: #b71c1c;
+    transform: scale(1.05);
 }
 
-.next-button:hover{
-  background-color: #e0e0ff;
+.history-delete-cancel-button{
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #2196f3;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.icon-button{
-  font-size: 1.4rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5vh 1vh;
-  border-radius: 6px;
-  transition: background 0.2s;
+.history-delete-cancel-button:hover{
+    background-color: #1976d2;
+    transform: scale(1.05);
 }
 
-.icon-button:hover{
-  background-color: #f0f0f0;
+@keyframes fadeIn{
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
