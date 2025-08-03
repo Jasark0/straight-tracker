@@ -27,6 +27,7 @@ export default function SettingsPage() {
   const [newEmail, setNewEmail] = useState("");
   const [currentEmail, setCurrentEmail] = useState("");
   const [avatar_url, setAvatarUrl] = useState("");
+  const [isSelecting, setIsSelecting] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -48,6 +49,24 @@ export default function SettingsPage() {
     };
     fetchUser();
   }, []);
+
+
+  
+  const handleMouseDown = () => {
+    setIsSelecting(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsSelecting(false);
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent, closeModal: () => void) => {
+    if (isSelecting) {
+      return;
+    } 
+
+    closeModal();
+  }
 
   const handleEmailChange = async (event: React.FormEvent<HTMLFormElement>) => {
   };
@@ -238,8 +257,10 @@ export default function SettingsPage() {
       </div>
 
       {showChangeUsernameModal && (
-        <div className="modal-overlay" onClick={() => setShowChangeUsernameModal(false)}>
-          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeUsernameModal(false))}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeUsernameModal(false)}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
@@ -272,8 +293,10 @@ export default function SettingsPage() {
 
 
       {showChangeEmailModal && (
-        <div className="modal-overlay" onClick={() => setShowChangeEmailModal(false)}>
-          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeEmailModal(false))}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeEmailModal(false)}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
@@ -314,8 +337,10 @@ export default function SettingsPage() {
       )}
 
       {showChangePasswordModal && (
-        <div className="modal-overlay" onClick={() => setShowChangePasswordModal(false)}>
-          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangePasswordModal(false))}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangePasswordModal(false)}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
@@ -347,8 +372,10 @@ export default function SettingsPage() {
 
 
       {showChangeNicknameModal && (
-        <div className="modal-overlay" onClick={() => setShowChangeNicknameModal(false)}>
-          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeNicknameModal(false))}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={() => setShowChangeNicknameModal(false)}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
