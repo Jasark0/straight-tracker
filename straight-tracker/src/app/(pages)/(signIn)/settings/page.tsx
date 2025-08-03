@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { changeNickname, changePassword, changeUsername, getUserSession, updateAvatarInProfile, updateProfile } from '@/actions/auth';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
@@ -33,6 +33,9 @@ export default function SettingsPage() {
   const [state, setState] = useState('idle');
   const [isErrorVisible, setIsErrorVisible] = useState(false);
   const [errorAnimationClass, setErrorAnimationClass] = useState('');
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
   let reactiveButtonColor = 'blue';
 
   useEffect(() => {
@@ -60,12 +63,30 @@ export default function SettingsPage() {
   const resetStates = () => {
     setState('idle');
     setError(null);
+    
+    // Clear any pending timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
+    // Abort any ongoing requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
   }
 
   const onClickHandler = (callback: () => void) => {
     setState('loading');
-    setTimeout(() => { 
-      callback();
+    
+    // Create new abort controller for this operation
+    abortControllerRef.current = new AbortController();
+    
+    timeoutRef.current = setTimeout(() => { 
+      if (!abortControllerRef.current?.signal.aborted) {
+        callback();
+      }
     }, 2500); 
   }
 
@@ -107,6 +128,8 @@ export default function SettingsPage() {
       return;
     }
 
+    // Cancel any ongoing operations before closing
+    resetStates();
     closeModal();
   }
 
@@ -122,19 +145,37 @@ export default function SettingsPage() {
       return;
     }
 
+    // Check if operation was aborted
+    if (abortControllerRef.current?.signal.aborted) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append('email', resetEmail);
 
-    const result = await changePassword(formData);
+    try {
+      const result = await changePassword(formData);
 
-    if (result.status === "success") {
-      setState('success');
-      setTimeout(() => {
-        setShowChangePasswordModal(false);
-        toast.success("Password reset email sent! Please check your inbox.");
-      }, 1000);
-    } else {
-      onError(result.status);
+      // Check again after async operation
+      if (abortControllerRef.current?.signal.aborted) {
+        return;
+      }
+
+      if (result.status === "success") {
+        setState('success');
+        setTimeout(() => {
+          if (!abortControllerRef.current?.signal.aborted) {
+            setShowChangePasswordModal(false);
+            toast.success("Password reset email sent! Please check your inbox.");
+          }
+        }, 1000);
+      } else {
+        onError(result.status);
+      }
+    } catch (error) {
+      if (!abortControllerRef.current?.signal.aborted) {
+        onError("An error occurred while resetting password.");
+      }
     }
   };
 
@@ -148,21 +189,39 @@ export default function SettingsPage() {
       return;
     }
 
+    // Check if operation was aborted
+    if (abortControllerRef.current?.signal.aborted) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append('nickname', newNickname);
 
-    const result = await changeNickname(formData);
+    try {
+      const result = await changeNickname(formData);
 
-    if (result.status === "success") {
-      setState('success');
-      setTimeout(() => {
-        setShowChangeNicknameModal(false);
-        toast.success("Nickname updated successfully!");
-      }, 1000);
-      const session = await getUserSession();
-      setUser(session?.user);
-    } else {
-      onError(result.status);
+      // Check again after async operation
+      if (abortControllerRef.current?.signal.aborted) {
+        return;
+      }
+
+      if (result.status === "success") {
+        setState('success');
+        setTimeout(() => {
+          if (!abortControllerRef.current?.signal.aborted) {
+            setShowChangeNicknameModal(false);
+            toast.success("Nickname updated successfully!");
+          }
+        }, 1000);
+        const session = await getUserSession();
+        setUser(session?.user);
+      } else {
+        onError(result.status);
+      }
+    } catch (error) {
+      if (!abortControllerRef.current?.signal.aborted) {
+        onError("An error occurred while updating nickname.");
+      }
     }
   };
 
@@ -175,21 +234,39 @@ export default function SettingsPage() {
       return;
     }
 
+    // Check if operation was aborted
+    if (abortControllerRef.current?.signal.aborted) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append('username', newUsername);
 
-    const result = await changeUsername(formData);
+    try {
+      const result = await changeUsername(formData);
 
-    if (result.status === "success") {
-      setState('success');
-      setTimeout(() => {
-        setShowChangeUsernameModal(false);
-        toast.success("Username updated successfully!");
-      }, 1000);
-      const session = await getUserSession();
-      setUser(session?.user);
-    } else {
-      onError(result.status);
+      // Check again after async operation
+      if (abortControllerRef.current?.signal.aborted) {
+        return;
+      }
+
+      if (result.status === "success") {
+        setState('success');
+        setTimeout(() => {
+          if (!abortControllerRef.current?.signal.aborted) {
+            setShowChangeUsernameModal(false);
+            toast.success("Username updated successfully!");
+          }
+        }, 1000);
+        const session = await getUserSession();
+        setUser(session?.user);
+      } else {
+        onError(result.status);
+      }
+    } catch (error) {
+      if (!abortControllerRef.current?.signal.aborted) {
+        onError("An error occurred while updating username.");
+      }
     }
   };
 
@@ -215,6 +292,24 @@ export default function SettingsPage() {
   else if (state === 'idle') {
     reactiveButtonColor ='blue';
   }
+
+  const closeNicknameModal = () => {
+    setShowChangeNicknameModal(false);
+    resetStates();
+  }
+  const closeUsernameModal = () => {
+    setShowChangeUsernameModal(false);
+    resetStates();
+  } 
+  const closeEmailModal = () => {
+    setShowChangeEmailModal(false);
+    resetStates();
+  }
+  const closePasswordModal = () => {
+    setShowChangePasswordModal(false);
+    resetStates();
+  }
+
 
   const nickname = user?.user_metadata?.nickname;
   const username = user?.user_metadata?.username;
@@ -312,13 +407,13 @@ export default function SettingsPage() {
       </div>
 
       {showChangeUsernameModal && (
-        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeUsernameModal(false))}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, closeUsernameModal)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
-              <button type="button" className="close-button" title="Close" onClick={() => setShowChangeUsernameModal(false)}>
-                <span>&times;</span> 
+              <button type="button" className="close-button" title="Close" onClick={closeUsernameModal}>
+                <span>&times;</span>
               </button>
               <h4 className="modal-title">Change Username</h4>
             </div>
@@ -367,12 +462,12 @@ export default function SettingsPage() {
 
 
       {showChangeEmailModal && (
-        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangeEmailModal(false))}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, closeEmailModal)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
-              <button type="button" className="close-button" title="Close" onClick={() => setShowChangeEmailModal(false)}>
+              <button type="button" className="close-button" title="Close" onClick={closeEmailModal}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
               </button>
               <h4 className="modal-title">Change Email</h4>
@@ -430,12 +525,12 @@ export default function SettingsPage() {
       )}
 
       {showChangePasswordModal && (
-        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, () => setShowChangePasswordModal(false))}>
+        <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, closePasswordModal)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
-              <button type="button" className="close-button" title="Close" onClick={() => setShowChangePasswordModal(false)}>
+              <button type="button" className="close-button" title="Close" onClick={closePasswordModal}>
                 <span>&times;</span> {/* A simple 'x' for the close icon */}
               </button>
               <h4 className="modal-title">Change Password</h4>
@@ -485,13 +580,13 @@ export default function SettingsPage() {
 
       {showChangeNicknameModal && (
         <div className="modal-overlay" onClick={(e) => {
-          handleOverlayClick(e, () => setShowChangeNicknameModal(false));
+          handleOverlayClick(e, closeNicknameModal);
         }}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
-              <button type="button" className="close-button" title="Close" onClick={() => setShowChangeNicknameModal(false)}>
+              <button type="button" className="close-button" title="Close" onClick={closeNicknameModal}>
                 <span>&times;</span>
               </button>
               <h4 className="modal-title">Change Nickname</h4>
