@@ -1,17 +1,21 @@
 import { NextResponse } from 'next/server'
-// The client you created from the Server-Side Auth instructions
 import { createClient } from '@/utils/supabase/server'
 import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
+import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
+
+export const generateUsername = () => {
+    return uniqueNamesGenerator({
+        dictionaries: [adjectives, animals],
+        length: 2,
+        separator: '-',
+    }) + Math.floor(Math.random() * 1000);
+}
 
 export async function GET(request: Request) {
     const { searchParams, origin} = new URL(request.url);
   const code = searchParams.get("code");
 
   const next = searchParams.get("next") ?? "/history";
-
-  
-
-
 
     if (code) {
         const supabase = await createClient();
@@ -26,7 +30,6 @@ export async function GET(request: Request) {
                 return NextResponse.redirect(`${origin}/error`);
             }
 
-            // Check if user exists in profiles table
             const { data: existingUser } = await supabaseAdmin
                 .from("profiles")
                 .select("*")
@@ -37,34 +40,32 @@ export async function GET(request: Request) {
             let username: string;
 
             if (!existingUser) {
-                // Create a random number for user identificaiton oauth
-                let idIsUnique = false;
-                let randomId = Math.floor(Math.random() * 1000);
-                // Check if the random ID is unique
-                while ( idIsUnique === false) {
+                let usernameIsUnique = false;
+                let randomUsername = generateUsername(); 
+
+                while (usernameIsUnique === false) {
                     const {data: usernameID} = await supabaseAdmin
                     .from("profiles")
                     .select("username")
-                    .contains("username", data?.user?.email+randomId.toString());
+                    .contains("username", randomUsername.toString());
 
                     if (!usernameID) {
-                        idIsUnique = true; // Unique ID found
+                        usernameIsUnique = true; 
                     }
                     else
                     {
-                        randomId = Math.floor(Math.random() * 1000000000);
+                        randomUsername = generateUsername();
                     }
                     
                 }
-                
-                username = (data?.user?.email?.split('@')[0] ?? "user") + randomId.toString();
+
+                username = randomUsername.toString();
 
 
-                // Insert the new user into the profiles table
                 const { error: dbError } = await supabaseAdmin.from("profiles").insert({
                     id: data?.user?.id,
                     email: data?.user?.email,
-                    username: username, // Use email prefix as username if not set
+                    username: username, 
                     created_at: new Date().toISOString(),
                     // options:{ display name and username mixed up idk we'll figure this out later
                     //     data: {
@@ -83,18 +84,17 @@ export async function GET(request: Request) {
 
             const { data: updatedUser, error} = await supabase.auth.updateUser({
                 data: {
-                    display_name: data?.user?.user_metadata?.full_name || "User",
+                    display_name: username,
                     username: username, 
-                    nickname: data?.user?.user_metadata?.nickname || "No Nickname"
+                    nickname: data?.user?.user_metadata?.nickname || null
                 }
             })
             
             
-            const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
+            const forwardedHost = request.headers.get("x-forwarded-host"); 
             const isLocalEnv = process.env.NODE_ENV === "development";
 
             if (isLocalEnv) {
-                // No load balancer in local environment, use original origin
                 return NextResponse.redirect(`${origin}${next}`);
             } else if (forwardedHost) {
                 return NextResponse.redirect(`https://${forwardedHost}${next}`);
@@ -104,7 +104,6 @@ export async function GET(request: Request) {
         }
     }
     
-  // return the user to an error page with instructions
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 } 
 
