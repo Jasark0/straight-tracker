@@ -31,23 +31,22 @@ export async function PATCH(req: Request) {
     
         const email = user?.email;
     
-        const { data: profile, error: profileError } = await supabaseAdmin
-            .from('profiles')
-            .select('username')
-            .eq('email', email)
-            .single();
+        // const { data: profile, error: profileError } = await supabaseAdmin
+        //     .from('profiles')
+        //     .select('username')
+        //     .eq('email', email)
+        //     .single();
     
-        if (profileError || !profile) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        }
+        // if (profileError || !profile) {
+        //     return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        // }
     
-        const username = profile.username;
+        // const username = profile.username;
 
         const { data: matchData, error: matchError } = await supabaseAdmin
         .from('straight_pool_matches')
         .update([
             {
-                username: username,
                 game_name: game_name,
                 player1: player1,
                 player2: player2,

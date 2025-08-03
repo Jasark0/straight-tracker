@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     
     const { data: profile, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('username')
+        .select('id')
         .eq('email', email)
         .single();
 
@@ -25,16 +25,16 @@ export async function GET(req: Request) {
     }
 
 
-    const username = profile.username;
+    const user_id = profile.id;
 
     const { data: poolMatch, error: matchError } = await supabaseAdmin
         .from('pool_matches')
         .select('*')
         .eq('match_id', match_id)
-        .eq('username', username)
+        .eq('user_id', user_id)
         .single();
 
-    if (matchError || !poolMatch || poolMatch.winner != null ) {
+    if (matchError || !poolMatch || poolMatch.winner != null) {
         return NextResponse.json({ redirect: '/history' });
     }
 

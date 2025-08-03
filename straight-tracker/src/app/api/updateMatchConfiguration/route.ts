@@ -29,24 +29,22 @@ export async function PATCH(req: Request) {
             sets,
         } = body;
 
-        // console.log(enableSets);
-    
         const session = await getUserSession();
         const user = session?.user;
     
         const email = user?.email;
     
-        const { data: profile, error: profileError } = await supabaseAdmin
-            .from('profiles')
-            .select('username')
-            .eq('email', email)
-            .single();
+        // const { data: profile, error: profileError } = await supabaseAdmin
+        //     .from('profiles')
+        //     .select('id')
+        //     .eq('email', email)
+        //     .single();
     
-        if (profileError || !profile) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        }
+        // if (profileError || !profile) {
+        //     return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        // }
     
-        const username = profile.username;
+        //const user_id = profile.id;
 
         const { data: existingSets, error: setsCheckError } = await supabaseAdmin
             .from('pool_matches_sets')
@@ -100,7 +98,6 @@ export async function PATCH(req: Request) {
         .from('pool_matches')
         .update([
             {
-                username: username,
                 game_name: game_name,
                 player1: player1,
                 player2: player2,

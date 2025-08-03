@@ -324,11 +324,7 @@ const Tracker: React.FC = () => {
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
             try{
-                const segments = pathname.split('/');
-                const URLGameType = segments[2]; 
-                const URLGameTypeNumber = URLGameType?.split('-')[0];
-
-                const res = await fetch(`/api/getPoolMatch?matchID=${matchID}&gameType=${parseInt(URLGameTypeNumber)}`);
+                const res = await fetch(`/api/getPoolMatch?matchID=${matchID}`);
                 const json = await res.json();
                 
                 if (json.redirect) {
