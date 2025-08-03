@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
             if (!abortControllerRef.current?.signal.aborted) {
                 callback();
             }
-        }, 2500); 
+        }, 2000); 
     }
 
     const onError = (errorMessage: string) => {
@@ -75,7 +75,7 @@ const Signup: React.FC = () => {
                 setErrorAnimationClass('');
                 resetStates();
             }, 400); 
-        }, 2500); 
+        }, 2000); 
     }
 
     const handleSubmit = async (formData: FormData) => {
@@ -101,7 +101,7 @@ const Signup: React.FC = () => {
                     }
                 }, 1000);
             } else {
-                onError(result.status);
+                onError(`${result.status}`);
             }
         } catch (error) {
             if (!abortControllerRef.current?.signal.aborted) {

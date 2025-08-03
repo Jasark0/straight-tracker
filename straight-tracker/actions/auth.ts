@@ -64,7 +64,6 @@ export async function signUp(formData : FormData) {
     if(credentials.password !== credentials.confirmPassword) {
         return { status: "Passwords do not match." };
     }
-
     const {error, data} = await supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
@@ -78,6 +77,7 @@ export async function signUp(formData : FormData) {
             },
         }
     });
+
 
     const {data: existingUser} = await supabaseAdmin
     .from("profiles")
