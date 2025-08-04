@@ -75,6 +75,11 @@
     margin-top: 0;
 }
 
+.history-filter-no-text{
+    display: flex;
+    width: 100%;
+}
+
 .history-filter-grid{
     display: grid;
     flex-wrap: wrap;

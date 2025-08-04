@@ -39,7 +39,21 @@ export default function History() {
         winner: string | null;
         created_at: string;
     }
-    
+
+    const allGameTypes = ['8-Ball', '9-Ball', '10-Ball', 'straight-pool'];
+
+    const gameTypeMap: Record<string, number | "straight"> = {
+        "8-Ball": 0,
+        "9-Ball": 1,
+        "10-Ball": 2
+    };
+
+    const revGameTypeMap: Record<number, string> = {
+        0: "8-Ball",
+        1: "9-Ball",
+        2: "10-Ball"
+    }
+
     const router = useRouter();
 
     const [selectedGameType, setSelectedGameType] = useState('8-Ball');
@@ -62,6 +76,8 @@ export default function History() {
     const [showDeletePoolModal, setShowDeletePoolModal] = useState(false);
     const [showDeleteStraightModal, setShowDeleteStraightModal] = useState(false);
 
+    const today = new Date().toISOString().split("T")[0];
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -98,12 +114,6 @@ export default function History() {
         router.push(`/tracker/straight-pool?matchID=${match.match_id}`);
     }
 
-    const gameTypeMap: Record<string, number | "straight"> = {
-        "8-Ball": 0,
-        "9-Ball": 1,
-        "10-Ball": 2
-    };
-
     const gameTypeLabels: Record<number, string> = {
         0: "8-Ball",
         1: "9-Ball",
@@ -125,6 +135,32 @@ export default function History() {
         
         window.location.reload();
     }
+
+    const availableGameTypes = useMemo(() => {
+        const types = new Set<string>();
+
+        allPoolMatches.forEach(match => {
+            const gameTypeStr = revGameTypeMap[match.game_type];
+            if (gameTypeStr) types.add(gameTypeStr);
+        });
+
+        if (allStraightMatches.length > 0) {
+            types.add('straight-pool');
+        }
+
+        return Array.from(types);
+    }, [allPoolMatches, allStraightMatches]);
+
+    const earliestMatchDate = useMemo(() => {
+        if (allPoolMatches.length === 0){
+            return undefined;
+        } 
+
+        const lastMatch = allPoolMatches[allPoolMatches.length - 1];
+        const date = new Date(lastMatch.created_at);
+
+        return date.toISOString().split("T")[0]; 
+    }, [allPoolMatches]);
 
     const filteredMatches = useMemo(() => {
         const gameNameSearch = debouncedSearchTerm.toLowerCase();
@@ -234,17 +270,25 @@ export default function History() {
                 <div className="history-content-container">
                     <div className="history-filter-container">
                         <p className="history-filter-game-text">Game to display:</p>
-                        <div className="history-filter-grid">
-                            {['8-Ball', '9-Ball', '10-Ball', 'straight-pool'].map((type) => (
-                                <button
+
+                        {availableGameTypes.length === 0 ? (
+                            <p className="history-filter-no-text">No matches found yet, make a new game today!</p>
+                        ) : (
+                            <div className="history-filter-grid">
+                                {allGameTypes
+                                .filter(type => availableGameTypes.includes(type))
+                                .map((type) => (
+                                    <button
                                     key={type}
                                     className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'straight-pool' ? 'smaller-font' : ''}`}
                                     onClick={() => setSelectedGameType(type)}
-                                >
-                                    {type === 'straight-pool' ? <>Straight Pool <br/> (14.1 Continuous)</> : `${type}`}
-                                </button>
-                            ))}
-                        </div> 
+                                    >
+                                    {type === 'straight-pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    
                         
                         <p>Search game name:</p>
                         <div className="history-search-container">
@@ -254,8 +298,11 @@ export default function History() {
 
                         <p>Filter by date:</p>
                         <div className="history-date-container">
-                            <input type="date" className="history-date-input" placeholder="Start date" onChange={(e) => setStartDate(e.target.value)}/>
-                            <input type="date" className="history-date-input" placeholder="End date" onChange={(e) => setEndDate(e.target.value)}/>
+                            <input type="date" className="history-date-input" placeholder="Start date" min={earliestMatchDate} max={endDate || today} 
+                            onChange={(e) => setStartDate(e.target.value)}/>
+
+                            <input type="date" className="history-date-input" placeholder="End date" min={startDate || undefined} max={today}
+                            onChange={(e) => setEndDate(e.target.value)}/>
                         </div>
 
                         <p>Filter by player name:</p>
