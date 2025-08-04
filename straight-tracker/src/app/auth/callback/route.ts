@@ -3,19 +3,19 @@ import { createClient } from '@/utils/supabase/server'
 import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
 
-export const generateUsername = () => {
+export async function GET(request: Request) {
+    const { searchParams, origin} = new URL(request.url);
+  const code = searchParams.get("code");
+
+  const next = searchParams.get("next") ?? "/history";
+
+  const generateUsername = () => {
     return uniqueNamesGenerator({
         dictionaries: [adjectives, animals],
         length: 2,
         separator: '-',
     }) + Math.floor(Math.random() * 1000);
 }
-
-export async function GET(request: Request) {
-    const { searchParams, origin} = new URL(request.url);
-  const code = searchParams.get("code");
-
-  const next = searchParams.get("next") ?? "/history";
 
     if (code) {
         const supabase = await createClient();
