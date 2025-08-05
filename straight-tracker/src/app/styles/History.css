@@ -158,6 +158,22 @@
     border-radius: 0.3rem;
 }
 
+.history-clear-button{
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #f44336;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.history-clear-button:hover{
+    background-color: #d32f2f;
+}
+
 
 /* History Matches Display CSS */
 
@@ -171,6 +187,26 @@
     overflow-y: auto;
 }
 
+.history-matches-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.history-matches-header-game-type{
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.history-matches-count{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #5a5a5a;
+}
+
 .history-no-match-text{
     display: flex;
     align-items: center;
@@ -180,12 +216,27 @@
 }
 
 .history-match-container{
+    position: relative;
+    max-height: 5rem;
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 10px;
+    cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease, max-height 0.3s ease;
+}
+
+.history-match-container:hover{
+    max-height: 7rem;
+    background-color: #dddddd; 
+    border-radius: 8px;
+}
+
+.history-match-container:hover .history-match-button-container{
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .history-match-row-container{
@@ -195,20 +246,16 @@
     font-size: 0.95rem;
 }
 
-.history-match-game-type-text{
-    font-size: 1.7rem;
-}
-
 .history-match-created-at-text{
     font-size: 1.3rem;
 }
 
 .history-match-game-name-text{
-    font-size: 1rem;
+    font-size: 1.5rem;
 }
 
 .history-match-score-text{
-    font-size: 1rem;
+    font-size: 1.5rem;
 }
 
 .history-match-current-sets-text{
@@ -222,38 +269,76 @@
 }
 
 .history-match-player-name-text{
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 .history-match-button-container{
     display: flex;
-    flex-direction: row;
-    gap: 2vh;
+    gap: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .history-match-button{
-    display: flex;
-    flex-direction: row;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+    user-select: none;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: 
+        background-color 0.3s ease, 
+        box-shadow 0.3s ease,
+        transform 0.15s ease;
+}
+
+.history-match-button-container .history-match-button{
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+    transition-delay: 0s;
+}
+
+.history-match-container:hover .history-match-button-container .history-match-button:nth-child(1){
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.history-match-container:hover .history-match-button-container .history-match-button:nth-child(2){
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .history-match-button.continue{
-    color: white;
-    background-color: #4caf50;
+    background: linear-gradient(135deg, #43a047, #66bb6a);
+    box-shadow: 0 3px 4px rgba(67, 160, 71, 0.5);
 }
 
-.history-match-button.view{
-    color: white;
-    background-color: #2196f3;
+.history-match-button.continue:hover{
+    background: linear-gradient(135deg, #388e3c, #4caf50);
+    box-shadow: 0 5px 10px rgba(56, 142, 60, 0.7);
+    transform: translateY(-2px);
 }
 
 .history-match-button.delete{
-    color: white;
-    background-color: #ee1616;
+    background: linear-gradient(135deg, #e53935, #ef5350);
+    box-shadow: 0 3px 4px rgba(229, 57, 53, 0.5);
+}
+
+.history-match-button.delete:hover{
+    background: linear-gradient(135deg, #c62828, #e53935);
+    box-shadow: 0 5px 10px rgba(198, 40, 40, 0.7);
+    transform: translateY(-2px);
 }
 
 

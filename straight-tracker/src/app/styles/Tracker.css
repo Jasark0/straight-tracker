@@ -3,8 +3,8 @@
 .tracker-page-box{
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 15vh);
-    padding-top: 15vh;
+    min-height: calc(100vh - 6rem);
+    padding-top: 6rem;
     align-items: center;
     justify-content: center;
     overflow-y: hidden;
@@ -45,57 +45,28 @@
     justify-content: center;
 }
 
-.game-name-box{
+.gear-button {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 0;
-    margin-bottom: 0;
-    height: 5vh;
-    position: relative;
-}
-
-.hamburger-container {
-    position: fixed;
-    left: 5vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.hamburger-icon {
-    height: 8vh;
-    width: 7vh;
-    cursor: pointer;
-}
-
-.dropdown-menu {
-    display: none;
     position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    flex-direction: column;
-    min-width: 150px;
-}
-
-.dropdown-item {
-    padding: 10px 15px;
-    font-size: 1rem;
+    top: 1.2rem;
+    right: 1.5rem;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    border: none;
+    border-radius: 50%;
+    padding: 0.6rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    white-space: nowrap;
+    transition:
+        background 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    z-index: 10;
 }
 
-.dropdown-item:hover {
-    background-color: #f0f0f0;
-}
-
-.hamburger-container:hover .dropdown-menu {
-    display: flex;
+.gear-button:hover {
+    background: linear-gradient(135deg, #3a3fc4, #777df8);
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
 .game-name-text{
@@ -290,7 +261,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: -20vh;
 }
 
 .undo-style{

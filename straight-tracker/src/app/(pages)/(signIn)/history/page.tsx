@@ -5,6 +5,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loading from '@/src/components/PageLoading'
 
 export default function History() {
     type PoolMatch = {
@@ -76,7 +77,7 @@ export default function History() {
     const [showDeletePoolModal, setShowDeletePoolModal] = useState(false);
     const [showDeleteStraightModal, setShowDeleteStraightModal] = useState(false);
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toLocaleDateString('en-CA');
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -113,12 +114,6 @@ export default function History() {
     const continueStraightMatchPage = (match: StraightMatch) => {
         router.push(`/tracker/straight-pool?matchID=${match.match_id}`);
     }
-
-    const gameTypeLabels: Record<number, string> = {
-        0: "8-Ball",
-        1: "9-Ball",
-        2: "10-Ball",
-    };
     
     const deletePoolMatch = async () => {
         await fetch(`/api/deletePoolMatch?matchID=${selectedPoolMatch?.match_id}`, {
@@ -159,7 +154,7 @@ export default function History() {
         const lastMatch = allPoolMatches[allPoolMatches.length - 1];
         const date = new Date(lastMatch.created_at);
 
-        return date.toISOString().split("T")[0]; 
+        return date.toLocaleDateString('en-CA');
     }, [allPoolMatches]);
 
     const filteredMatches = useMemo(() => {
@@ -195,8 +190,17 @@ export default function History() {
             }));
     }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, debouncedPlayerName]);
 
+    const handleClearFilters = () => {
+        setSearchTerm('');
+        setStartDate('');
+        setEndDate('');
+        setPlayerName('');
+    };
+
     useEffect(() => { //Get all matches
         const fetchAllMatches = async () => {
+            setLoading(true);
+
             try{
                 const res = await fetch('/api/getAllMatches');
                 const json = await res.json();
@@ -207,10 +211,11 @@ export default function History() {
 
                 setAllPoolMatches(json.allPoolMatches);
                 setAllStraightMatches(json.allStraightMatches);
+
+                setLoading(false);
             }
             catch (err){
                 setError('Network error');
-                console.error(err);
             }
         };
         fetchAllMatches();
@@ -259,7 +264,11 @@ export default function History() {
         }
     }, [])
 
-    return (
+    if (loading){
+        return <Loading/>;
+    }
+
+    return !loading && (
         <div className="history-page-container">
             <ToastContainer className="history-toast"/>
             <div className={`history-container ${showSelectModal ? "blurred" : ""}`}>
@@ -276,49 +285,62 @@ export default function History() {
                         ) : (
                             <div className="history-filter-grid">
                                 {allGameTypes
-                                .filter(type => availableGameTypes.includes(type))
-                                .map((type) => (
+                                    .filter(type => availableGameTypes.includes(type))
+                                    .map((type) => (
                                     <button
-                                    key={type}
-                                    className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'straight-pool' ? 'smaller-font' : ''}`}
-                                    onClick={() => setSelectedGameType(type)}
-                                    >
-                                    {type === 'straight-pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
+                                        key={type}
+                                        className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'straight-pool' ? 'smaller-font' : ''}`}
+                                        onClick={() => setSelectedGameType(type)}
+                                        >
+                                        {type === 'straight-pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
                                     </button>
                                 ))}
                             </div>
                         )}
                     
-                        
                         <p>Search game name:</p>
                         <div className="history-search-container">
                             <span className="history-search-icon">🔍</span>
-                            <input className="history-search-input" placeholder="Search game name" onChange={(e) => setSearchTerm(e.target.value)}/>
+                            <input className="history-search-input" placeholder="Search game name" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
                         </div>
 
                         <p>Filter by date:</p>
                         <div className="history-date-container">
-                            <input type="date" className="history-date-input" placeholder="Start date" min={earliestMatchDate} max={endDate || today} 
+                            <input type="date" className="history-date-input" placeholder="Start date" value={startDate} min={earliestMatchDate} max={endDate || today} 
                             onChange={(e) => setStartDate(e.target.value)}/>
 
-                            <input type="date" className="history-date-input" placeholder="End date" min={startDate || undefined} max={today}
+                            <input type="date" className="history-date-input" placeholder="End date" value={endDate} min={startDate || undefined} max={today}
                             onChange={(e) => setEndDate(e.target.value)}/>
                         </div>
 
                         <p>Filter by player name:</p>
                         <div className="history-search-container">
                             <span className="history-search-icon">🔍</span>
-                            <input className="history-search-input" placeholder="Search player name" onChange={(e) => setPlayerName(e.target.value)}/>
+                            <input className="history-search-input" placeholder="Search player name" value={playerName} onChange={(e) => setPlayerName(e.target.value)}/>
                         </div>
+
+                        <button className="history-clear-button" onClick={handleClearFilters}>
+                            Clear Filters
+                        </button>
                     </div>
                     
                     <div className="history-matches-container">
                         {filteredMatches.length === 0 ? (
-                        <p className="history-no-match-text">
-                            No match history found. 
-                        </p>
+                            <p className="history-no-match-text">
+                                No match history found. 
+                            </p>
                         ) : (
                             <div>
+                                <div className="history-matches-header">
+                                    <span className="history-matches-header-game-type">
+                                        {selectedGameType === 'straight-pool'                                                                                                                
+                                            ? 'Straight Pool (14.1 Continuous)'
+                                            : revGameTypeMap[parseInt(selectedGameType)] ?? selectedGameType} Matches
+                                    </span>                                                                                         
+                                    <span className="history-matches-count">
+                                        {filteredMatches.length} match{filteredMatches.length !== 1 && 'es'} found
+                                    </span>
+                                </div>
                                 {filteredMatches.map((match) => {
                                     if (match.type === "pool"){
                                         const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
@@ -339,9 +361,9 @@ export default function History() {
                                         }
 
                                         return (
-                                            <div key={match.match_id} className="history-match-container">
+                                            <div key={match.match_id} className="history-match-container" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-type-text">{gameTypeLabels[match.game_type] ?? "None"}</span>
+                                                    <span className="history-match-game-name-text">Game Name: {match.game_name}</span>
                                                     <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 
@@ -354,7 +376,9 @@ export default function History() {
                                                 </div>
 
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-name-text">Game Name: {match.game_name}</span>
+                                                    <span className="history-match-player-name-text">
+                                                        {match.player1} vs. {match.player2}
+                                                    </span>
                                                     <span className="history-match-score-text">
                                                         {match.pool_matches_sets
                                                         ? (
@@ -372,21 +396,17 @@ export default function History() {
                                                 </div>
                                                 
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-player-name-text">
-                                                        {match.player1} vs. {match.player2}
-                                                    </span>
+                                                    <span></span>
                                                     <span className="history-match-button-container">
                                                         {match.winner === null && (
-                                                            <button className="history-match-button continue" onClick={() => continuePoolMatchPage(match)}>
+                                                            <button className="history-match-button continue" 
+                                                            onClick={(e) => {e.stopPropagation(); continuePoolMatchPage(match);}}>
                                                                 Continue Match
                                                             </button>
                                                         )}
 
-                                                        <button className="history-match-button view" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
-                                                            View Details
-                                                        </button>
-
-                                                        <button className="history-match-button delete" onClick={() => {setShowDeletePoolModal(true); setSelectedPoolMatch(match);}}>
+                                                        <button className="history-match-button delete" 
+                                                        onClick={(e) => {e.stopPropagation(); setShowDeletePoolModal(true); setSelectedPoolMatch(match);}}>
                                                             Delete Match
                                                         </button>
                                                     </span>
@@ -396,9 +416,9 @@ export default function History() {
                                     }
                                     else if (match.type === 'straight'){
                                         return (
-                                            <div key={match.match_id} className="history-match-container">
+                                            <div key={match.match_id} className="history-match-container" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-type-text">Straight Pool (14.1 Continuous)</span>
+                                                    <span className="history-match-game-name-text">Game Name: {match.game_name}</span>
                                                     <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 
@@ -411,28 +431,26 @@ export default function History() {
                                                 </div>
 
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-name-text">Game Name: {match.game_name}</span>
+                                                    <span className="history-match-player-name-text">
+                                                        {match.player1} vs. {match.player2}
+                                                    </span>
                                                     <span className="history-match-score-text">
                                                         Score: <span className="history-match-current-scores-text">{match.player1_score}</span> - <span className="history-match-current-scores-text">{match.player2_score}</span>
                                                     </span>
                                                 </div>
                                             
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-player-name-text">
-                                                        {match.player1} vs. {match.player2}
-                                                    </span>
+                                                    <span></span>
                                                     <span className="history-match-button-container">
                                                         {match.winner === null && (
-                                                            <button className="history-match-button continue" onClick={() => {continueStraightMatchPage(match)}}>
+                                                            <button className="history-match-button continue" 
+                                                            onClick={(e) => {e.stopPropagation(); continueStraightMatchPage(match)}}>
                                                                 Continue Match
                                                             </button>
                                                         )}
 
-                                                        <button className="history-match-button view" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
-                                                            View Details
-                                                        </button>
-
-                                                        <button className="history-match-button delete" onClick={() => {setShowDeleteStraightModal(true); setSelectedStraightMatch(match);}}>
+                                                        <button className="history-match-button delete" 
+                                                        onClick={(e) => {e.stopPropagation(); setShowDeleteStraightModal(true); setSelectedStraightMatch(match);}}>
                                                             Delete Match
                                                         </button>
                                                     </span>
@@ -472,7 +490,7 @@ export default function History() {
                             &times;
                         </div>
                         <p className="history-details-game-type-text">
-                            Game Type: {gameTypeLabels[selectedPoolMatch.game_type] ?? "None"}
+                            Game Type: {revGameTypeMap[selectedPoolMatch.game_type] ?? "None"}
                         </p>
                         <p className="history-details-game-name-text">
                             Game Name: {selectedPoolMatch.game_name}

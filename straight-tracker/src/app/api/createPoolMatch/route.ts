@@ -88,6 +88,7 @@ export async function POST(req: Request) {
     .select(); 
 
     if (matchError || !matchData || matchData.length === 0) {
+        console.log(matchError);
         return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
     }
 
