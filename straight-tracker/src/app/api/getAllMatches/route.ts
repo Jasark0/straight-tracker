@@ -59,6 +59,7 @@ export async function GET(req: Request) {
             player1_high_run,
             player2_score,
             player2_high_run,
+            lag_winner,
             winner,
             created_at
         `)

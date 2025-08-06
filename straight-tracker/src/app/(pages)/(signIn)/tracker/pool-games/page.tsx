@@ -70,7 +70,7 @@ const Tracker: React.FC = () => {
                 }
                 else{
                     await updatePoolMatch(prev + 1, player2Score);
-                    const winnerValue = player1;
+                    const winnerValue = 'player1';
                     handleWinner(winnerValue);
                 }
             }
@@ -78,7 +78,7 @@ const Tracker: React.FC = () => {
         else{
             if (prev + 1 === raceTo){
                 await updatePoolMatch(prev + 1, player2Score);
-                const winnerValue = player1;
+                const winnerValue = 'player1';
                 handleWinner(winnerValue);
             }
         }
@@ -122,7 +122,7 @@ const Tracker: React.FC = () => {
                 }
                 else{
                     await updatePoolMatch(player1Score, prev + 1);
-                    const winnerValue = player2;
+                    const winnerValue = 'player2';
                     handleWinner(winnerValue);
                 }
             }
@@ -130,7 +130,7 @@ const Tracker: React.FC = () => {
         else{
             if (prev + 1 === raceTo){
                 await updatePoolMatch(player1Score, prev + 1);
-                const winnerValue = player2;
+                const winnerValue = 'player2';
                 handleWinner(winnerValue);
             }
         }
@@ -414,6 +414,7 @@ const Tracker: React.FC = () => {
                 <button className="gear-button" onClick={handleConfigureGame} title="Configure Match">
                     <Icon path={mdiCog} size={1} />
                 </button>
+                
                 <p className="game-name-text">
                     {gameName}  
                 </p>
@@ -533,7 +534,7 @@ const Tracker: React.FC = () => {
                             And the winner is...
                         </p>
                         <p className="winner-text">
-                            {winner}
+                            {winner === 'player1' ? `Player 1 - ${player1}` : winner === 'player2' ? `Player 2 - ${player2}` : ''}
                         </p>
                         <div className="winner-button-box">
                             <button className="winner-button" onClick={handleExit}>

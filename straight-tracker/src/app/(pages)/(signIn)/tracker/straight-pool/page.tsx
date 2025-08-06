@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
+import Icon from '@mdi/react';
+import { mdiCog } from '@mdi/js';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -81,7 +83,7 @@ const Tracker: React.FC = () => {
 
         if (updatedScore === raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
-            handleWinner(player1);
+            handleWinner('player1');
         }
 
         setActionHistory(history => [...history, action]);
@@ -122,7 +124,7 @@ const Tracker: React.FC = () => {
 
         if (updatedScore >= raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
-            handleWinner(player1);
+            handleWinner('player1');
         }
 
         setActionHistory(history => [...history, action]);
@@ -225,7 +227,7 @@ const Tracker: React.FC = () => {
 
         if (updatedScore === raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
-            handleWinner(player2);
+            handleWinner('player2');
         }
 
         setActionHistory(history => [...history, action]);
@@ -266,7 +268,7 @@ const Tracker: React.FC = () => {
 
         if (updatedScore >= raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
-            handleWinner(player2);
+            handleWinner('player2');
         }
 
         setActionHistory(history => [...history, action]);
@@ -685,13 +687,9 @@ const Tracker: React.FC = () => {
 
             {!loading && (
                 <>
-                    <div className="hamburger-container">
-                        <img src="/hamburger-menu.png" className="hamburger-icon" />
-                        <div className="dropdown-menu">
-                            <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
-                            <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
-                        </div>
-                    </div>
+                    <button className="gear-button" onClick={handleConfigureGame} title="Configure Match">
+                        <Icon path={mdiCog} size={1} />
+                    </button>
 
                     <p className="s-game-name-text">
                         Game Name: {gameName}
@@ -782,7 +780,7 @@ const Tracker: React.FC = () => {
                             And the winner is...
                         </p>
                         <p className="winner-text">
-                            {winner}
+                            {winner === 'player1' ? `Player 1 - ${player1}` : winner === 'player2' ? `Player 2 - ${player2}` : ''}
                         </p>
                         <div className="winner-button-box">
                             <button className="winner-button" onClick={handleExit}>

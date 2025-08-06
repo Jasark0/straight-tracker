@@ -6,6 +6,7 @@ import "@/src/app/styles/Header.css"
 
 import { createClient } from "@/utils/supabase/server";
 
+import Maintenance from '@/src/components/Maintenance';
 import ConditionalHeader from '../components/ConditionalHeader'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -29,6 +30,11 @@ export default async function RootLayout({
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    const isMaintenance = process.env.MAINTENANCE_MODE === 'true';
+    
+    if (isMaintenance){
+        return <Maintenance/>;
+    }
  
     return (
         <html lang="en">

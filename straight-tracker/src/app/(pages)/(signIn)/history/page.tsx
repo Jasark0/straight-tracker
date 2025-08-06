@@ -37,6 +37,7 @@ export default function History() {
         player1_high_run: number;
         player2_score: number;
         player2_high_run: number;
+        lag_winner: string;
         winner: string | null;
         created_at: string;
     }
@@ -278,6 +279,7 @@ export default function History() {
                 
                 <div className="history-content-container">
                     <div className="history-filter-container">
+                        {/* Start Thinking about tabs organziation, mobile css*/}
                         <p className="history-filter-game-text">Game to display:</p>
 
                         {availableGameTypes.length === 0 ? (
@@ -309,7 +311,7 @@ export default function History() {
                             <input type="date" className="history-date-input" placeholder="Start date" value={startDate} min={earliestMatchDate} max={endDate || today} 
                             onChange={(e) => setStartDate(e.target.value)}/>
 
-                            <input type="date" className="history-date-input" placeholder="End date" value={endDate} min={startDate || undefined} max={today}
+                            <input type="date" className="history-date-input" placeholder="End date" value={endDate} min={earliestMatchDate || startDate} max={today}
                             onChange={(e) => setEndDate(e.target.value)}/>
                         </div>
 
@@ -319,6 +321,7 @@ export default function History() {
                             <input className="history-search-input" placeholder="Search player name" value={playerName} onChange={(e) => setPlayerName(e.target.value)}/>
                         </div>
 
+                        {/*Filter by race to, sets, and disparity*/}
                         <button className="history-clear-button" onClick={handleClearFilters}>
                             Clear Filters
                         </button>
@@ -499,7 +502,13 @@ export default function History() {
                             {selectedPoolMatch.player1} vs. {selectedPoolMatch.player2}
                         </p>
                         <p className="history-details-winner-text">
-                            Lag Winner: {selectedPoolMatch.lag_winner}, Winner: {selectedPoolMatch.winner || "In Progress"}
+                            Lag Winner: {selectedPoolMatch.lag_winner}, Winner: {
+                                selectedPoolMatch.winner === 'player1'
+                                ? `Player 1 - ${selectedPoolMatch.player1}`
+                                : selectedPoolMatch.winner === 'player2'
+                                ? `Player 2 - ${selectedPoolMatch.player2}`
+                                : "In Progress"
+                            }
                         </p>
 
                         <img src="/divider.png" className="divider-css"></img>
@@ -572,8 +581,15 @@ export default function History() {
                                 {selectedStraightMatch.player1} vs. {selectedStraightMatch.player2}
                             </p>
                         </div>
+
                         <p className="history-details-winner-text">
-                            Winner: {selectedStraightMatch.winner || "In Progress"}
+                            Lag Winner: {selectedStraightMatch.lag_winner}, Winner: {
+                                selectedStraightMatch.winner === 'player1'
+                                ? `Player 1 - ${selectedStraightMatch.player1}`
+                                : selectedStraightMatch.winner === 'player2'
+                                ? `Player 2 - ${selectedStraightMatch.player2}`
+                                : "In Progress"
+                            }
                         </p>
 
                         <img src="/divider.png" className="divider-css"></img>
