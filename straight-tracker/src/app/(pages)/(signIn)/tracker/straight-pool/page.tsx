@@ -19,7 +19,7 @@ const Tracker: React.FC = () => {
     const player1Ref = useRef(player1);
     const player2Ref = useRef(player2);
     const [raceTo, setRaceTo] = useState<number>(0);
-    const [toShoot, setToShoot] = useState('');
+    const [toShoot, setToShoot] = useState<1|2>(1);
     const toShootRef = useRef(toShoot);
     const [rack, setRack] = useState<number>(1);
     const [remainingBalls, setRemainingBalls] = useState<number>(15);
@@ -34,7 +34,7 @@ const Tracker: React.FC = () => {
     const player2HighRunRef = useRef(player2HighRun);
     const player2CurrRunRef = useRef(player2CurrRun);
     
-    const [winner, setWinner] = useState('');
+    const [winner, setWinner] = useState<1|2|null>(null);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -64,7 +64,7 @@ const Tracker: React.FC = () => {
         setPlayer1Score(updatedScore);
         setPlayer1CurrRun(updatedCurrRun);
 
-        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -83,7 +83,7 @@ const Tracker: React.FC = () => {
 
         if (updatedScore === raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
-            handleWinner('player1');
+            handleWinner(1);
         }
 
         setActionHistory(history => [...history, action]);
@@ -103,7 +103,7 @@ const Tracker: React.FC = () => {
             prevRemainingBalls: remainingBalls,
         }
 
-        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -124,14 +124,14 @@ const Tracker: React.FC = () => {
 
         if (updatedScore >= raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
-            handleWinner('player1');
+            handleWinner(1);
         }
 
         setActionHistory(history => [...history, action]);
     }
 
     const decrementPlayer1 = async () => {
-        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -183,14 +183,14 @@ const Tracker: React.FC = () => {
             setPlayer1CurrRun(0);
             setRemainingBalls(15);
             setRack(rack + 1);
-            setToShoot(player2);
+            setToShoot(2);
             setActionHistory(history => [...history, action]);
             return;
         }
 
         setPlayer1Score(player1Score - 1);
         setPlayer1CurrRun(0);
-        setToShoot(player2);
+        setToShoot(2);
 
         setActionHistory(history => [...history, action]);
     }
@@ -208,7 +208,7 @@ const Tracker: React.FC = () => {
         setPlayer2Score(updatedScore);
         setPlayer2CurrRun(updatedCurrRun);
 
-        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -227,7 +227,7 @@ const Tracker: React.FC = () => {
 
         if (updatedScore === raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
-            handleWinner('player2');
+            handleWinner(2);
         }
 
         setActionHistory(history => [...history, action]);
@@ -247,7 +247,7 @@ const Tracker: React.FC = () => {
             prevRemainingBalls: remainingBalls,
         }
 
-        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -268,14 +268,14 @@ const Tracker: React.FC = () => {
 
         if (updatedScore >= raceTo){
             updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
-            handleWinner('player2');
+            handleWinner(2);
         }
 
         setActionHistory(history => [...history, action]);
     }
 
     const decrementPlayer2 = async () => {
-        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -327,14 +327,14 @@ const Tracker: React.FC = () => {
             setPlayer2CurrRun(0);
             setRemainingBalls(15);
             setRack(rack + 1);
-            setToShoot(player1);
+            setToShoot(1);
             setActionHistory(history => [...history, action]);
             return;
         }
 
         setPlayer2Score(player2Score - 1);
         setPlayer2CurrRun(0);
-        setToShoot(player1);
+        setToShoot(1);
 
         setActionHistory(history => [...history, action]);
     }
@@ -345,20 +345,20 @@ const Tracker: React.FC = () => {
         const currentPlayer2 = player2Ref.current;
 
         const action: Action = {
-            player: currentToShoot === currentPlayer1 ? 'player1' : 'player2',
+            player: currentToShoot === 1 ? 'player1' : 'player2',
             ActionType: 'miss',
         };
 
-        if (currentToShoot === currentPlayer1){
+        if (currentToShoot === 1){
             action.prevPlayerCurrRun = player1CurrRunRef.current;
             setPlayer1CurrRun(0);
         }
-        else if (currentToShoot === currentPlayer2){
+        else if (currentToShoot === 2){
             action.prevPlayerCurrRun = player2CurrRunRef.current;
             setPlayer2CurrRun(0);
         }
 
-        const nextPlayer = currentToShoot === currentPlayer1 ? currentPlayer2 : currentPlayer1;
+        const nextPlayer = currentToShoot === 1 ? 2 : 1;
 
         setToShoot(nextPlayer);
         setActionHistory((history) => [...history, action]);
@@ -420,8 +420,7 @@ const Tracker: React.FC = () => {
                     setPlayer1CurrRun(lastAction.prevPlayerCurrRun);
                 }
             }
-            setToShoot(player1);
-
+            setToShoot(1);
         }
         else if (lastAction.player === 'player2'){
             if (lastAction.ActionType === 'increment'){
@@ -474,13 +473,13 @@ const Tracker: React.FC = () => {
                     setPlayer2CurrRun(lastAction.prevPlayerCurrRun);
                 }
             }
-            setToShoot(player2);
+            setToShoot(2);
         }
 
         setActionHistory(prev => prev.slice(0, -1));
     }
 
-    const updateStraightMatch = async (toShoot: string, rack: number, remainingBalls: number, updatedPlayer1Score: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
+    const updateStraightMatch = async (toShoot: 1|2, rack: number, remainingBalls: number, updatedPlayer1Score: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
         updatedPlayer2Score: number, updatedPlayer2HighRun: number, updatedPlayer2CurrRun: number) => { //updates scores to database
         try {
             const res = await fetch('/api/updateStraightMatch', {
@@ -509,7 +508,7 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+    const handleWinner = async (winnerValue: 1 | 2 | null) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -730,10 +729,10 @@ const Tracker: React.FC = () => {
                                 <p className="rack-number">(Rack {rack})</p>
                             </div>
                             <p className="s-to-shoot-text"> 
-                                {toShoot} to shoot!
+                                {toShoot === 1 ? `${player1}` : `${player2}`} to shoot!
                             </p>
                             <div className="arrow-container">
-                                <img src={toShoot === player1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
+                                <img src={toShoot === 1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
                                 <div className="player-turn-text-style" id="player-turn-text">
                                 </div>
                                 <div className="player-swap-text-container">
@@ -780,8 +779,18 @@ const Tracker: React.FC = () => {
                             And the winner is...
                         </p>
                         <p className="winner-text">
-                            {winner === 'player1' ? `Player 1 - ${player1}` : winner === 'player2' ? `Player 2 - ${player2}` : ''}
+                            {winner === 1
+                                ? player1 === 'Player1'
+                                ? 'Player 1'
+                                : `Player 1 - ${player1}`
+                            : winner === 2
+                                ? player2 === 'Player2'
+                                ? 'Player 2'
+                                : `Player 2 - ${player2}`
+                                : ''}
                         </p>
+
+
                         <div className="winner-button-box">
                             <button className="winner-button" onClick={handleExit}>
                                 exit match

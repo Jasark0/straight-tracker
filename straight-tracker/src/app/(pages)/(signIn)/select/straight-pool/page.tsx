@@ -13,7 +13,7 @@ const Select: React.FC = () => {
     const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
 
     const [lagPopup, setLagPopup] = useState(false);
-    const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
+    const [lagWinnerSelected, setLagWinnerSelected] = useState<1|2|null>(null);
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +27,7 @@ const Select: React.FC = () => {
         await submitMatch(null);
     };
 
-    const submitMatch = async (finalLagWinner: string|null) => {
+    const submitMatch = async (finalLagWinner: number|null) => {
         try {
             const res = await fetch('/api/createStraightMatch', {
                 method: 'POST',
@@ -131,11 +131,11 @@ const Select: React.FC = () => {
                         <p className="lag-text">Players, lag for break at this time.</p>
                         <p className="lag-winner-text">Pick a lag winner:</p>
                         <div className="lag-button-box">
-                            <button className={`player1-lag-button ${ lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
+                            <button className={`player1-lag-button ${ lagWinnerSelected === 1 ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected(1)}>
                                 {player1 || 'Player1'}
                             </button>
                                 
-                            <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
+                            <button className={`player2-lag-button ${lagWinnerSelected === 2 ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected(2)}>
                                 {player2 || 'Player2'}
                             </button>
                         </div>
@@ -143,8 +143,7 @@ const Select: React.FC = () => {
                         <button className="continue-button" disabled={!lagWinnerSelected}
                             onClick={() => {
                                 setLagPopup(false);
-                                const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                                submitMatch(lagName);
+                                submitMatch(lagWinnerSelected);
                             }}
                         >
                             Continue

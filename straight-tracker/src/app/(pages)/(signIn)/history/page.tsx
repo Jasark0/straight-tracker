@@ -15,8 +15,7 @@ export default function History() {
         player1: string;
         player2: string;
         race_to: number;
-        lag_winner: string;
-        winner: string | null;
+        winner: number | null;
         created_at: string;
         pool_matches_race: {
             player1_score: number;
@@ -24,6 +23,9 @@ export default function History() {
         }[];
         pool_matches_sets: {
             sets: number;
+        }
+        pool_matches_lag: {
+            lag_winner: number;
         }
     };
 
@@ -37,9 +39,11 @@ export default function History() {
         player1_high_run: number;
         player2_score: number;
         player2_high_run: number;
-        lag_winner: string;
-        winner: string | null;
+        winner: number | null;
         created_at: string;
+        straight_pool_matches_lag: {
+            lag_winner: number;
+        }
     }
 
     const allGameTypes = ['8-Ball', '9-Ball', '10-Ball', 'straight-pool'];
@@ -366,7 +370,7 @@ export default function History() {
                                         return (
                                             <div key={match.match_id} className="history-match-container" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-name-text">Game Name: {match.game_name}</span>
+                                                    <span className="history-match-game-name-text">{match.game_name}</span>
                                                     <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 
@@ -421,7 +425,7 @@ export default function History() {
                                         return (
                                             <div key={match.match_id} className="history-match-container" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
                                                 <div className="history-match-row-container">
-                                                    <span className="history-match-game-name-text">Game Name: {match.game_name}</span>
+                                                    <span className="history-match-game-name-text">{match.game_name}</span>
                                                     <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 
@@ -502,13 +506,31 @@ export default function History() {
                             {selectedPoolMatch.player1} vs. {selectedPoolMatch.player2}
                         </p>
                         <p className="history-details-winner-text">
-                            Lag Winner: {selectedPoolMatch.lag_winner}, Winner: {
-                                selectedPoolMatch.winner === 'player1'
-                                ? `Player 1 - ${selectedPoolMatch.player1}`
-                                : selectedPoolMatch.winner === 'player2'
-                                ? `Player 2 - ${selectedPoolMatch.player2}`
-                                : "In Progress"
-                            }
+                            {selectedPoolMatch.pool_matches_lag?.lag_winner != null && (
+                                <>
+                                    Lag Winner:{" "}
+                                    {selectedPoolMatch.pool_matches_lag.lag_winner === 1
+                                        ? selectedPoolMatch.player1 === "Player1"
+                                            ? "Player 1"
+                                            : `Player 1 - ${selectedPoolMatch.player1}`
+                                        : selectedPoolMatch.pool_matches_lag.lag_winner === 2
+                                        ? selectedPoolMatch.player2 === "Player2"
+                                            ? "Player 2"
+                                            : `Player 2 - ${selectedPoolMatch.player2}`
+                                        : "Unknown"}
+                                    ,{" "}
+                                </>
+                            )}
+                            Winner:{" "}
+                            {selectedPoolMatch.winner === 1
+                                ? selectedPoolMatch.player1 === "Player1"
+                                    ? "Player 1"
+                                    : `Player 1 - ${selectedPoolMatch.player1}`
+                                : selectedPoolMatch.winner === 2
+                                ? selectedPoolMatch.player2 === "Player2"
+                                    ? "Player 2"
+                                    : `Player 2 - ${selectedPoolMatch.player2}`
+                                : "In Progress"}
                         </p>
 
                         <img src="/divider.png" className="divider-css"></img>
@@ -583,14 +605,34 @@ export default function History() {
                         </div>
 
                         <p className="history-details-winner-text">
-                            Lag Winner: {selectedStraightMatch.lag_winner}, Winner: {
-                                selectedStraightMatch.winner === 'player1'
-                                ? `Player 1 - ${selectedStraightMatch.player1}`
-                                : selectedStraightMatch.winner === 'player2'
-                                ? `Player 2 - ${selectedStraightMatch.player2}`
-                                : "In Progress"
-                            }
+                            {selectedStraightMatch.straight_pool_matches_lag?.lag_winner != null && (
+                                <>
+                                    Lag Winner:{" "}
+                                    {selectedStraightMatch.straight_pool_matches_lag.lag_winner === 1
+                                        ? selectedStraightMatch.player1 === "Player1"
+                                            ? "Player 1"
+                                            : `Player 1 - ${selectedStraightMatch.player1}`
+                                        : selectedStraightMatch.straight_pool_matches_lag.lag_winner === 2
+                                        ? selectedStraightMatch.player2 === "Player2"
+                                            ? "Player 2"
+                                            : `Player 2 - ${selectedStraightMatch.player2}`
+                                        : "Unknown"}
+                                    ,{" "}
+                                </>
+                            )}
+                            Winner:{" "}
+                            {selectedStraightMatch.winner === 1
+                                ? selectedStraightMatch.player1 === "Player1"
+                                    ? "Player 1"
+                                    : `Player 1 - ${selectedStraightMatch.player1}`
+                                : selectedStraightMatch.winner === 2
+                                ? selectedStraightMatch.player2 === "Player2"
+                                    ? "Player 2"
+                                    : `Player 2 - ${selectedStraightMatch.player2}`
+                                : "In Progress"}
                         </p>
+
+
 
                         <img src="/divider.png" className="divider-css"></img>
 

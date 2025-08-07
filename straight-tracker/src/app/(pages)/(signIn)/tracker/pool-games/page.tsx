@@ -19,8 +19,8 @@ const Tracker: React.FC = () => {
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState<number>();
-    const [breakFormat, setBreakFormat] = useState(0);
-    const [toBreak, setToBreak] = useState('');
+    const [breakFormat, setBreakFormat] = useState<1|2>();
+    const [toBreak, setToBreak] = useState<1|2>(1);
     const [player1Score, setPlayer1Score] = useState<number>(0);
     const [player2Score, setPlayer2Score] = useState<number>(0);
 
@@ -29,12 +29,12 @@ const Tracker: React.FC = () => {
     const [player1Set, setPlayer1Set] = useState<number | undefined>();
     const [player2Set, setPlayer2Set] = useState<number | undefined>();
 
-    const [winner, setWinner] = useState('');
+    const [winner, setWinner] = useState<1|2|null>(null);
 
     type Action = {
         player: string;
         prevScore: number;
-        toBreak: string;
+        toBreak: 1|2;
         prevSet?: number;
         prevRaceId?: number;
     };
@@ -66,31 +66,29 @@ const Tracker: React.FC = () => {
 
                 if (prevSet + 1 !== raceSets){
                     action.prevRaceId = id;
-                    await completeSet(prev + 1, player2Score, 'player1');
+                    await completeSet(prev + 1, player2Score, toBreak, 1);
                 }
                 else{
-                    await updatePoolMatch(prev + 1, player2Score);
-                    const winnerValue = 'player1';
-                    handleWinner(winnerValue);
+                    await updatePoolMatch(prev + 1, player2Score, toBreak);
+                    handleWinner(1);
                 }
             }
         }
         else{
             if (prev + 1 === raceTo){
-                await updatePoolMatch(prev + 1, player2Score);
-                const winnerValue = 'player1';
-                handleWinner(winnerValue);
+                await updatePoolMatch(prev + 1, player2Score, toBreak);
+                handleWinner(1);
             }
         }
 
-        if (breakFormat === 0){
-            setToBreak(player1);
+        if (breakFormat === 1){
+            setToBreak(1);
         } 
-        else if (toBreak === player1){
-            setToBreak(player2);
+        else if (toBreak === 1){
+            setToBreak(2);
         } 
         else{
-            setToBreak(player1);
+            setToBreak(1);
         }
 
         setActionHistory(history => [...history, action]);
@@ -118,31 +116,29 @@ const Tracker: React.FC = () => {
 
                 if (prevSet + 1 !== raceSets){
                     action.prevRaceId = id;
-                    await completeSet(player1Score, prev + 1, 'player2');
+                    await completeSet(player1Score, prev + 1, toBreak, 2);
                 }
                 else{
-                    await updatePoolMatch(player1Score, prev + 1);
-                    const winnerValue = 'player2';
-                    handleWinner(winnerValue);
+                    await updatePoolMatch(player1Score, prev + 1, toBreak);
+                    handleWinner(2);
                 }
             }
         }
         else{
             if (prev + 1 === raceTo){
-                await updatePoolMatch(player1Score, prev + 1);
-                const winnerValue = 'player2';
-                handleWinner(winnerValue);
+                await updatePoolMatch(player1Score, prev + 1, toBreak);
+                handleWinner(2);
             }
         }
 
-        if (breakFormat === 0){
-            setToBreak(player2);
+        if (breakFormat === 1){
+            setToBreak(2);
         } 
-        else if (toBreak === player1){
-            setToBreak(player2);
+        else if (toBreak === 1){
+            setToBreak(2);
         } 
         else{
-            setToBreak(player1);
+            setToBreak(1);
         }
 
         setActionHistory(history => [...history, action]);
@@ -207,15 +203,17 @@ const Tracker: React.FC = () => {
         setActionHistory(prev => prev.slice(0, -1));
     };
 
-    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number, winner?: 'player1' | 'player2' | null) => { //updates scores to database
+    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number, toBreak: number, winner?: 1 | 2 | null) => { //updates scores to database
         try {
             const res = await fetch('/api/updatePoolMatch', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    match_id: matchID,
                     id,
                     player1_score: updatedPlayer1Score,
                     player2_score: updatedPlayer2Score,
+                    to_break: toBreak,
                     winner: winner ?? null
                 }),
             });
@@ -229,10 +227,10 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number, winner: 'player1' | 'player2') => { //creates a new set when a player reaches the race_to requirement
+    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number, toBreak: 1 | 2, winner: 1 | 2) => { //creates a new set when a player reaches the race_to requirement
         try{
             setLoading(true);
-            await updatePoolMatch(finalPlayer1Score, finalPlayer2Score, winner);
+            await updatePoolMatch(finalPlayer1Score, finalPlayer2Score, toBreak, winner);
 
             const res = await fetch(`/api/createNewRace?matchID=${matchID}`, {
                 method: 'POST',
@@ -257,7 +255,7 @@ const Tracker: React.FC = () => {
         }
     }
     
-    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+    const handleWinner = async (winnerValue: 1 | 2 | null) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -289,13 +287,13 @@ const Tracker: React.FC = () => {
     }
 
     const handleConfigureGame = async () => {
-        await updatePoolMatch(player1Score, player2Score);
+        await updatePoolMatch(player1Score, player2Score, toBreak);
 
         router.push(`/configure/pool-games?matchID=${matchID}`);
     }
 
     const goToHistory = async () => {
-        await updatePoolMatch(player1Score, player2Score);
+        await updatePoolMatch(player1Score, player2Score, toBreak);
 
         router.push('/history');
     }
@@ -372,24 +370,26 @@ const Tracker: React.FC = () => {
     }, [matchID]);
 
     useEffect(() => { //Updating database with scores every 15 seconds
-        if (!id) return;
+        if (!matchID || !id) return;
 
         const interval = setInterval(() => {
-            updatePoolMatch(player1Score, player2Score);
+            updatePoolMatch(player1Score, player2Score, toBreak);
         }, 15000);
 
         return () => clearInterval(interval);
-    }, [id, player1Score, player2Score]);
+    }, [matchID, id, player1Score, player2Score, toBreak]);
     
     useEffect(() => { //Updating database with scores on reload & leaving tab
-        if (!id) return;
+        if (!matchID || !id) return;
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
                 const payload = JSON.stringify({
+                    match_id: matchID,
                     id,
                     player1_score: player1Score,
                     player2_score: player2Score,
+                    to_break: toBreak,
                 });
 
                 const blob = new Blob([payload], { type: 'application/json' });
@@ -403,7 +403,7 @@ const Tracker: React.FC = () => {
         return () => {
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [id, player1Score, player2Score]);
+    }, [matchID, id, player1Score, player2Score, toBreak]);
 
 
     return (
@@ -433,6 +433,7 @@ const Tracker: React.FC = () => {
                     <p className="rack-text">
                         (
                     </p>
+                    
                     {sets !== undefined && (
                         <>
                             <p className="rack-text">
@@ -458,7 +459,7 @@ const Tracker: React.FC = () => {
 
                 <div className="to-break-box">
                     <p className="to-break-player-text">
-                        {toBreak}
+                        {toBreak === 1 ? `${player1}` : `${player2}`}
                     </p>
                     
                     <p className="to-break-text">
@@ -534,7 +535,15 @@ const Tracker: React.FC = () => {
                             And the winner is...
                         </p>
                         <p className="winner-text">
-                            {winner === 'player1' ? `Player 1 - ${player1}` : winner === 'player2' ? `Player 2 - ${player2}` : ''}
+                            {winner === 1
+                                ? player1 === 'Player1'
+                                ? 'Player 1'
+                                : `Player 1 - ${player1}`
+                            : winner === 2
+                                ? player2 === 'Player2'
+                                ? 'Player 2'
+                                : `Player 2 - ${player2}`
+                                : ''}
                         </p>
                         <div className="winner-button-box">
                             <button className="winner-button" onClick={handleExit}>

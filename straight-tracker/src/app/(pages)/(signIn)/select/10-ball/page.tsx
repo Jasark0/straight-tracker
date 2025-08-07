@@ -16,11 +16,11 @@ const Select: React.FC = () => {
     const [sets, setSets] = useState('');
     const [enableSets, setEnableSets] = useState(false);
     const [oddWarning, setOddWarning] = useState('');
-    const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">('Winner Breaks');
+    const [breakFormat, setBreakFormat] = useState<1|2>(1);
     const [breakMethod, setBreakMethod] = useState<'random' | 'lag'>('random');
 
     const [lagPopup, setLagPopup] = useState(false);
-    const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
+    const [lagWinnerSelected, setLagWinnerSelected] = useState<1|2|null>(null);
     
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +81,7 @@ const Select: React.FC = () => {
         await submitMatch(null);
     };
 
-    const submitMatch = async (finalLagWinner: string|null) => {
+    const submitMatch = async (finalLagWinner: number|null) => {
         try {
             const res = await fetch('/api/createPoolMatch', {
                 method: 'POST',
@@ -219,12 +219,12 @@ const Select: React.FC = () => {
                         <label className="break-label">Break Format:</label>
                         <div className="break-format-box">
                             <label className="break-format-text">
-                                <input type="radio" name="break" value="Winner Breaks" checked={breakFormat === "Winner Breaks"} 
-                                onChange={() => setBreakFormat("Winner Breaks")} /> Winner Breaks 
+                                <input type="radio" name="break" value="Winner Breaks" checked={breakFormat === 1} 
+                                onChange={() => setBreakFormat(1)} /> Winner Breaks 
                             </label>
                             <label className="break-format-text">
-                                <input type="radio" name="break" value="Alternate Breaks" checked={breakFormat === "Alternate Breaks"} 
-                                onChange={() => setBreakFormat("Alternate Breaks")} /> Alternate Breaks
+                                <input type="radio" name="break" value="Alternate Breaks" checked={breakFormat === 2} 
+                                onChange={() => setBreakFormat(2)} /> Alternate Breaks
                             </label>
                         </div>
                     </div>
@@ -255,11 +255,11 @@ const Select: React.FC = () => {
                         <p className="lag-text">Players, lag for break at this time.</p>
                         <p className="lag-winner-text">Pick a lag winner:</p>
                         <div className="lag-button-box">
-                            <button className={`player1-lag-button ${ lagWinnerSelected === 'player1' ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected('player1')}>
+                            <button className={`player1-lag-button ${ lagWinnerSelected === 1 ? 'active-red' : ''}`} onClick={() => setLagWinnerSelected(1)}>
                                 {player1 || 'Player1'}
                             </button>
                                 
-                            <button className={`player2-lag-button ${lagWinnerSelected === 'player2' ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected('player2')}>
+                            <button className={`player2-lag-button ${lagWinnerSelected === 2 ? 'active-blue' : ''}`} onClick={() => setLagWinnerSelected(2)}>
                                 {player2 || 'Player2'}
                             </button>
                         </div>
@@ -267,8 +267,7 @@ const Select: React.FC = () => {
                         <button className="continue-button" disabled={!lagWinnerSelected}
                             onClick={() => {
                                 setLagPopup(false);
-                                const lagName = lagWinnerSelected === 'player1' ? player1 : player2;
-                                submitMatch(lagName);
+                                submitMatch(lagWinnerSelected);
                             }}
                         >
                             Continue

@@ -35,39 +35,26 @@ export async function POST(req: Request) {
 
     let finalGameName = game_name;
     
-    if (!finalGameName) {
-        const { count, error: countError } = await supabaseAdmin
-        .from('pool_matches')
-        .select('match_id', { count: 'exact' })
-        .eq('user_id', user_id)
-        .eq('game_type', game_type);
-
-        if (countError) {
-            return NextResponse.json({ error: 'Failed to count matches' }, { status: 500 });
-        }
-
-        let safeCount = 0;
-        if (count !== null){
-            safeCount = count;
-        }
-
+    if (!finalGameName){
         switch (game_type){
             case 0:
-                finalGameName = `8 Ball - Match ${safeCount + 1}`;
+                finalGameName = '8 Ball - Match';
                 break;
             case 1:
-                finalGameName = `9 Ball - Match ${safeCount + 1}`;
+                finalGameName = '9 Ball - Match';
                 break;
             case 2:
-                finalGameName = `10 Ball - Match ${safeCount + 1}`;
+                finalGameName = '10 Ball - Match';
                 break;
         }
     }
 
+
     const finalPlayer1 = player1?.trim() ? player1 : "Player1";
     const finalPlayer2 = player2?.trim() ? player2 : "Player2";
-    const breakFormatInt = break_format === "Winner Breaks" ? 0 : break_format === "Alternate Breaks" ? 1 : null;
-    const selectedLagWinner = lag_winner?.trim() ? lag_winner : (Math.random() < 0.5 ? finalPlayer1 : finalPlayer2);
+
+    const lagChosen = !!lag_winner;
+    const finalLagWinner = lag_winner || (Math.random() < 0.5 ? 1 : 2);
 
     const { data: matchData, error: matchError } = await supabaseAdmin
     .from('pool_matches')
@@ -79,9 +66,8 @@ export async function POST(req: Request) {
             player1: finalPlayer1,
             player2: finalPlayer2,
             race_to: parseInt(race_to),
-            break_format: breakFormatInt,
-            lag_winner: selectedLagWinner,
-            to_break: selectedLagWinner,
+            break_format,
+            to_break: finalLagWinner,
             winner: null,
         },
     ])
@@ -92,8 +78,22 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to create match' }, { status: 500 });
     }
 
-
     const match_id = matchData[0].match_id;
+
+    if (lagChosen) {
+        const { error: lagError } = await supabaseAdmin
+            .from('pool_matches_lag')
+            .insert([
+                {
+                    match_id,
+                    lag_winner
+                },
+            ]);
+
+        if (lagError) {
+            console.error('Lag insert error:', lagError);
+        }
+    }
     
     const { error: raceError } = await supabaseAdmin
     .from('pool_matches_race')

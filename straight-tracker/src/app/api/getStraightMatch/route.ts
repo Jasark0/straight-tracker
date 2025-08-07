@@ -29,22 +29,7 @@ export async function GET(req: Request) {
 
     const { data: straightMatch, error: matchError } = await supabaseAdmin
         .from('straight_pool_matches')
-        .select(`
-            game_name, 
-            player1, 
-            player2,
-            race_to,
-            to_shoot,
-            lag_winner,
-            rack,
-            remaining_balls,
-            player1_score,
-            player1_high_run,
-            player1_curr_run,
-            player2_score,
-            player2_high_run,
-            player2_curr_run
-            `)
+        .select('*')
         .eq('match_id', match_id)
         .eq('user_id', user_id)
         .single();

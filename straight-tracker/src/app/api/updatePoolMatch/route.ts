@@ -4,10 +4,19 @@ import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
 export async function POST(req: Request) {
     try{
         const body = await req.json();
-        const { id, player1_score, player2_score, winner } = body;
+        const { match_id, id, player1_score, player2_score, to_break, winner } = body;
 
-        if (!id || player1_score == null || player2_score == null){
+        if (!match_id || !id || player1_score === null || player2_score === null || to_break === null){
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        const { error: breakError } = await supabaseAdmin
+        .from('pool_matches')
+        .update({to_break})
+        .eq('match_id', match_id)
+
+        if (breakError){
+            return NextResponse.json({ error: breakError.message }, { status: 500 });
         }
 
         const updateData: any = {
