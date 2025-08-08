@@ -15,7 +15,8 @@ const Select: React.FC = () => {
     const [lagPopup, setLagPopup] = useState(false);
     const [lagWinnerSelected, setLagWinnerSelected] = useState<1|2|null>(null);
 
-
+    const [raceToError, setRaceToError] = useState('');
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -93,14 +94,27 @@ const Select: React.FC = () => {
                                 pattern="^[1-9][0-9]*$"
                                 value={raceTo}
                                 onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d*$/.test(val)) {
-                                    setRaceTo(val);
-                                }
+                                    const val = e.target.value;
+                                    if (/^\d*$/.test(val)) {
+                                        const numericVal = parseInt(val || "0", 10);
+                                        if (val === "") {
+                                            setRaceTo(val);
+                                            setRaceToError("");
+                                        } else if (numericVal <= 500) {
+                                            setRaceTo(val);
+                                            setRaceToError("");
+                                        } else {
+                                            setRaceToError("Please enter a number less than or equal to 500.");
+                                        }
+                                    }
                                 }}
                                 required
-                                title="Please enter a number greater than 0."
+                                title="Please enter a number greater than 0 and less than 500."
                             />
+
+                            {raceToError && (
+                                <p className="race-error-text">{raceToError}</p>
+                            )}
                         </div>
                     
                     </div>

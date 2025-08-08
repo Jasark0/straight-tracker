@@ -23,31 +23,41 @@ const Select: React.FC = () => {
     const [lagWinnerSelected, setLagWinnerSelected] = useState<1|2|null>(null);
     
     const [error, setError] = useState('');
+    const [raceToError, setRaceToError] = useState('');
+    const [setsError, setSetsError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
 
         if (/^\d*$/.test(val)) {
-            setSets(val);
-            
-            if (val === ''){
+            if (val === '') {
+                setSets(val);
                 setOddWarning('');
-            } 
-            else{
-                const num = parseInt(val, 10);
-                if (num <= 0){
-                    setOddWarning('Please enter a number greater than 0.');
-                } 
-                else if (num % 2 === 0){
-                    setOddWarning('Only odd numbers are allowed (1, 3, 5, ...).');
-                } 
-                else{
-                    setOddWarning('');
-                }
+                setSetsError('');
+                return;
+            }
+
+            const num = parseInt(val, 10);
+
+            if (num > 99) {
+                setSetsError('Please enter a number less than or equal to 99.');
+                return; // don't update the input
+            } else {
+                setSetsError('');
+                setSets(val); // valid value, update input
+            }
+
+            if (num <= 0) {
+                setOddWarning('Please enter a number greater than 0.');
+            } else if (num % 2 === 0) {
+                setOddWarning('Only odd numbers are allowed (1, 3, 5, ...).');
+            } else {
+                setOddWarning('');
             }
         }
     };
+
     
     const handleToggleSets = (checked: boolean) => {
         setEnableSets(checked);
@@ -171,14 +181,28 @@ const Select: React.FC = () => {
                                 pattern="^[1-9][0-9]*$"
                                 value={raceTo}
                                 onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d*$/.test(val)) {
-                                    setRaceTo(val);
-                                }
+                                    const val = e.target.value;
+                                    if (/^\d*$/.test(val)) {
+                                        const numericVal = parseInt(val || "0", 10);
+                                        if (val === "") {
+                                            setRaceTo(val);
+                                            setRaceToError("");
+                                        } else if (numericVal <= 500) {
+                                            setRaceTo(val);
+                                            setRaceToError("");
+                                        } else {
+                                            setRaceToError("Please enter a number less than or equal to 500.");
+                                        }
+                                    }
                                 }}
                                 required
-                                title="Please enter a number greater than 0."
+                                title="Please enter a number greater than 0 and less than 500."
                             />
+
+                            {raceToError && (
+                                <p className="race-error-text">{raceToError}</p>
+                            )}
+                            
                             <label className="sets-toggle-label">
                             <input
                                 type="checkbox"
@@ -191,25 +215,28 @@ const Select: React.FC = () => {
                         
                         {enableSets && (
                             <div className="sets-box">
-                            <div className="sets-info-box">
-                                <label className="sets-label">Best of (Sets):</label>
-                                <button type="button" className="sets-icon">i</button>
-                            </div>
+                                <div className="sets-info-box">
+                                    <label className="sets-label">Best of (Sets):</label>
+                                    <button type="button" className="sets-icon">i</button>
+                                </div>
 
-                            <div className="sets-info-box">
-                                <input
-                                className="sets-input"
-                                type="text"
-                                inputMode="numeric"
-                                pattern="^\d*$"
-                                value={sets}
-                                onChange={handleChange}
-                                required
-                                title="Please enter a positive odd number greater than or equal to 3."
-                                />
-                            </div>
+                                <div className="sets-info-box">
+                                    <input
+                                    className="sets-input"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="^\d*$"
+                                    value={sets}
+                                    onChange={handleChange}
+                                    required
+                                    title="Please enter a positive odd number greater than or equal to 3."
+                                    />
+                                </div>
 
-                            {oddWarning && <p className="warning-css">{oddWarning}</p>}
+                                {oddWarning && <p className="warning-css">{oddWarning}</p>}
+                                {setsError && (
+                                    <p className="race-error-text">{setsError}</p>
+                                )}
                             </div>
                         )}
                     </div>
