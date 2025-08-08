@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabaseAdmin'
-import { getUserSession } from '@/actions/auth';
 
 class ValidationError extends Error {
   constructor(message: string) {
@@ -8,7 +7,6 @@ class ValidationError extends Error {
     this.name = 'ValidationError';
   }
 }
-
 
 export async function PATCH(req: Request) {
     try{
@@ -22,26 +20,9 @@ export async function PATCH(req: Request) {
             player1,
             player2,
             race_to,
-            lag_winner,
             to_shoot
         } = body;
     
-        const session = await getUserSession();
-        const user = session?.user;
-    
-        const email = user?.email;
-    
-        // const { data: profile, error: profileError } = await supabaseAdmin
-        //     .from('profiles')
-        //     .select('username')
-        //     .eq('email', email)
-        //     .single();
-    
-        // if (profileError || !profile) {
-        //     return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        // }
-    
-        // const username = profile.username;
 
         const { data: matchData, error: matchError } = await supabaseAdmin
         .from('straight_pool_matches')
@@ -51,7 +32,6 @@ export async function PATCH(req: Request) {
                 player1: player1,
                 player2: player2,
                 race_to: parseInt(race_to),
-                lag_winner: lag_winner,
                 to_shoot: to_shoot,
                 winner: null,
             },

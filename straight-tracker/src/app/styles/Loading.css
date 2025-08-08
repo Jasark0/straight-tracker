@@ -1,0 +1,41 @@
+.loading-page-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #1f2937; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.loading-spinner{
+    width: 8rem;
+    height: 8rem;
+    border: 0.5rem solid rgba(31, 41, 55, 0.2); 
+    border-top-color: #1f2937;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+}
+
+.loading-text{
+    font-size: 1.5rem;
+    font-weight: 500;
+    animation: pulse 1.5s ease-in-out infinite;
+    opacity: 0.9;
+}
+
+@keyframes spin{
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse{
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}

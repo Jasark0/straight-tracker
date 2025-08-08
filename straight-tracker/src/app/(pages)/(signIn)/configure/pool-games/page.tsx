@@ -5,13 +5,14 @@ import React, { useEffect, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Loading from '@/src/components/PageLoading'
+
 const Select: React.FC = () => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
     let matchID = searchParams.get('matchID');
     
-    const [gameType, setGameType] = useState<number>();
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
@@ -20,15 +21,13 @@ const Select: React.FC = () => {
     const [enableSets, setEnableSets] = useState(false);
     const [oddWarning, setOddWarning] = useState('');
     const [raceWarning, setRaceWarning] = useState('');
-    const [breakFormat, setBreakFormat] = useState<"Winner Breaks" | "Alternate Breaks">();
+    const [breakFormat, setBreakFormat] = useState<1|2>();
 
     const [lagPopup, setLagPopup] = useState(false);
-    // const [lagWinnerSelected, setLagWinnerSelected] = useState<'player1' | 'player2' | null>(null);
 
     const [id, setId] = useState<number>();
 
-    const [toBreak, setToBreak] = useState('');
-    const [lagWinner, setLagWinner] = useState('');
+    const [toBreak, setToBreak] = useState<1|2>();
     const [player1Score, setPlayer1Score] = useState<number>(0);
     const [player2Score, setPlayer2Score] = useState<number>(0);
 
@@ -38,11 +37,11 @@ const Select: React.FC = () => {
 
     const [showWinnerVerificationModal, setShowWinnerVerificationModal] = useState(false);
     const [showBackVerificationModal, setShowBackVerificationModal] = useState(false);
-    const [playerToWin, setPlayerToWin] = useState('');
+    const [playerToWin, setPlayerToWin] = useState<1|2|null>(null);
     const [playerToWinScore, setPlayerToWinScore] = useState<number | undefined>(0);
     const [playerToWinSets, setPlayerToWinSets] = useState<number | undefined>(0);
     const [isOpen, setIsOpen] = useState(false);
-    const [winner, setWinner] = useState('');
+    const [winner, setWinner] = useState<1|2|null>();
 
     const [oldMatchInfo, setOldMatchInfo] = useState({
         "poolMatch": {
@@ -54,7 +53,6 @@ const Select: React.FC = () => {
             "player2": "",
             "race_to": 0,
             "break_format": 0,
-            "lag_winner": null,
             "to_break": "",
             "winner": null,
             "created_at": ""
@@ -76,9 +74,6 @@ const Select: React.FC = () => {
     const [playerAheadRace, setPlayerAheadRace] = useState<string>();
     const [playerAheadSet, setPlayerAheadSet] = useState<string>();
 
-
-
-    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
 
@@ -170,22 +165,6 @@ const Select: React.FC = () => {
         });
     };
 
-    const updatePlayerName = async (player: number, newName: string) => {
-        if(player === 1) {
-            if(lagWinner === player1)
-                setLagWinner(newName);
-            if(toBreak === player1)
-                setToBreak(newName);
-            setPlayer1(newName);
-        } else if(player === 2) {
-            if(lagWinner === player2)
-                setLagWinner(newName);
-            if(toBreak === player2)
-                setToBreak(newName);
-            setPlayer2(newName);
-        }
-    }
-
     const updateMatchConfig = async (finalLagWinner: string|null) => {
         try {
             if (!matchID) return;
@@ -200,8 +179,7 @@ const Select: React.FC = () => {
                     player1: player1,
                     player2: player2,
                     race_to: parseInt(raceTo),
-                    break_format: breakFormat === "Winner Breaks" ? 0 : 1,
-                    lag_winner: finalLagWinner,
+                    break_format: breakFormat,
                     to_break: toBreak,
                     enableSets: enableSets,
                     sets: sets ? parseInt(sets) : null,
@@ -232,7 +210,7 @@ const Select: React.FC = () => {
         }
     }
 
-    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+    const handleWinner = async (winnerValue: 1 | 2 | null) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -264,8 +242,7 @@ const Select: React.FC = () => {
     }
 
     const handleExit = () => {
-        const winnerValue = playerToWin;
-        handleWinner(winnerValue);
+        handleWinner(playerToWin);
         router.push('/history');
     }
 
@@ -277,7 +254,7 @@ const Select: React.FC = () => {
             player2 === oldMatchInfo.poolMatch.player2 &&
             parseInt(raceTo) === oldMatchInfo.poolMatch.race_to &&
             enableSets === (oldMatchInfo.matchSets != null) &&
-            breakFormat === (oldMatchInfo.poolMatch.break_format === 0 ? "Winner Breaks" : "Alternate Breaks"))) {
+            breakFormat === (oldMatchInfo.poolMatch.break_format))) {
             if((!enableSets || (enableSets && parseInt(sets) === oldMatchInfo.matchSets.sets))) {
                 handleReturnToTracker();
                 return;
@@ -299,13 +276,11 @@ const Select: React.FC = () => {
 
                 setOldMatchInfo(json);
 
-                setGameType(json.poolMatch.game_type);
                 setGameName(json.poolMatch.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
                 setRaceTo(json.poolMatch.race_to);
-                setBreakFormat(json.poolMatch.break_format === 0 ? "Winner Breaks" : "Alternate Breaks");
-                setLagWinner(json.poolMatch.lag_winner);
+                setBreakFormat(json.poolMatch.break_format);
                 setToBreak(json.poolMatch.to_break);
                 
                 const raceCount = json.matchRace.length;
@@ -356,16 +331,7 @@ const Select: React.FC = () => {
     }, [player1Score, player2Score, player1Set, player2Set, player1, player2, enableSets]);
 
     if(loading) { //Loading screen
-        return (
-            <div className="page-box">
-                <div className="loading-screen">
-                    <div className="loading-content">
-                        <p>Loading match configuration...</p>
-                        <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
-                    </div>
-                </div>
-            </div>
-        );
+        return <Loading/>;
     }
 
     return (
@@ -394,7 +360,7 @@ const Select: React.FC = () => {
                                 type="text"
                                 placeholder="Type your name"
                                 value={player1}
-                                onChange={(e) => updatePlayerName(1, e.target.value)}
+                                onChange={(e) => {setPlayer1(e.target.value)}}
                                 title="Please enter the name of player1."
                             />
                         </div>
@@ -406,7 +372,7 @@ const Select: React.FC = () => {
                                 type="text"
                                 placeholder="Type your name"
                                 value={player2}
-                                onChange={(e) => updatePlayerName(2, e.target.value)}
+                                onChange={(e) => {setPlayer2(e.target.value)}}
                                 title="Please enter the name of player2."
                             />
                         </div>
@@ -465,17 +431,17 @@ const Select: React.FC = () => {
                         <label className="break-label">Break Format:</label>
                         <div className="break-format-box">
                             <label className="break-format-text">
-                                <input type="radio" name="break" value="Winner Breaks" checked={breakFormat === "Winner Breaks"} 
-                                onChange={() => setBreakFormat("Winner Breaks")} /> Winner Breaks 
+                                <input type="radio" name="break" value="Winner Breaks" checked={breakFormat === 1} 
+                                onChange={() => setBreakFormat(1)} /> Winner Breaks 
                             </label>
                             <label className="break-format-text">
-                                <input type="radio" name="break" value="Alternate Breaks" checked={breakFormat === "Alternate Breaks"} 
-                                onChange={() => setBreakFormat("Alternate Breaks")} /> Alternate Breaks
+                                <input type="radio" name="break" value="Alternate Breaks" checked={breakFormat === 2} 
+                                onChange={() => setBreakFormat(2)} /> Alternate Breaks
                             </label>
                         </div>
                     </div>
                     
-                    <hr className="styled-divider" />
+                    <hr className="styled-divider"/>
                     <div className="dropdown-component">
                         <div className="dropdown-container" onClick={toggleDropdown}>
                             <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>&#9660;</span>
@@ -488,13 +454,17 @@ const Select: React.FC = () => {
                                     <div className="button-selection-box">
                                         <button type="button" className="submit-button" onClick={() => {
                                             setShowWinnerVerificationModal(true);
-                                            setPlayerToWin(player1);
+                                            setPlayerToWin(1);
                                             setPlayerToWinScore(player1Score);
-                                            if(raceSets) setPlayerToWinSets(player1Set);
+                                            setPlayerToWinSets(player1Set);
                                         }}>
                                             {player1}
                                         </button>
-                                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(true); setPlayerToWin(player2); setPlayerToWinScore(player2Score);}}>
+                                        <button type="button" className="submit-button" onClick={() => {
+                                            setShowWinnerVerificationModal(true); 
+                                            setPlayerToWin(2); 
+                                            setPlayerToWinScore(player2Score);
+                                        }}>
                                             {player2}
                                         </button>
                                     </div>
@@ -527,7 +497,7 @@ const Select: React.FC = () => {
             {showWinnerVerificationModal && (
                 <div className="history-details-modal" onClick={() => setShowWinnerVerificationModal(false)}>
                     <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
-                        <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}{raceSets && playerToWinSets != null ? ` and won ${playerToWinSets} sets` : ''}.</p>
+                        <p className="game-name-message">Are you sure you want to make {playerToWin === 1 ? player1 : player2} the winner? <br/> They have a score of {playerToWinScore}{raceSets && playerToWinSets != null ? ` and won ${playerToWinSets} sets` : ''}.</p>
                         <div className="button-selection-box">
                             <button type="button" className="submit-button" onClick={() => {handleExit()}}>
                                 Yes

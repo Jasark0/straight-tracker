@@ -8,6 +8,8 @@ import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Loading from '@/src/components/PageLoading'
+
 const Tracker: React.FC = () => {
     const router = useRouter();
 
@@ -671,114 +673,103 @@ const Tracker: React.FC = () => {
         };
     }, [matchID, toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
 
+    if (loading){
+        return <Loading/>;
+    }
+
     return (
-        <div className="s-main-container">
-            {loading && (
-                <div className="page-box">
-                    <div className="loading-screen">
-                        <div className="loading-content">
-                            <p>Loading match info...</p>
-                            <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
+        <div className="s-main-container">  
+            <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
+                <Icon path={mdiCog} size={1} />
+            </button>
+
+            <p className="s-game-name-text">
+                Game Name: {gameName}
+            </p>
+            <p className="s-race-to-text">
+                Race To: {raceTo} Balls
+            </p>
+
+            <img src="/divider.png" className="s-tracker-divider-css"></img>
+
+            <div className="s-player-container">
+                <div className="s-player1-container">
+                    <p id = "player1" className="s-player1-name">{player1}</p>
+                    <div className="s-score-container">
+                        <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
+                        <p className="s-player1-score">{player1Score}</p>
+                        <div className="s-increment-container">
+                            <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
+                            <div className="CR-container">
+                                <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
+                                <button className="CR-icon">i</button>
+                            </div>
                         </div>
+                    </div>
+        
+                    <div className="high-style player1-high-run">
+                        High Run: {player1HighRun}
+                    </div>
+                    <div className="high-style player1-curr-high-run">
+                        Current Run: {player1CurrRun}
                     </div>
                 </div>
-            )}
 
-            {!loading && (
-                <>
-                    <button className="gear-button" onClick={handleConfigureGame} title="Configure Match">
-                        <Icon path={mdiCog} size={1} />
-                    </button>
-
-                    <p className="s-game-name-text">
-                        Game Name: {gameName}
+                <div className="remaining-turn-container">
+                    <div className="remaining-balls-container">
+                        <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
+                        <p className="remaining-balls-style">Remaining Balls</p>
+                        <p className="rack-number">(Rack {rack})</p>
+                    </div>
+                    <p className="s-to-shoot-text"> 
+                        {toShoot === 1 ? `${player1}` : `${player2}`} to shoot!
                     </p>
-                    <p className="s-race-to-text">
-                        Race To: {raceTo} Balls
-                    </p>
-
-                    <img src="/divider.png" className="s-tracker-divider-css"></img>
-
-                    <div className="s-player-container">
-                        <div className="s-player1-container">
-                            <p id = "player1" className="s-player1-name">{player1}</p>
-                            <div className="s-score-container">
-                                <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
-                                <p className="s-player1-score">{player1Score}</p>
-                                <div className="s-increment-container">
-                                    <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
-                                    <div className="CR-container">
-                                        <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
-                                        <button className="CR-icon">i</button>
-                                    </div>
-                                </div>
-                            </div>
-                
-                            <div className="high-style player1-high-run">
-                                High Run: {player1HighRun}
-                            </div>
-                            <div className="high-style player1-curr-high-run">
-                                Current Run: {player1CurrRun}
-                            </div>
+                    <div className="arrow-container">
+                        <img src={toShoot === 1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
+                        <div className="player-turn-text-style" id="player-turn-text">
                         </div>
-
-                        <div className="remaining-turn-container">
-                            <div className="remaining-balls-container">
-                                <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
-                                <p className="remaining-balls-style">Remaining Balls</p>
-                                <p className="rack-number">(Rack {rack})</p>
+                        <div className="player-swap-text-container">
+                            <div className="player-swap-text-style">
+                                (Press 
                             </div>
-                            <p className="s-to-shoot-text"> 
-                                {toShoot === 1 ? `${player1}` : `${player2}`} to shoot!
-                            </p>
-                            <div className="arrow-container">
-                                <img src={toShoot === 1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
-                                <div className="player-turn-text-style" id="player-turn-text">
-                                </div>
-                                <div className="player-swap-text-container">
-                                    <div className="player-swap-text-style">
-                                        (Press 
-                                    </div>
-                                    <div className="player-swap-spacebar-text-style">
-                                        spacebar
-                                    </div>
-                                    <div className="player-swap-text-style">
-                                        to swap turn)
-                                    </div>
-                                </div>
+                            <div className="player-swap-spacebar-text-style">
+                                spacebar
                             </div>
-                            <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
-                        </div>
-
-                        <div className="s-player2-container">
-                            <p id = "player2" className="s-player2-name">{player2}</p>
-                            <div className="s-score-container">
-                                <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
-                                <p className="s-player2-score">{player2Score}</p>
-                                <div className="s-increment-container">
-                                    <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
-                                    <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
-                                </div>     
-                            </div>
-
-                            <div className="high-style player2-high-run">
-                                High Run: {player2HighRun}
-                            </div>
-                            <div className="high-style player2-curr-high-run">
-                                Current High Run: {player2CurrRun}
+                            <div className="player-swap-text-style">
+                                to swap turn)
                             </div>
                         </div>
                     </div>
-                </>
-            )}
+                    <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                </div>
+
+                <div className="s-player2-container">
+                    <p id = "player2" className="s-player2-name">{player2}</p>
+                    <div className="s-score-container">
+                        <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
+                        <p className="s-player2-score">{player2Score}</p>
+                        <div className="s-increment-container">
+                            <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
+                            <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
+                        </div>     
+                    </div>
+
+                    <div className="high-style player2-high-run">
+                        High Run: {player2HighRun}
+                    </div>
+                    <div className="high-style player2-curr-high-run">
+                        Current High Run: {player2CurrRun}
+                    </div>
+                </div>
+            </div>
 
             {winner && (
-                <div className="winner-modal">
-                    <div className="winner-content-modal">
-                        <p className="winner-notice-text">
+                <div className="tracker-winner-modal">
+                    <div className="tracker-winner-modal-content">
+                        <p className="tracker-winner-title-text">
                             And the winner is...
                         </p>
-                        <p className="winner-text">
+                        <p className="tracker-winner-text">
                             {winner === 1
                                 ? player1 === 'Player1'
                                 ? 'Player 1'
@@ -789,10 +780,8 @@ const Tracker: React.FC = () => {
                                 : `Player 2 - ${player2}`
                                 : ''}
                         </p>
-
-
-                        <div className="winner-button-box">
-                            <button className="winner-button" onClick={handleExit}>
+                        <div className="tracker-winner-button-container">
+                            <button className="tracker-winner-button" onClick={handleExit}>
                                 exit match
                             </button>
                         </div>

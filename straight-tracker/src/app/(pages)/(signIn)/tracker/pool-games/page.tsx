@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Loading from '@/src/components/PageLoading'
+
 const Tracker: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
@@ -405,136 +407,140 @@ const Tracker: React.FC = () => {
         };
     }, [matchID, id, player1Score, player2Score, toBreak]);
 
+    if (loading){
+        return <Loading/>;
+    }
 
     return (
-        <div className="tracker-page-box">
+        <div className="tracker-page-container">
             <ToastContainer className="s-toast-warning"/>
-                
-            <div className="tracker-box">
-                <button className="gear-button" onClick={handleConfigureGame} title="Configure Match">
-                    <Icon path={mdiCog} size={1} />
-                </button>
-                
-                <p className="game-name-text">
-                    {gameName}  
+            
+            <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
+                <Icon path={mdiCog} size={1} />
+            </button>
+            
+            <p className="tracker-game-name-text">
+                {gameName}  
+            </p>
+            
+            <div className="tracker-race-sets-container">
+                <p className="tracker-race-text">Race to {raceTo}</p>
+                {sets && (
+                    <>
+                        <p>-</p>
+                        <p className="tracker-sets-text">Best of {sets} Sets</p>
+                    </>
+                )}
+            </div>
+            
+            <div className="tracker-rack-container">
+                <p className="tracker-rack-text bracket">
+                    (
                 </p>
-                
-                <div className="race-text-box">
-                    <p className="race-text">Race to {raceTo}</p>
-                    {sets && (
-                        <>
-                            <p className="race-text">-</p>
-                            <p className="race-text">Best of {sets} Sets</p>
-                        </>
-                    )}
-                </div>
-                
-                <div className="rack-box">
-                    <p className="rack-text">
-                        (
-                    </p>
-                    
+                        
+                <div className="tracker-rack-text-container">
                     {sets !== undefined && (
                         <>
-                            <p className="rack-text">
+                            <p className="tracker-rack-text">
                                 Set {player1Set !== undefined && player2Set !== undefined ? player1Set + player2Set + 1: 1}
                             </p>
 
-                            <p className="rack-text">
+                            <p>
                                 -
                             </p>
                         </>
                     )}
                     
-                    <p className="rack-text">
+                    <p className="tracker-rack-text">
                         Rack {player1Score + player2Score + 1}
                     </p>
-
-                    <p className="rack-text">
-                        )
-                    </p>
                 </div>
 
-                <img src="/divider.png" className="tracker-divider-css"></img>
+                <p className="tracker-rack-text bracket">
+                    )
+                </p>
+            </div>
 
-                <div className="to-break-box">
-                    <p className="to-break-player-text">
-                        {toBreak === 1 ? `${player1}` : `${player2}`}
-                    </p>
-                    
-                    <p className="to-break-text">
-                        to break!
-                    </p>
-                </div>
-                
-                
-                <div className="score-box">
-                    <div className="player1-box">
-                        <p className="player1-text">
-                            {player1}
-                        </p>
-
-                        <div className="player1-score-box">
-                            <p className="player1-score">
-                                {player1Score}
-                            </p>
-                            <button className="player1-increment" onClick={incrementPlayer1}>
-                                +
-                            </button>
-                        </div>
-
-                        {sets && (
-                            <div className="player1-sets-box">
-                                <p className="player1-set">
-                                    {player1Set}
-                                </p>
-                                <p className="player1-set-text">
-                                    Sets
-                                </p>
-                            </div>
-                        )}    
-                    </div>
-
-                    <div className="player2-box">
-                        <p className="player2-text">
-                            {player2}
-                        </p>
-
-                        <div className="player2-score-box">
-                            <p className="player2-score">
-                                {player2Score}
-                            </p>
-                            <button className="player2-increment" onClick={incrementPlayer2}>
-                                +
-                            </button>
-                        </div>
-
-                        {sets && (
-                            <div className="player2-sets-box">
-                                <p className="player2-set">
-                                    {player2Set}
-                                </p>
-                                <p className="player2-set-text"> 
-                                    Sets
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
+            <img src="/divider.png" className="tracker-divider-css"></img>
             
+            <div className="tracker-score-container">
+                <div className="tracker-player1-container">
+                    <p className="tracker-player1-name-text">
+                        {player1}
+                    </p>
 
-                <div className={sets ? 'undo-set-box' : 'undo-box'}>
-                    <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                    <div className="tracker-player1-score-container">
+                        <p className="tracker-player-score-text player1">
+                            {player1Score}
+                        </p>
+                        <button className="tracker-player1-increment" onClick={incrementPlayer1}>
+                            +
+                        </button>
+                    </div>
+
+                    {sets && (
+                        <div className="tracker-player1-sets-container">
+                            <p className="tracker-player-set-text player1">
+                                {player1Set}
+                            </p>
+                            <p className="tracker-player-set-label">
+                                Sets
+                            </p>
+                        </div>
+                    )}    
                 </div>
-            </div>    
+                
+                <div className="tracker-to-break-undo-container">
+                    <div className="tracker-to-break-container">
+                        <p className="tracker-to-break-player-text">
+                            {toBreak === 1 ? `${player1}` : `${player2}`}
+                        </p>
+                        
+                        <p className="tracker-to-break-text">
+                            to break!
+                        </p>
+                    </div>
+
+                    <div className="tracker-undo-container">
+                        <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                    </div>
+                </div>
+
+                <div className="tracker-player2-container">
+                    <p className="tracker-player2-name-text">
+                        {player2}
+                    </p>
+
+                    <div className="tracker-player2-score-container">
+                        <p className="tracker-player-score-text player2">
+                            {player2Score}
+                        </p>
+                        <button className="tracker-player2-increment" onClick={incrementPlayer2}>
+                            +
+                        </button>
+                    </div>
+
+                    {sets && (
+                        <div className="tracker-player2-sets-container">
+                            <p className="tracker-player-set-text player2">
+                                {player2Set}
+                            </p>
+                            <p className="tracker-player-set-label">
+                                Sets
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+             
 
             {winner && (
-                <div className="winner-modal">
-                    <div className="winner-content-modal">
-                        <p className="winner-notice-text">
+                <div className="tracker-winner-modal">
+                    <div className="tracker-winner-modal-content">
+                        <p className="tracker-winner-title-text">
                             And the winner is...
                         </p>
-                        <p className="winner-text">
+                        <p className="tracker-winner-text">
                             {winner === 1
                                 ? player1 === 'Player1'
                                 ? 'Player 1'
@@ -545,8 +551,8 @@ const Tracker: React.FC = () => {
                                 : `Player 2 - ${player2}`
                                 : ''}
                         </p>
-                        <div className="winner-button-box">
-                            <button className="winner-button" onClick={handleExit}>
+                        <div className="tracker-winner-button-container">
+                            <button className="tracker-winner-button" onClick={handleExit}>
                                 exit match
                             </button>
                         </div>
