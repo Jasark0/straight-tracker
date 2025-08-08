@@ -7,15 +7,16 @@ export async function GET(req: Request) {
     const id = session?.user.id;
 
     
-    const { data: nickname, error: profileError } = await supabaseAdmin
+    const { data: filteredGameType, error: profileError } = await supabaseAdmin
         .from('profiles')
-        .select('nickname')
+        .select('filtered_game_type')
         .eq('id', id)
         .single();
 
-    if (profileError || !nickname) {
-        return NextResponse.json({ error: 'User or nickname not found' }, { status: 404 });
-    }
     
-    return NextResponse.json( nickname, { status: 200 });
+    if (profileError || !filteredGameType) {
+        return NextResponse.json({ error: 'User or filtered game type not found' }, { status: 404 });
+    }
+
+    return NextResponse.json( filteredGameType, { status: 200 });
 }

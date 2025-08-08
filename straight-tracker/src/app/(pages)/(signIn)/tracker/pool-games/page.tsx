@@ -286,7 +286,7 @@ const Tracker: React.FC = () => {
         finally{
             setLoading(false);
         }
-    }
+    } 
 
     const handleConfigureGame = async () => {
         await updatePoolMatch(player1Score, player2Score, toBreak);

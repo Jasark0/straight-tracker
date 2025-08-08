@@ -46,9 +46,9 @@ export default function History() {
         }
     }
 
-    const allGameTypes = ['8-Ball', '9-Ball', '10-Ball', 'straight-pool'];
+    const allGameTypes = ['8-Ball', '9-Ball', '10-Ball', 'Straight Pool'];
 
-    const gameTypeMap: Record<string, number | "straight"> = {
+    const gameTypeMap: Record<string, number | "Straight Pool"> = {
         "8-Ball": 0,
         "9-Ball": 1,
         "10-Ball": 2
@@ -62,7 +62,7 @@ export default function History() {
 
     const router = useRouter();
 
-    const [selectedGameType, setSelectedGameType] = useState('8-Ball');
+    const [selectedGameType, setSelectedGameType] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); //Sets a delay between new user search terms
     const [startDate, setStartDate] = useState<string>("");
@@ -73,7 +73,6 @@ export default function History() {
     const [allPoolMatches, setAllPoolMatches] = useState<PoolMatch[]>([]);
     const [allStraightMatches, setAllStraightMatches] = useState<StraightMatch[]>([]);
     const [showSelectModal, setShowSelectModal] = useState(false);
-    const [selectedGame, setSelectedGame] = useState('');
 
     const [selectedPoolMatch, setSelectedPoolMatch] = useState<PoolMatch>();
     const [selectedStraightMatch, setSelectedStraightMatch] = useState<StraightMatch>();
@@ -89,26 +88,49 @@ export default function History() {
 
     const gameSelect = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
+    }
 
-        const target = e.target as HTMLElement;
-
-        if (!target.closest(".game-option")){
-            setSelectedGame('');
+    const selectPage = (selectedCreateGameType: string) => {
+        if (selectedCreateGameType === "8-Ball"){
+            router.push('/select/8-ball');
+        }
+        else if (selectedCreateGameType === "9-Ball"){
+            router.push('/select/9-ball'); 
+        }
+        else if (selectedCreateGameType === "10-Ball"){
+            router.push('/select/10-ball');
+        }
+        else if (selectedCreateGameType === "Straight Pool (14.1 Continuous)"){
+            router.push('/select/straight-pool'); 
         }
     }
 
-    const selectPage = (selectedGameType: string) => {
-        if (selectedGameType === "8 Ball"){
-            router.push('/select/8-ball');
+    const updateFilteredGameType = async (selectedFilteredGameType: string) => {
+        if (selectedFilteredGameType === selectedGameType){
+            setSelectedGameType('');
+            return;
         }
-        else if (selectedGameType === "9 Ball"){
-            router.push('/select/9-ball'); 
+
+        try{
+            setLoading(true);
+            setSelectedGameType(selectedFilteredGameType);
+
+            const res = await fetch('/api/updateFilteredGameType', {
+                method: 'POST',
+                headers: {'Content-Type': 'applications/json'},
+                body: JSON.stringify({
+                    filtered_game_type: selectedFilteredGameType,
+                })
+            });
+
+            const data = await res.json();
+            if (data.error){
+                console.error('Failed to update profiles:', data.error);
+            }
+            setLoading(false);
         }
-        else if (selectedGameType === "10 Ball"){
-            router.push('/select/10-ball');
-        }
-        else if (selectedGameType === "Straight Pool (14.1 Continuous)"){
-            router.push('/select/straight-pool'); 
+        catch (err){
+            console.error('Error updating profiles:', err);
         }
     }
 
@@ -136,7 +158,7 @@ export default function History() {
         window.location.reload();
     }
 
-    const availableGameTypes = useMemo(() => {
+    const availableGameTypes = useMemo(() => { //Returning all game types user has created
         const types = new Set<string>();
 
         allPoolMatches.forEach(match => {
@@ -145,7 +167,7 @@ export default function History() {
         });
 
         if (allStraightMatches.length > 0) {
-            types.add('straight-pool');
+            types.add('Straight Pool');
         }
 
         return Array.from(types);
@@ -162,7 +184,7 @@ export default function History() {
         return date.toLocaleDateString('en-CA');
     }, [allPoolMatches]);
 
-    const filteredMatches = useMemo(() => {
+    const filteredMatches = useMemo(() => { //Filtering games based on selected filters
         const gameNameSearch = debouncedSearchTerm.toLowerCase();
         const playerNameSearch = debouncedPlayerName.toLowerCase();
 
@@ -174,13 +196,13 @@ export default function History() {
             return true;
         };
 
-        if (selectedGameType === "straight-pool") {
+        if (selectedGameType === "Straight Pool") {
             return allStraightMatches
             .filter((match) => match.game_name.toLowerCase().includes(gameNameSearch) && filterByDate(match.created_at) &&
             (match.player1.toLowerCase().includes(playerNameSearch.toLowerCase()) || match.player2.toLowerCase().includes(playerNameSearch.toLowerCase())))
             .map((match) => ({
                 ...match,
-                type: "straight" as const
+                type: "Straight Pool" as const
             }));
         }
 
@@ -195,19 +217,42 @@ export default function History() {
             }));
     }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, debouncedPlayerName]);
 
-    const handleClearFilters = () => {
+    const handleClearFilters = () => { //Clear all filters
+        setSelectedGameType('');
         setSearchTerm('');
         setStartDate('');
         setEndDate('');
         setPlayerName('');
     };
 
+    useEffect(() => { //Get filtered game type
+        const fetchFilteredGameType = async () => {
+            setLoading(true);
+
+            try{
+                const res = await fetch('/api/getFilteredGameType');
+                const json = await res.json();
+
+                if (!res.ok){
+                    setError(json.error);
+                }
+
+                setSelectedGameType(json.filtered_game_type);
+                setLoading(false);
+            }
+            catch (err){
+                setError('Network error');
+            }
+        };
+        fetchFilteredGameType();
+    }, [])
+
     useEffect(() => { //Get all matches
         const fetchAllMatches = async () => {
             setLoading(true);
 
             try{
-                const res = await fetch('/api/getAllMatches');
+                const res = await fetch('/api/getHistoryMatches');
                 const json = await res.json();
 
                 if (!res.ok){
@@ -273,7 +318,7 @@ export default function History() {
         return <Loading/>;
     }
 
-    return !loading && (
+    return (
         <div className="history-page-container">
             <ToastContainer className="history-toast"/>
             <div className={`history-container ${showSelectModal ? "blurred" : ""}`}>
@@ -295,10 +340,10 @@ export default function History() {
                                     .map((type) => (
                                     <button
                                         key={type}
-                                        className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'straight-pool' ? 'smaller-font' : ''}`}
-                                        onClick={() => setSelectedGameType(type)}
+                                        className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'Straight Pool' ? 'smaller-font' : ''}`}
+                                        onClick={() => {updateFilteredGameType(type)}}
                                         >
-                                        {type === 'straight-pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
+                                        {type === 'Straight Pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
                                     </button>
                                 ))}
                             </div>
@@ -340,7 +385,7 @@ export default function History() {
                             <div>
                                 <div className="history-matches-header">
                                     <span className="history-matches-header-game-type">
-                                        {selectedGameType === 'straight-pool'                                                                                                                
+                                        {selectedGameType === 'Straight Pool'                                                                                                                
                                             ? 'Straight Pool (14.1 Continuous)'
                                             : revGameTypeMap[parseInt(selectedGameType)] ?? selectedGameType} Matches
                                     </span>                                                                                         
@@ -421,7 +466,7 @@ export default function History() {
                                             </div>
                                         );
                                     }
-                                    else if (match.type === 'straight'){
+                                    else if (match.type === 'Straight Pool'){
                                         return (
                                             <div key={match.match_id} className="history-match-container" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
                                                 <div className="history-match-row-container">
@@ -480,7 +525,7 @@ export default function History() {
                         </div>
                         <h2>Select a Game Type</h2>
                         <div className="history-select-game-options">
-                            {["8 Ball", "9 Ball", "10 Ball", "Straight Pool (14.1 Continuous)"].map((game) => (
+                            {["8-Ball", "9-Ball", "10-Ball", "Straight Pool (14.1 Continuous)"].map((game) => (
                                 <button className="history-select-game-option" key={game} onClick={() => selectPage(game)}>
                                     {game}
                                 </button>
