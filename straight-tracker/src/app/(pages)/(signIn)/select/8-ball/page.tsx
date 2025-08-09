@@ -222,14 +222,14 @@ const Select: React.FC = () => {
 
                                 <div className="sets-info-box">
                                     <input
-                                    className="sets-input"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="^\d*$"
-                                    value={sets}
-                                    onChange={handleChange}
-                                    required
-                                    title="Please enter a positive odd number greater than or equal to 3."
+                                        className="sets-input"
+                                        type="text"
+                                        inputMode="numeric"
+                                        pattern="^\d*$"
+                                        value={sets}
+                                        onChange={handleChange}
+                                        required
+                                        title="Please enter a positive odd number greater than or equal to 3."
                                     />
                                 </div>
 
