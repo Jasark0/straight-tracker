@@ -64,13 +64,11 @@ export default function SettingsPage() {
     setState('idle');
     setError(null);
     
-    // Clear any pending timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-    
-    // Abort any ongoing requests
+  
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -79,8 +77,7 @@ export default function SettingsPage() {
 
   const onClickHandler = (callback: () => void) => {
     setState('loading');
-    
-    // Create new abort controller for this operation
+
     abortControllerRef.current = new AbortController();
     
     timeoutRef.current = setTimeout(() => { 
@@ -128,7 +125,6 @@ export default function SettingsPage() {
       return;
     }
 
-    // Cancel any ongoing operations before closing
     resetStates();
     closeModal();
   }
@@ -145,7 +141,6 @@ export default function SettingsPage() {
       return;
     }
 
-    // Check if operation was aborted
     if (abortControllerRef.current?.signal.aborted) {
       return;
     }
@@ -156,7 +151,6 @@ export default function SettingsPage() {
     try {
       const result = await changePassword(formData);
 
-      // Check again after async operation
       if (abortControllerRef.current?.signal.aborted) {
         return;
       }
@@ -189,7 +183,6 @@ export default function SettingsPage() {
       return;
     }
 
-    // Check if operation was aborted
     if (abortControllerRef.current?.signal.aborted) {
       return;
     }
@@ -200,7 +193,6 @@ export default function SettingsPage() {
     try {
       const result = await changeNickname(formData);
 
-      // Check again after async operation
       if (abortControllerRef.current?.signal.aborted) {
         return;
       }
@@ -234,7 +226,6 @@ export default function SettingsPage() {
       return;
     }
 
-    // Check if operation was aborted
     if (abortControllerRef.current?.signal.aborted) {
       return;
     }
@@ -245,7 +236,6 @@ export default function SettingsPage() {
     try {
       const result = await changeUsername(formData);
 
-      // Check again after async operation
       if (abortControllerRef.current?.signal.aborted) {
         return;
       }
@@ -349,9 +339,11 @@ export default function SettingsPage() {
                   const result = await updateAvatarInProfile({ avatar_url: url });
 
                   if (result.status === "success") {
-                    alert("Avatar updated successfully!");
+                    const session = await getUserSession();
+                    setUser(session?.user);
+                    toast.success("Avatar updated successfully!");
                   } else {
-                    alert("Error updating avatar: " + result.status);
+                    toast.error("Error updating avatar: " + result.status);
                   }
                 }}
               />
@@ -531,7 +523,7 @@ export default function SettingsPage() {
             onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={closePasswordModal}>
-                <span>&times;</span> {/* A simple 'x' for the close icon */}
+                <span>&times;</span>
               </button>
               <h4 className="modal-title">Change Password</h4>
             </div>
@@ -599,13 +591,13 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   placeholder="Enter new nickname"
-                  maxLength={20}
+                  maxLength={15}
                   className="settingsTextInput"
                   value={newNickname}
                   onChange={(e) => setNewNickname(e.target.value)}
                 />
                 <div className="change-display-name-feedback-container">
-                  <span className="count-down">{newNickname.length}/20</span>
+                  <span className="count-down">{newNickname.length}/15</span>
                 </div>
                 <p className="text-description">
                   This is how you will appear to others.
