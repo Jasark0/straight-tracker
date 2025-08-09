@@ -155,14 +155,6 @@ const Select: React.FC = () => {
         }
 
         await updateMatchConfig(null);
-
-        toast.success("Match config updated successfully.", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-        });
     };
 
     const updateMatchConfig = async (finalLagWinner: string|null) => {
