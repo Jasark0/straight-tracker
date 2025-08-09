@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import React, { useEffect, useState, useMemo } from 'react'
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from 'react-toastify';
@@ -61,6 +61,8 @@ export default function History() {
     }
 
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
     const [selectedGameType, setSelectedGameType] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
@@ -72,8 +74,12 @@ export default function History() {
     const [winnerName, setWinnerName] = useState("");
     const [debouncedWinnerName, setDebouncedWinnerName] = useState(winnerName); //Sets a delay between new winner name search terms
     const [winnerPlayer, setWinnerPlayer] = useState("");
-    const [raceToRange, setRaceToRange] = useState("");
-    const [setsRange, setSetsRange] = useState("");
+    const [raceTo, setRaceTo] = useState<number>();
+    const [minRaceTo, setMinRaceTo] = useState<number>();
+    const [maxRaceTo, setMaxRaceTo] = useState<number>();
+    const [sets, setSets] = useState<number>();
+    const [minSets, setMinSets] = useState<number>();
+    const [maxSets, setMaxSets] = useState<number>();
 
     const [raceToError, setRaceToError] = useState("");
     const [setsError, setSetsError] = useState("");
@@ -142,52 +148,6 @@ export default function History() {
         }
     }
 
-    const handleRaceToRange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
-
-        if (!/^[0-9]{0,3}(-[0-9]{0,3})?$/.test(value)){
-            setRaceToError("Can only be a number between 1-500, or a range of (1-500)-(1-500)");
-            return; 
-        }
-
-        const parts = value.split("-");
-
-        if (parts.some(num => num && parseInt(num) > 500)){
-            setRaceToError("Can only be a number between 1-500, or a range of (1-500)-(1-500)");
-            return; 
-        }
-
-        setRaceToError("");
-        setRaceToRange(value);
-    };
-
-    const handleSetsRange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
-
-        if (!/^\d*$/.test(value) && !/^\d+-\d*$/.test(value)){
-            setSetsError("Can only be an odd number between 1-99, or a range of (1-99)-(1-99)");
-            return;
-        }
-
-        if (!/^[0-9]{0,2}(-[0-9]{0,2})?$/.test(value)){
-            setSetsError("Can only be an odd number between 1-99, or a range of (1-99)-(1-99)");
-            return;
-        }
-
-        const parts = value.split("-").filter(Boolean);
-
-        for (let num of parts){
-            const n = parseInt(num, 10);
-            if (n < 1 || n > 99 || n % 2 === 0){
-                setSetsError("Can only be an odd number between 1-99, or a range of (1-99)-(1-99)");
-                return; 
-            }
-        }
-
-        setSetsError("");
-        setSetsRange(value);
-    }
-
     const continuePoolMatchPage = (match: PoolMatch) => {    
         router.push(`/tracker/pool-games?matchID=${match.match_id}`);
     }
@@ -251,59 +211,22 @@ export default function History() {
             return true;
         };
 
-        const filterByRaceTo = (matchRaceTo: number, filterValue: string) => {
-            if (filterValue === ""){
+        const filterByRaceTo = (matchRaceTo: number) => {
+            if (raceTo == null){
                 return true;
             }
 
-            if (filterValue.includes('-')){
-                const [minStr, maxStr] = filterValue.split("-");
-                const min = parseInt(minStr, 10);
-                const max = parseInt(maxStr, 10);
-                if (isNaN(min) || isNaN(max)){
-                    return true;
-                }
-
-                return (matchRaceTo >= min && matchRaceTo <= max);
-            }
-            else{
-                const target = parseInt(filterValue, 10);
-                if (isNaN(target)){
-                    return true;
-                }
-
-                return matchRaceTo === target;
-            }
+            return raceTo === matchRaceTo;
         }
 
-        const filterBySets = (matchSets: number | null | undefined, filterValue: string) => {
-            if (filterValue === ""){
+        const filterBySets = (matchSets: number) => {
+            if (sets == null){
                 return true;
             }
 
-            if (matchSets == null){
-                return false;
-            }
-
-            if (filterValue.includes('-')){
-                const [minStr, maxStr] = filterValue.split("-");
-                const min = parseInt(minStr, 10);
-                const max = parseInt(maxStr, 10);
-                if (isNaN(min) || isNaN(max)){
-                    return true;
-                }
-
-                return (matchSets >= min && matchSets <= max);
-            }
-            else{
-                const target = parseInt(filterValue, 10);
-                if (isNaN(target)){
-                    return true;
-                }
-
-                return matchSets === target;
-            }
+            return sets === matchSets;
         }
+
 
         if (selectedGameType === "Straight Pool") {
             return allStraightMatches
@@ -324,7 +247,7 @@ export default function History() {
                     (match.winner === 1 && match.player1.toLowerCase().includes(winnerNameSearch.toLowerCase())) ||
                     (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
                 ) && 
-                filterByRaceTo(match.race_to, raceToRange)
+                filterByRaceTo(match.race_to)
             )
             .map((match) => ({
                 ...match,
@@ -353,15 +276,15 @@ export default function History() {
                     (match.winner === 1 && match.player1.toLowerCase().includes(winnerNameSearch.toLowerCase())) ||
                     (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
                 ) && 
-                filterByRaceTo(match.race_to, raceToRange) &&
-                filterBySets(match.pool_matches_sets?.sets, setsRange)
+                filterByRaceTo(match.race_to) &&
+                filterBySets(match.pool_matches_sets?.sets)
             )
             .map((match) => ({
                 ...match,
                 type: "pool" as const
             }));
     }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, 
-        debouncedPlayerName, debouncedWinnerName, winnerPlayer, raceToRange, setsRange]);
+        debouncedPlayerName, debouncedWinnerName, winnerPlayer, raceTo, sets]);
 
     const handleClearFilters = () => { //Clear all filters
         setSelectedGameType('');
@@ -371,8 +294,6 @@ export default function History() {
         setPlayerName('');
         setWinnerName('');
         setWinnerPlayer('');
-        setRaceToRange('');
-        setSetsRange('');
     };
 
     useEffect(() => { //Get filtered game type
@@ -460,22 +381,26 @@ export default function History() {
         return () => clearTimeout(handler);
     }, [winnerName]);
 
-    useEffect(() => { //Toastify notification on reset password success
-        const params = new URLSearchParams(window.location.search);
+    useEffect(() => { //Toastify notification on password resetted successfully
+        if (loading) return;
 
-        if (params.get('success') === '1') {
-            toast.success("Password updated successfully!", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-            });
+        const success = searchParams.get('success');
+        if (success === '1') {
+            setTimeout(() => {
+                toast.success("Password resetted successfully.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            }, 0);
 
+            const params = new URLSearchParams(searchParams.toString());
             params.delete('success');
-            router.replace(`${window.location.pathname}?${params.toString()}`);
+            router.replace(`${pathname}?${params.toString()}`);
         }
-    }, [])
+    }, [loading]);
 
     if (loading){
         return <Loading/>;
@@ -555,18 +480,14 @@ export default function History() {
                         <div className="history-search-container">
                             <input
                                 className="history-search-input"
-                                placeholder="e.g. 10-30"
+                                placeholder="Search race to"
                                 type="text"
                                 inputMode="numeric"
-                                value={raceToRange}
-                                onChange={handleRaceToRange}
+                                value={raceTo}
+                                onChange={() => {setRaceTo(raceTo)}}
                                 required
                             />
                         </div>
-
-                        {raceToError && (
-                            <p className="race-error-text">{raceToError}</p>
-                        )}
 
                         {selectedGameType != "Straight Pool" && (
                             <>
@@ -574,21 +495,16 @@ export default function History() {
                                 <div className="history-search-container">
                                     <input
                                         className="history-search-input"
-                                        placeholder="e.g. 5-13"
+                                        placeholder="Search sets (best of)"
                                         type="text"
                                         inputMode="numeric"
-                                        value={setsRange}
-                                        onChange={handleSetsRange}
+                                        value={sets}
+                                        onChange={() => {setSets(sets)}}
                                         required
                                     />
                                 </div>
-
-                                {setsError && (
-                                    <p className="race-error-text">{setsError}</p>
-                                )}
                             </>
                         )}
-                            
 
                         <button className="history-clear-button" onClick={handleClearFilters}>
                             Clear Filters

@@ -4,16 +4,17 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
 import Icon from '@mdi/react';
 import { mdiCog } from '@mdi/js';
-import { useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { useSearchParams, usePathname } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Loading from '@/src/components/PageLoading'
 
 const Tracker: React.FC = () => {
     const router = useRouter();
-
+    const pathname = usePathname();
     const searchParams = useSearchParams();
+    
     const matchID = searchParams.get('matchID');
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
@@ -559,22 +560,26 @@ const Tracker: React.FC = () => {
         router.push('/history');
     }
 
-    useEffect(() => { //Toastify notification on configuring match success
-        const params = new URLSearchParams(window.location.search);
+    useEffect(() => { //Toastify notification on match updated successfully
+        if (loading) return;
 
-        if (params.get('success') === '1') {
-            toast.success("Match config updated successfully.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-            });
+        const success = searchParams.get('success');
+        if (success === '1') {
+            setTimeout(() => {
+                toast.success("Match config updated successfully.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            }, 0);
 
+            const params = new URLSearchParams(searchParams.toString());
             params.delete('success');
-            router.replace(`${window.location.pathname}?${params.toString()}`);
+            router.replace(`${pathname}?${params.toString()}`);
         }
-    }, [])
+    }, [loading]);
 
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
@@ -679,6 +684,7 @@ const Tracker: React.FC = () => {
 
     return (
         <div className="s-main-container">  
+            <ToastContainer className="s-toast-warning"/>
             <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
                 <Icon path={mdiCog} size={1} />
             </button>

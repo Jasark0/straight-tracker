@@ -306,22 +306,26 @@ const Tracker: React.FC = () => {
         router.push('/history');
     }
 
-    useEffect(() => { //Toastify notification on configuring match success
-        const params = new URLSearchParams(window.location.search);
+    useEffect(() => { //Toastify notification on match updated successfully
+        if (loading) return;
 
-        if (params.get('success') === '1') {
-            toast.success("Match config updated successfully.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-            });
+        const success = searchParams.get('success');
+        if (success === '1') {
+            setTimeout(() => {
+                toast.success("Match config updated successfully.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            }, 0);
 
+            const params = new URLSearchParams(searchParams.toString());
             params.delete('success');
-            router.replace(`${window.location.pathname}?${params.toString()}`);
+            router.replace(`${pathname}?${params.toString()}`);
         }
-    }, [])
+    }, [loading]);
 
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
@@ -414,7 +418,6 @@ const Tracker: React.FC = () => {
     return (
         <div className="tracker-page-container">
             <ToastContainer className="s-toast-warning"/>
-            
             <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
                 <Icon path={mdiCog} size={1} />
             </button>
@@ -532,7 +535,7 @@ const Tracker: React.FC = () => {
                     )}
                 </div>
             </div>
-             
+            
 
             {winner && (
                 <div className="tracker-winner-modal">

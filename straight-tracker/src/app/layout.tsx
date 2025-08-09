@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Header.css"
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { createClient } from "@/utils/supabase/server";
 
