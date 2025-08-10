@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -74,15 +74,31 @@ export default function History() {
     const [winnerName, setWinnerName] = useState("");
     const [debouncedWinnerName, setDebouncedWinnerName] = useState(winnerName); //Sets a delay between new winner name search terms
     const [winnerPlayer, setWinnerPlayer] = useState("");
-    const [raceTo, setRaceTo] = useState<number>();
-    const [minRaceTo, setMinRaceTo] = useState<number>();
-    const [maxRaceTo, setMaxRaceTo] = useState<number>();
-    const [sets, setSets] = useState<number>();
-    const [minSets, setMinSets] = useState<number>();
-    const [maxSets, setMaxSets] = useState<number>();
+    const [raceTo, setRaceTo] = useState<number|null>(null);
+    const [debouncedRaceTo, setDebouncedRaceTo] = useState<number|null>(raceTo); //Sets a delay between new race to search terms
+    const [enableRaceToRange, setEnableRaceToRange] = useState(false);
+    const [minRaceTo, setMinRaceTo] = useState<number|null>(null);
+    const [maxRaceTo, setMaxRaceTo] = useState<number|null>(null);
+    const [debouncedMinRaceTo, setDebouncedMinRaceTo] = useState<number|null>(minRaceTo); //Sets a delay between new min race to search terms
+    const [debouncedMaxRaceTo, setDebouncedMaxRaceTo] = useState<number|null>(maxRaceTo); //Sets a delay between new max race to search terms
+    const validateRaceToRangeTimeout = useRef<NodeJS.Timeout | null>(null); //Timer to set error if min < max
+    const [sets, setSets] = useState<number|null>(null);
+    const [debouncedSets, setDebouncedSets] = useState<number|null>(sets); //Sets a delay between new sets search terms
+    const [enableSetsRange, setEnableSetsRange] = useState(false);
+    const [minSets, setMinSets] = useState<number|null>(null);
+    const [maxSets, setMaxSets] = useState<number|null>(null);
+    const [debouncedMinSets, setDebouncedMinSets] = useState<number|null>(minSets); //Sets a delay between new min sets search terms
+    const [debouncedMaxSets, setDebouncedMaxSets] = useState<number|null>(maxSets); //Sets a delay between new max sets to search terms
+    const validateSetsRangeTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const [raceToError, setRaceToError] = useState("");
+    const [minRaceToError, setMinRaceToError] = useState("");
+    const [maxRaceToError, setMaxRaceToError] = useState("");
+    const [raceToRangeError, setRaceToRangeError] = useState("");
     const [setsError, setSetsError] = useState("");
+    const [minSetsError, setMinSetsError] = useState("");
+    const [maxSetsError, setMaxSetsError] = useState("");
+    const [setsRangeError, setSetsRangeError] = useState("");
 
     const [allPoolMatches, setAllPoolMatches] = useState<PoolMatch[]>([]);
     const [allStraightMatches, setAllStraightMatches] = useState<StraightMatch[]>([]);
@@ -148,6 +164,173 @@ export default function History() {
         }
     }
 
+    const handleRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (val === '') {
+            setRaceTo(null);
+            setRaceToError('');
+            return;
+        }
+
+        if (!/^\d+$/.test(val)) {
+            setRaceToError('Numeric inputs only.');
+            return;
+        }
+
+        const num = Number(val);
+        if (num >= 1 && num <= 500){
+            setRaceTo(num);
+            setRaceToError('');
+        } 
+        else{
+            setRaceToError('Race to can only be between 1-500.');
+        }
+    }
+
+    const handleMinRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (val === '') {
+            setMinRaceTo(null);
+            setMinRaceToError('');
+            return;
+        }
+
+        if (!/^\d+$/.test(val)) {
+            setMinRaceToError('Numeric inputs only.');
+            return;
+        }
+
+        const num = Number(val);
+        if (num >= 1 && num <= 500){
+            setMinRaceTo(num);
+            setMinRaceToError('');
+        } 
+        else{
+            setMinRaceToError('Race to can only be between 1-500.');
+            return;
+        }
+    }
+
+    const handleMaxRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (val === '') {
+            setMaxRaceTo(null);
+            setMaxRaceToError('');
+            return;
+        }
+
+        if (!/^\d+$/.test(val)) {
+            setMaxRaceToError('Numeric inputs only.');
+            return;
+        }
+
+        const num = Number(val);
+        if (num >= 1 && num <= 500){
+            setMaxRaceTo(num);
+            setMaxRaceToError('');
+        } 
+        else{
+            setMaxRaceToError('Race to can only be between 1-500.');
+            return;
+        }
+    }
+
+    const validateRaceToRange = (min: number | null, max: number | null) => {
+        if (min !== null && max !== null && min > max){
+            setRaceToRangeError('Minimum cannot be greater than Maximum.');
+        } 
+        else{
+            setRaceToRangeError('');
+        }
+    };
+
+    const handleSetsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (val === '') {
+            setSets(null);
+            setSetsError('');
+            return;
+        }
+
+        if (!/^[0-9]*$/.test(val)) {
+            setSetsError('Numeric inputs only.');
+            return;
+        }
+
+        const num = Number(val);
+
+        if(num >= 1 && num <= 99 && num % 2 === 1) {
+            setSets(num);
+            setSetsError('');
+        } 
+        else{
+            setSetsError('Sets can only be an odd input between 1-99.');
+        }
+    }
+
+    const handleMinSetsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (val === '') {
+            setMinSets(null);
+            setMinSetsError('');
+            return;
+        }
+
+        if (!/^\d+$/.test(val)) {
+            setMinSetsError('Numeric inputs only.');
+            return;
+        }
+
+        const num = Number(val);
+        if (num >= 1 && num <= 500){
+            setMinSets(num);
+            setMinSetsError('');
+        } 
+        else{
+            setMinSetsError('Race to can only be between 1-500.');
+            return;
+        }
+    }
+
+    const handleMaxSetsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+
+        if (val === '') {
+            setMaxSets(null);
+            setMaxSetsError('');
+            return;
+        }
+
+        if (!/^\d+$/.test(val)) {
+            setMaxSetsError('Numeric inputs only.');
+            return;
+        }
+
+        const num = Number(val);
+        if (num >= 1 && num <= 500){
+            setMaxSets(num);
+            setMaxSetsError('');
+        } 
+        else{
+            setMaxSetsError('Race to can only be between 1-500.');
+            return;
+        }
+    }
+
+    const validateSetsRange = (min: number | null, max: number | null) => {
+        if (min !== null && max !== null && min > max){
+            setSetsRangeError('Minimum cannot be greater than Maximum.');
+        } 
+        else{
+            setSetsRangeError('');
+        }
+    };
+
     const continuePoolMatchPage = (match: PoolMatch) => {    
         router.push(`/tracker/pool-games?matchID=${match.match_id}`);
     }
@@ -212,21 +395,26 @@ export default function History() {
         };
 
         const filterByRaceTo = (matchRaceTo: number) => {
-            if (raceTo == null){
-                return true;
-            }
-
-            return raceTo === matchRaceTo;
+            return debouncedRaceTo == null || debouncedRaceTo === matchRaceTo;
         }
 
         const filterBySets = (matchSets: number) => {
-            if (sets == null){
-                return true;
-            }
-
-            return sets === matchSets;
+            return debouncedSets == null || debouncedSets === matchSets;
         }
 
+        const filterByRaceToRange = (matchRaceTo: number) => {
+            return (
+                (debouncedMinRaceTo == null || matchRaceTo >= debouncedMinRaceTo) &&
+                (debouncedMaxRaceTo == null || matchRaceTo <= debouncedMaxRaceTo)
+            );
+        }
+
+        const filterBySetsRange = (matchSets: number) => {
+            return (
+                (debouncedMinSets == null || matchSets >= debouncedMinSets) &&
+                (debouncedMaxSets == null || matchSets <= debouncedMaxSets)
+            );
+        }
 
         if (selectedGameType === "Straight Pool") {
             return allStraightMatches
@@ -247,7 +435,8 @@ export default function History() {
                     (match.winner === 1 && match.player1.toLowerCase().includes(winnerNameSearch.toLowerCase())) ||
                     (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
                 ) && 
-                filterByRaceTo(match.race_to)
+                filterByRaceTo(match.race_to) &&
+                filterByRaceToRange(match.race_to)
             )
             .map((match) => ({
                 ...match,
@@ -277,14 +466,17 @@ export default function History() {
                     (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
                 ) && 
                 filterByRaceTo(match.race_to) &&
-                filterBySets(match.pool_matches_sets?.sets)
+                filterByRaceToRange(match.race_to) &&
+                filterBySets(match.pool_matches_sets?.sets) &&
+                filterBySetsRange(match.pool_matches_sets?.sets)
             )
             .map((match) => ({
                 ...match,
                 type: "pool" as const
             }));
     }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, 
-        debouncedPlayerName, debouncedWinnerName, winnerPlayer, raceTo, sets]);
+        debouncedPlayerName, debouncedWinnerName, winnerPlayer, debouncedRaceTo, debouncedSets, 
+        debouncedMinRaceTo, debouncedMaxRaceTo, debouncedMinSets, debouncedMaxSets]);
 
     const handleClearFilters = () => { //Clear all filters
         setSelectedGameType('');
@@ -294,6 +486,12 @@ export default function History() {
         setPlayerName('');
         setWinnerName('');
         setWinnerPlayer('');
+        setRaceTo(null);
+        setMinRaceTo(null);
+        setMaxRaceTo(null);
+        setSets(null);
+        setMinSets(null);
+        setMaxSets(null);
     };
 
     useEffect(() => { //Get filtered game type
@@ -381,6 +579,116 @@ export default function History() {
         return () => clearTimeout(handler);
     }, [winnerName]);
 
+    useEffect(() => { //Set a timeout to search race to
+        if (raceTo === null) {
+            setDebouncedRaceTo(null);
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedRaceTo(raceTo);
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [raceTo]);
+
+    useEffect(() => { //Set a timeout to search min race to
+        if (minRaceTo === null) {
+            setDebouncedMinRaceTo(null);
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedMinRaceTo(minRaceTo);
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [minRaceTo]);
+
+    useEffect(() => { //Set a timeout to search max race to
+        if (maxRaceTo === null) {
+            setDebouncedMaxRaceTo(null);
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedMaxRaceTo(maxRaceTo);
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [maxRaceTo]);
+
+    useEffect(() => { //Set a timeout to search sets
+        if (sets === null) {
+            setDebouncedSets(null);
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedSets(sets);
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [sets]);
+
+    useEffect(() => { //Set a timeout to search min sets
+        if (minSets === null) {
+            setDebouncedMinSets(null);
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedMinSets(minSets);
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [minSets]);
+
+    useEffect(() => { //Set a timeout to search max sets
+        if (maxSets === null) {
+            setDebouncedMaxSets(null);
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedMaxSets(maxSets);
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [maxSets]);
+
+    useEffect(() => { //Set a timeout to validate range in race to
+        if (validateRaceToRangeTimeout.current){
+            clearTimeout(validateRaceToRangeTimeout.current);
+        }
+
+        validateRaceToRangeTimeout.current = setTimeout(() => {
+            validateRaceToRange(minRaceTo, maxRaceTo);
+        }, 1000);
+
+        return () => {
+            if (validateRaceToRangeTimeout.current){
+                clearTimeout(validateRaceToRangeTimeout.current);
+            }
+        };
+    }, [minRaceTo, maxRaceTo]);
+
+    useEffect(() => { //Set a timeout to validate range in sets
+        if (validateSetsRangeTimeout.current){
+            clearTimeout(validateSetsRangeTimeout.current);
+        }
+
+        validateSetsRangeTimeout.current = setTimeout(() => {
+            validateSetsRange(minSets, maxSets);
+        }, 1000);
+
+        return () => {
+            if (validateSetsRangeTimeout.current){
+                clearTimeout(validateSetsRangeTimeout.current);
+            }
+        };
+    }, [minSets, maxSets]);
+
     useEffect(() => { //Toastify notification on password resetted successfully
         if (loading) return;
 
@@ -416,7 +724,6 @@ export default function History() {
                 
                 <div className="history-content-container">
                     <div className="history-filter-container">
-                        {/* Start Thinking about tabs organziation, mobile css*/}
                         <p className="history-filter-game-text">Game to display:</p>
 
                         {availableGameTypes.length === 0 ? (
@@ -478,31 +785,100 @@ export default function History() {
                         
                         <p>Filter by race to:</p>
                         <div className="history-search-container">
-                            <input
-                                className="history-search-input"
-                                placeholder="Search race to"
-                                type="text"
-                                inputMode="numeric"
-                                value={raceTo}
-                                onChange={() => {setRaceTo(raceTo)}}
-                                required
-                            />
+                            {!enableRaceToRange ? (
+                                <>
+                                    <input
+                                        className="history-search-input"
+                                        placeholder="Search race to"
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={raceTo ?? ''}
+                                        onChange={handleRaceToFilter}
+                                        required
+                                    />
+                                    {raceToError && <p className="history-race-to-error">{raceToError}</p>}
+                                </>
+                            ) : (
+                                <>
+                                    <input
+                                        className="history-search-input"
+                                        placeholder="Min race to"
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={minRaceTo ?? ''}
+                                        onChange={handleMinRaceToFilter}
+                                    />
+                                    {minRaceToError && <p className="history-race-to-error">{minRaceToError}</p>}
+
+                                    <p>To</p>
+
+                                    <input
+                                        className="history-search-input"
+                                        placeholder="Max race to"
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={maxRaceTo ?? ''}
+                                        onChange={handleMaxRaceToFilter}
+                                    />
+                                    {maxRaceToError && <p className="history-race-to-error">{maxRaceToError}</p>}
+
+                                    {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}
+                                </>
+                            )}
                         </div>
+
+                        <button onClick={() => {setEnableRaceToRange(!enableRaceToRange); setRaceTo(null); setMinRaceTo(null); setMaxRaceTo(null);}} style={{ marginTop: '8px' }}>
+                            {enableRaceToRange ? 'Disable range input' : 'Enable range input'}
+                        </button>
 
                         {selectedGameType != "Straight Pool" && (
                             <>
-                                <p>Filter by sets:</p>
                                 <div className="history-search-container">
-                                    <input
-                                        className="history-search-input"
-                                        placeholder="Search sets (best of)"
-                                        type="text"
-                                        inputMode="numeric"
-                                        value={sets}
-                                        onChange={() => {setSets(sets)}}
-                                        required
-                                    />
+                                    {!enableSetsRange ? (
+                                        <>
+                                            <input
+                                                className="history-search-input"
+                                                placeholder="Search sets"
+                                                type="text"
+                                                inputMode="numeric"
+                                                value={sets ?? ''}
+                                                onChange={handleSetsFilter}
+                                                required
+                                            />
+                                            {setsError && <p className="history-race-to-error">{setsError}</p>}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <input
+                                                className="history-search-input"
+                                                placeholder="Min sets"
+                                                type="text"
+                                                inputMode="numeric"
+                                                value={minSets ?? ''}
+                                                onChange={handleMinSetsFilter}
+                                            />
+                                            {minRaceToError && <p className="history-race-to-error">{minSetsError}</p>}
+
+                                            <p>To</p>
+
+                                            <input
+                                                className="history-search-input"
+                                                placeholder="Max sets"
+                                                type="text"
+                                                inputMode="numeric"
+                                                value={maxSets ?? ''}
+                                                onChange={handleMaxSetsFilter}
+                                            />
+                                            {maxSetsError && <p className="history-race-to-error">{maxSetsError}</p>}
+
+                                            {setsRangeError && <p className="history-race-to-error">{setsRangeError}</p>}
+                                        </>
+                                    )}
                                 </div>
+
+                                <button onClick={() => {setEnableSetsRange(!enableSetsRange); setSets(null); setMinSets(null); setMaxSets(null);}} style={{ marginTop: '8px' }}>
+                                    {enableSetsRange ? 'Disable range input' : 'Enable range input'}
+                                </button>
                             </>
                         )}
 
