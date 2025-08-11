@@ -64,6 +64,8 @@ export default function History() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
+    const [filterTab, setFilterTab] = useState<1|2|3>(1); //Filter container tab selection
+
     const [selectedGameType, setSelectedGameType] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); //Sets a delay between new user search terms
@@ -724,163 +726,199 @@ export default function History() {
                 
                 <div className="history-content-container">
                     <div className="history-filter-container">
-                        <p className="history-filter-game-text">Game to display:</p>
-
-                        {availableGameTypes.length === 0 ? (
-                            <p className="history-filter-no-text">No matches found yet, make a new game today!</p>
-                        ) : (
-                            <div className="history-filter-grid">
-                                {allGameTypes
-                                    .filter(type => availableGameTypes.includes(type))
-                                    .map((type) => (
-                                    <button
-                                        key={type}
-                                        className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'Straight Pool' ? 'smaller-font' : ''}`}
-                                        onClick={() => {updateFilteredGameType(type)}}
-                                        >
-                                        {type === 'Straight Pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    
-                        <p>Search game name:</p>
-                        <div className="history-search-container">
-                            <span className="history-search-icon">🔍</span>
-                            <input className="history-search-input" placeholder="Search game name" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
-                        </div>
-
-                        <p>Filter by date:</p>
-                        <div className="history-date-container">
-                            <input type="date" className="history-date-input" placeholder="Start date" value={startDate} min={earliestMatchDate} max={endDate || today} 
-                            onChange={(e) => setStartDate(e.target.value)}/>
-
-                            <input type="date" className="history-date-input" placeholder="End date" value={endDate} min={earliestMatchDate || startDate} max={today}
-                            onChange={(e) => setEndDate(e.target.value)}/>
-                        </div>
-
-                        <p>Filter by player name:</p>
-                        <div className="history-search-container">
-                            <span className="history-search-icon">🔍</span>
-                            <input className="history-search-input" placeholder="Search player name" value={playerName} onChange={(e) => setPlayerName(e.target.value)}/>
-                        </div>
-
-                        <p>Filter by winner name:</p>
-                        <div className="history-search-container">
-                            <span className="history-search-icon">🔍</span>
-                            <input className="history-search-input" placeholder="Search winner name" value={winnerName} onChange={(e) => setWinnerName(e.target.value)}/>
-                        </div>
-                        
-                        <p>Filter by player win:</p>
-                        <div className="history-filter-grid">
-                            <button className={`history-filter-game-button ${winnerPlayer === 'player1' ? 'active' : ''}`} 
-                            onClick={() => setWinnerPlayer(winnerPlayer === 'player1' ? '' : 'player1')}>
-                                Player 1 Wins
+                        <div className="history-filter-tabs">
+                            <button 
+                                className={`history-filter-tab ${filterTab === 1 ? "active" : ""}`}
+                                onClick={() => setFilterTab(1)}
+                            >
+                                Game Type
                             </button>
-                            <button className={`history-filter-game-button ${winnerPlayer === 'player2' ? 'active' : ''}`} 
-                            onClick={() => setWinnerPlayer(winnerPlayer === 'player2' ? '' : 'player2')}>
-                                Player 2 Wins
+                            <button 
+                                className={`history-filter-tab ${filterTab === 2 ? "active" : ""}`}
+                                onClick={() => setFilterTab(2)}
+                            >
+                                General
+                            </button>
+                            <button 
+                                className={`history-filter-tab ${filterTab === 3 ? "active" : ""}`}
+                                onClick={() => setFilterTab(3)}
+                            >
+                                Advanced
                             </button>
                         </div>
-                        
-                        <p>Filter by race to:</p>
-                        <div className="history-search-container">
-                            {!enableRaceToRange ? (
+
+                        <div className="history-filter-tab-content">
+                            {filterTab === 1 && (
                                 <>
-                                    <input
-                                        className="history-search-input"
-                                        placeholder="Search race to"
-                                        type="text"
-                                        inputMode="numeric"
-                                        value={raceTo ?? ''}
-                                        onChange={handleRaceToFilter}
-                                        required
-                                    />
-                                    {raceToError && <p className="history-race-to-error">{raceToError}</p>}
-                                </>
-                            ) : (
-                                <>
-                                    <input
-                                        className="history-search-input"
-                                        placeholder="Min race to"
-                                        type="text"
-                                        inputMode="numeric"
-                                        value={minRaceTo ?? ''}
-                                        onChange={handleMinRaceToFilter}
-                                    />
-                                    {minRaceToError && <p className="history-race-to-error">{minRaceToError}</p>}
+                                    <p className="history-filter-game-text">Game to display:</p>
 
-                                    <p>To</p>
-
-                                    <input
-                                        className="history-search-input"
-                                        placeholder="Max race to"
-                                        type="text"
-                                        inputMode="numeric"
-                                        value={maxRaceTo ?? ''}
-                                        onChange={handleMaxRaceToFilter}
-                                    />
-                                    {maxRaceToError && <p className="history-race-to-error">{maxRaceToError}</p>}
-
-                                    {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}
+                                    {availableGameTypes.length === 0 ? (
+                                        <p className="history-filter-no-text">No matches found yet, make a new game today!</p>
+                                    ) : (
+                                        <div className="history-filter-grid">
+                                            {allGameTypes
+                                                .filter(type => availableGameTypes.includes(type))
+                                                .map((type) => (
+                                                <button
+                                                    key={type}
+                                                    className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'Straight Pool' ? 'smaller-font' : ''}`}
+                                                    onClick={() => {updateFilteredGameType(type)}}
+                                                    >
+                                                    {type === 'Straight Pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
                                 </>
                             )}
-                        </div>
 
-                        <button onClick={() => {setEnableRaceToRange(!enableRaceToRange); setRaceTo(null); setMinRaceTo(null); setMaxRaceTo(null);}} style={{ marginTop: '8px' }}>
-                            {enableRaceToRange ? 'Disable range input' : 'Enable range input'}
-                        </button>
+                            {filterTab === 2 && (
+                                <>
+                                    <p>Search game name:</p>
+                                    <div className="history-search-container">
+                                        <span className="history-search-icon">🔍</span>
+                                        <input className="history-search-input" placeholder="Search game name" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
+                                    </div>
 
-                        {selectedGameType != "Straight Pool" && (
-                            <>
-                                <div className="history-search-container">
-                                    {!enableSetsRange ? (
+                                    <p>Filter by date:</p>
+                                    <div className="history-date-container">
+                                        <input type="date" className="history-date-input" placeholder="Start date" value={startDate} min={earliestMatchDate} max={endDate || today} 
+                                        onChange={(e) => setStartDate(e.target.value)}/>
+
+                                        <input type="date" className="history-date-input" placeholder="End date" value={endDate} min={earliestMatchDate || startDate} max={today}
+                                        onChange={(e) => setEndDate(e.target.value)}/>
+                                    </div>
+
+                                    <p>Filter by player name:</p>
+                                    <div className="history-search-container">
+                                        <span className="history-search-icon">🔍</span>
+                                        <input className="history-search-input" placeholder="Search player name" value={playerName} onChange={(e) => setPlayerName(e.target.value)}/>
+                                    </div>
+
+                                    <p>Filter by winner name:</p>
+                                    <div className="history-search-container">
+                                        <span className="history-search-icon">🔍</span>
+                                        <input className="history-search-input" placeholder="Search winner name" value={winnerName} onChange={(e) => setWinnerName(e.target.value)}/>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {filterTab === 3 && (
+                                <>        
+                                    <p>Filter by player win:</p>
+                                    <div className="history-filter-grid">
+                                        <button className={`history-filter-game-button ${winnerPlayer === 'player1' ? 'active' : ''}`} 
+                                        onClick={() => setWinnerPlayer(winnerPlayer === 'player1' ? '' : 'player1')}>
+                                            Player 1 Wins
+                                        </button>
+                                        <button className={`history-filter-game-button ${winnerPlayer === 'player2' ? 'active' : ''}`} 
+                                        onClick={() => setWinnerPlayer(winnerPlayer === 'player2' ? '' : 'player2')}>
+                                            Player 2 Wins
+                                        </button>
+                                    </div>
+                                    
+                                    <p>Filter by race to:</p>
+                                    <div className="history-search-container">
+                                        {!enableRaceToRange ? (
+                                            <>
+                                                <input
+                                                    className="history-search-input"
+                                                    placeholder="Search race to"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    value={raceTo ?? ''}
+                                                    onChange={handleRaceToFilter}
+                                                    required
+                                                />
+                                                {raceToError && <p className="history-race-to-error">{raceToError}</p>}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <input
+                                                    className="history-search-input"
+                                                    placeholder="Min race to"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    value={minRaceTo ?? ''}
+                                                    onChange={handleMinRaceToFilter}
+                                                />
+                                                {minRaceToError && <p className="history-race-to-error">{minRaceToError}</p>}
+
+                                                <p>To</p>
+
+                                                <input
+                                                    className="history-search-input"
+                                                    placeholder="Max race to"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    value={maxRaceTo ?? ''}
+                                                    onChange={handleMaxRaceToFilter}
+                                                />
+                                                {maxRaceToError && <p className="history-race-to-error">{maxRaceToError}</p>}
+
+                                                {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <button onClick={() => {setEnableRaceToRange(!enableRaceToRange); setRaceTo(null); setMinRaceTo(null); setMaxRaceTo(null);}} style={{ marginTop: '8px' }}>
+                                        {enableRaceToRange ? 'Disable race range' : 'Enable race range input'}
+                                    </button>
+
+                                    {selectedGameType != "Straight Pool" && (
                                         <>
-                                            <input
-                                                className="history-search-input"
-                                                placeholder="Search sets"
-                                                type="text"
-                                                inputMode="numeric"
-                                                value={sets ?? ''}
-                                                onChange={handleSetsFilter}
-                                                required
-                                            />
-                                            {setsError && <p className="history-race-to-error">{setsError}</p>}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <input
-                                                className="history-search-input"
-                                                placeholder="Min sets"
-                                                type="text"
-                                                inputMode="numeric"
-                                                value={minSets ?? ''}
-                                                onChange={handleMinSetsFilter}
-                                            />
-                                            {minRaceToError && <p className="history-race-to-error">{minSetsError}</p>}
+                                            <div className="history-search-container">
+                                                {!enableSetsRange ? (
+                                                    <>
+                                                        <input
+                                                            className="history-search-input"
+                                                            placeholder="Search sets"
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            value={sets ?? ''}
+                                                            onChange={handleSetsFilter}
+                                                            required
+                                                        />
+                                                        {setsError && <p className="history-race-to-error">{setsError}</p>}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <input
+                                                            className="history-search-input"
+                                                            placeholder="Min sets"
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            value={minSets ?? ''}
+                                                            onChange={handleMinSetsFilter}
+                                                        />
+                                                        {minRaceToError && <p className="history-race-to-error">{minSetsError}</p>}
 
-                                            <p>To</p>
+                                                        <p>To</p>
 
-                                            <input
-                                                className="history-search-input"
-                                                placeholder="Max sets"
-                                                type="text"
-                                                inputMode="numeric"
-                                                value={maxSets ?? ''}
-                                                onChange={handleMaxSetsFilter}
-                                            />
-                                            {maxSetsError && <p className="history-race-to-error">{maxSetsError}</p>}
+                                                        <input
+                                                            className="history-search-input"
+                                                            placeholder="Max sets"
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            value={maxSets ?? ''}
+                                                            onChange={handleMaxSetsFilter}
+                                                        />
+                                                        {maxSetsError && <p className="history-race-to-error">{maxSetsError}</p>}
 
-                                            {setsRangeError && <p className="history-race-to-error">{setsRangeError}</p>}
+                                                        {setsRangeError && <p className="history-race-to-error">{setsRangeError}</p>}
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            <button onClick={() => {setEnableSetsRange(!enableSetsRange); setSets(null); setMinSets(null); setMaxSets(null);}} style={{ marginTop: '8px' }}>
+                                                {enableSetsRange ? 'Disable range input' : 'Enable sets range input'}
+                                            </button>
                                         </>
                                     )}
-                                </div>
-
-                                <button onClick={() => {setEnableSetsRange(!enableSetsRange); setSets(null); setMinSets(null); setMaxSets(null);}} style={{ marginTop: '8px' }}>
-                                    {enableSetsRange ? 'Disable range input' : 'Enable range input'}
-                                </button>
-                            </>
-                        )}
+                                </>
+                            )}
+                                
+                        </div>
 
                         <button className="history-clear-button" onClick={handleClearFilters}>
                             Clear Filters
