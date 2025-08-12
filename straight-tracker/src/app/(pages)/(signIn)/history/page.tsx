@@ -65,6 +65,8 @@ export default function History() {
     const searchParams = useSearchParams();
 
     const [filterTab, setFilterTab] = useState<1|2|3>(1); //Filter container tab selection
+    const [transitioning, setTransitioning] = useState(false);
+    const [nextTab, setNextTab] = useState<1 | 2 | 3>(1);
 
     const [selectedGameType, setSelectedGameType] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
@@ -94,12 +96,10 @@ export default function History() {
     const validateSetsRangeTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const [raceToError, setRaceToError] = useState("");
-    const [minRaceToError, setMinRaceToError] = useState("");
-    const [maxRaceToError, setMaxRaceToError] = useState("");
+    const [minMaxRaceToError, setMinMaxRaceToError] = useState("");
     const [raceToRangeError, setRaceToRangeError] = useState("");
     const [setsError, setSetsError] = useState("");
-    const [minSetsError, setMinSetsError] = useState("");
-    const [maxSetsError, setMaxSetsError] = useState("");
+    const [minMaxSetsError, setMinMaxSetsError] = useState("");
     const [setsRangeError, setSetsRangeError] = useState("");
 
     const [allPoolMatches, setAllPoolMatches] = useState<PoolMatch[]>([]);
@@ -117,6 +117,15 @@ export default function History() {
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const handleTabChange = (tab: 1 | 2 | 3) => {
+        if (tab === filterTab){
+            return;
+        }
+
+        setNextTab(tab);
+        setTransitioning(true);
+    };
 
     const gameSelect = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
@@ -166,6 +175,26 @@ export default function History() {
         }
     }
 
+    const toggleRaceToFilter = () => {
+        setEnableRaceToRange(!enableRaceToRange); 
+        setRaceTo(null); 
+        setMinRaceTo(null); 
+        setMaxRaceTo(null);
+        setRaceToError('');
+        setRaceToRangeError('');
+        setMinMaxRaceToError('');
+    }
+
+    const toggleSetsFilter = () => {
+        setEnableSetsRange(!enableSetsRange); 
+        setSets(null); 
+        setMinSets(null); 
+        setMaxSets(null);
+        setSetsError('');
+        setSetsRangeError('');
+        setMinMaxSetsError('');
+    }
+
     const handleRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
 
@@ -195,22 +224,22 @@ export default function History() {
 
         if (val === '') {
             setMinRaceTo(null);
-            setMinRaceToError('');
+            setMinMaxRaceToError('');
             return;
         }
 
         if (!/^\d+$/.test(val)) {
-            setMinRaceToError('Numeric inputs only.');
+            setMinMaxRaceToError('Numeric inputs only.');
             return;
         }
 
         const num = Number(val);
         if (num >= 1 && num <= 500){
             setMinRaceTo(num);
-            setMinRaceToError('');
+            setMinMaxRaceToError('');
         } 
         else{
-            setMinRaceToError('Race to can only be between 1-500.');
+            setMinMaxRaceToError('Race to can only be between 1-500.');
             return;
         }
     }
@@ -220,22 +249,22 @@ export default function History() {
 
         if (val === '') {
             setMaxRaceTo(null);
-            setMaxRaceToError('');
+            setMinMaxRaceToError('');
             return;
         }
 
         if (!/^\d+$/.test(val)) {
-            setMaxRaceToError('Numeric inputs only.');
+            setMinMaxRaceToError('Numeric inputs only.');
             return;
         }
 
         const num = Number(val);
         if (num >= 1 && num <= 500){
             setMaxRaceTo(num);
-            setMaxRaceToError('');
+            setMinMaxRaceToError('');
         } 
         else{
-            setMaxRaceToError('Race to can only be between 1-500.');
+            setMinMaxRaceToError('Race to can only be between 1-500.');
             return;
         }
     }
@@ -279,22 +308,22 @@ export default function History() {
 
         if (val === '') {
             setMinSets(null);
-            setMinSetsError('');
+            setMinMaxSetsError('');
             return;
         }
 
         if (!/^\d+$/.test(val)) {
-            setMinSetsError('Numeric inputs only.');
+            setMinMaxSetsError('Numeric inputs only.');
             return;
         }
 
         const num = Number(val);
         if (num >= 1 && num <= 500){
             setMinSets(num);
-            setMinSetsError('');
+            setMinMaxSetsError('');
         } 
         else{
-            setMinSetsError('Race to can only be between 1-500.');
+            setMinMaxSetsError('Race to can only be between 1-500.');
             return;
         }
     }
@@ -304,22 +333,22 @@ export default function History() {
 
         if (val === '') {
             setMaxSets(null);
-            setMaxSetsError('');
+            setMinMaxSetsError('');
             return;
         }
 
         if (!/^\d+$/.test(val)) {
-            setMaxSetsError('Numeric inputs only.');
+            setMinMaxSetsError('Numeric inputs only.');
             return;
         }
 
         const num = Number(val);
         if (num >= 1 && num <= 500){
             setMaxSets(num);
-            setMaxSetsError('');
+            setMinMaxSetsError('');
         } 
         else{
-            setMaxSetsError('Race to can only be between 1-500.');
+            setMinMaxSetsError('Race to can only be between 1-500.');
             return;
         }
     }
@@ -494,7 +523,19 @@ export default function History() {
         setSets(null);
         setMinSets(null);
         setMaxSets(null);
+
+        setFilterTab(1);
     };
+
+    useEffect(() => {
+        if (transitioning) {
+            const timeout = setTimeout(() => {
+                setFilterTab(nextTab);
+                setTransitioning(false);
+            }, 250);
+            return () => clearTimeout(timeout);
+        }
+    }, [transitioning, nextTab]);
 
     useEffect(() => { //Get filtered game type
         const fetchFilteredGameType = async () => {
@@ -729,25 +770,25 @@ export default function History() {
                         <div className="history-filter-tabs">
                             <button 
                                 className={`history-filter-tab ${filterTab === 1 ? "active" : ""}`}
-                                onClick={() => setFilterTab(1)}
+                                onClick={() => handleTabChange(1)}
                             >
                                 Game Type
                             </button>
                             <button 
                                 className={`history-filter-tab ${filterTab === 2 ? "active" : ""}`}
-                                onClick={() => setFilterTab(2)}
+                                onClick={() => handleTabChange(2)}
                             >
                                 General
                             </button>
                             <button 
                                 className={`history-filter-tab ${filterTab === 3 ? "active" : ""}`}
-                                onClick={() => setFilterTab(3)}
+                                onClick={() => handleTabChange(3)}
                             >
                                 Advanced
                             </button>
                         </div>
 
-                        <div className="history-filter-tab-content">
+                        <div className={`history-filter-tab-content ${transitioning ? "fade-out" : "fade-in"}`}>
                             {filterTab === 1 && (
                                 <>
                                     <p className="history-filter-game-text">Game to display:</p>
@@ -818,106 +859,116 @@ export default function History() {
                                     </div>
                                     
                                     <p>Filter by race to:</p>
-                                    <div className="history-search-container">
+                                    <div className="history-search-number-container">
                                         {!enableRaceToRange ? (
                                             <>
                                                 <input
-                                                    className="history-search-input"
+                                                    className="history-search-input number-input"
                                                     placeholder="Search race to"
                                                     type="text"
                                                     inputMode="numeric"
                                                     value={raceTo ?? ''}
                                                     onChange={handleRaceToFilter}
-                                                    required
                                                 />
                                                 {raceToError && <p className="history-race-to-error">{raceToError}</p>}
                                             </>
                                         ) : (
                                             <>
-                                                <input
-                                                    className="history-search-input"
-                                                    placeholder="Min race to"
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    value={minRaceTo ?? ''}
-                                                    onChange={handleMinRaceToFilter}
-                                                />
-                                                {minRaceToError && <p className="history-race-to-error">{minRaceToError}</p>}
+                                                <div className="history-range-container">
+                                                    <input
+                                                        className="history-search-input number-input"
+                                                        placeholder="Min race to"
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={minRaceTo ?? ''}
+                                                        onChange={handleMinRaceToFilter}
+                                                    />
+                                                    
+                                                    
 
-                                                <p>To</p>
+                                                    <p>To</p>
 
-                                                <input
-                                                    className="history-search-input"
-                                                    placeholder="Max race to"
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    value={maxRaceTo ?? ''}
-                                                    onChange={handleMaxRaceToFilter}
-                                                />
-                                                {maxRaceToError && <p className="history-race-to-error">{maxRaceToError}</p>}
-
-                                                {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}
+                                                    <input
+                                                        className="history-search-input number-input"
+                                                        placeholder="Max race to"
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={maxRaceTo ?? ''}
+                                                        onChange={handleMaxRaceToFilter}
+                                                    />
+                                                             
+                                                </div>
+                                                {minMaxRaceToError && <p className="history-race-to-error">{minMaxRaceToError}</p>}
+                                                {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}   
                                             </>
                                         )}
                                     </div>
 
-                                    <button onClick={() => {setEnableRaceToRange(!enableRaceToRange); setRaceTo(null); setMinRaceTo(null); setMaxRaceTo(null);}} style={{ marginTop: '8px' }}>
-                                        {enableRaceToRange ? 'Disable race range' : 'Enable race range input'}
-                                    </button>
+                                    <label className="history-filter-toggle-container">
+                                        <input type="checkbox" checked={enableRaceToRange} onChange={toggleRaceToFilter}/>
+                                        <span className="history-filter-slider"></span>
+                                        <span className="history-filter-toggle-label">
+                                            {enableRaceToRange ? "Disable Race Range" : "Enable Race Range"}
+                                        </span>
+                                    </label>
 
                                     {selectedGameType != "Straight Pool" && (
                                         <>
-                                            <div className="history-search-container">
+                                            <div className="history-search-number-container">
                                                 {!enableSetsRange ? (
                                                     <>
                                                         <input
-                                                            className="history-search-input"
+                                                            className="history-search-input number-input"
                                                             placeholder="Search sets"
                                                             type="text"
                                                             inputMode="numeric"
                                                             value={sets ?? ''}
                                                             onChange={handleSetsFilter}
-                                                            required
                                                         />
                                                         {setsError && <p className="history-race-to-error">{setsError}</p>}
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <input
-                                                            className="history-search-input"
-                                                            placeholder="Min sets"
-                                                            type="text"
-                                                            inputMode="numeric"
-                                                            value={minSets ?? ''}
-                                                            onChange={handleMinSetsFilter}
-                                                        />
-                                                        {minRaceToError && <p className="history-race-to-error">{minSetsError}</p>}
+                                                        <div className="history-range-container">
+                                                            <input
+                                                                className="history-search-input number-input"
+                                                                placeholder="Min sets"
+                                                                type="text"
+                                                                inputMode="numeric"
+                                                                value={minSets ?? ''}
+                                                                onChange={handleMinSetsFilter}
+                                                            />
+                                                            
 
-                                                        <p>To</p>
+                                                            <p>To</p>
 
-                                                        <input
-                                                            className="history-search-input"
-                                                            placeholder="Max sets"
-                                                            type="text"
-                                                            inputMode="numeric"
-                                                            value={maxSets ?? ''}
-                                                            onChange={handleMaxSetsFilter}
-                                                        />
-                                                        {maxSetsError && <p className="history-race-to-error">{maxSetsError}</p>}
-
+                                                            <input
+                                                                className="history-search-input number-input"
+                                                                placeholder="Max sets"
+                                                                type="text"
+                                                                inputMode="numeric"
+                                                                value={maxSets ?? ''}
+                                                                onChange={handleMaxSetsFilter}
+                                                            />
+                                                            
+                                                        </div>
+                                                        {minMaxRaceToError && <p className="history-race-to-error">{minMaxSetsError}</p>}
                                                         {setsRangeError && <p className="history-race-to-error">{setsRangeError}</p>}
                                                     </>
                                                 )}
                                             </div>
 
-                                            <button onClick={() => {setEnableSetsRange(!enableSetsRange); setSets(null); setMinSets(null); setMaxSets(null);}} style={{ marginTop: '8px' }}>
-                                                {enableSetsRange ? 'Disable range input' : 'Enable sets range input'}
-                                            </button>
+                                            <label className="history-filter-toggle-container">
+                                                <input type="checkbox" checked={enableSetsRange} onChange={toggleSetsFilter}/>
+                                                <span className="history-filter-slider"></span>
+                                                <span className="history-filter-toggle-label">
+                                                    {enableSetsRange ? "Disable Sets Range" : "Enable Sets Range"}
+                                                </span>
+                                            </label>
                                         </>
                                     )}
                                 </>
-                            )}
-                                
+                            )}    
                         </div>
 
                         <button className="history-clear-button" onClick={handleClearFilters}>
