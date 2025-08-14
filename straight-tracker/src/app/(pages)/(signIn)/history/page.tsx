@@ -767,7 +767,7 @@ export default function History() {
                 </div>
                 
                 <div className="history-content-container">
-                    {/* <div className="history-filter-container">
+                    <div className="history-filter-container">
                         <div className="history-filter-tabs">
                             <button 
                                 className={`history-filter-tab ${filterTab === 1 ? "active" : ""}`}
@@ -975,7 +975,7 @@ export default function History() {
                         <button className="history-clear-button" onClick={handleClearFilters}>
                             Clear Filters
                         </button>
-                    </div> */}
+                    </div>
                     
                     <div className="history-matches-container">
                         {filteredMatches.length === 0 ? (
