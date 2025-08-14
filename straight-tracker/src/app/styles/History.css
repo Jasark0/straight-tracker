@@ -457,7 +457,7 @@
 /* History Matches Display CSS */
 
 .history-matches-container{
-    width: 65vw;
+    width: 60vw;
     padding: 1rem;
     background-color: white;
     border: 2px solid #ccc;
@@ -947,6 +947,10 @@
 
     .history-filter-container{ 
         display: none;
+    }
+
+    .history-matches-container{
+        width: 80vw;
     }
 }
 
