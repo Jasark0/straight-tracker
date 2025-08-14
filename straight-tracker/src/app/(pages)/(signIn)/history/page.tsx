@@ -63,10 +63,12 @@ export default function History() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-
-    const [filterTab, setFilterTab] = useState<1|2|3>(1); //Filter container tab selection
+    
+    const [showFilter, setShowFilter] = useState(false);
+    const [filterTab, setFilterTab] = useState(1); //Filter tab selection
+    const [prevTab, setPrevTab] = useState(1);
     const [transitioning, setTransitioning] = useState(false);
-    const [nextTab, setNextTab] = useState<1 | 2 | 3>(1);
+    const [slideDirection, setSlideDirection] = useState("right");
 
     const [selectedGameType, setSelectedGameType] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
@@ -118,13 +120,16 @@ export default function History() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    const handleTabChange = (tab: 1 | 2 | 3) => {
-        if (tab === filterTab){
-            return;
-        }
-
-        setNextTab(tab);
+    const handleTabChange = (tab: number) => {
+        if (tab === filterTab) return;
+        setSlideDirection(tab > filterTab ? "right" : "left");
+        setPrevTab(filterTab);
         setTransitioning(true);
+
+        setTimeout(() => {
+            setFilterTab(tab);
+            setTransitioning(false);
+        }, 250);
     };
 
     const gameSelect = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -146,7 +151,7 @@ export default function History() {
         }
     }
 
-    const handleFilteredGameType = async (selectedFilteredGameType: string) => { //Update profiles with the last filtered game type selected
+    const handleFilteredGameType = async (selectedFilteredGameType: string) => {
         if (selectedFilteredGameType === selectedGameType){
             setSelectedGameType('');
             return;
@@ -550,16 +555,6 @@ export default function History() {
         setFilterTab(1);
     };
 
-    useEffect(() => { //Transitioning to next tab
-        if (transitioning) {
-            const timeout = setTimeout(() => {
-                setFilterTab(nextTab);
-                setTransitioning(false);
-            }, 250);
-            return () => clearTimeout(timeout);
-        }
-    }, [transitioning, nextTab]);
-
     useEffect(() => { //Get all matches
         const fetchAllMatches = async () => {
             setLoading(true);
@@ -763,6 +758,12 @@ export default function History() {
             <ToastContainer className="history-toast"/>
             <div className={`history-container ${showSelectModal ? "blurred" : ""}`}>
                 <div className="history-new-game-container">
+                    <button 
+                        className="hamburger-button" 
+                        onClick={() => setShowFilter(!showFilter)}
+                    >
+                        ☰
+                    </button>
                     <button className="history-new-game-button" onClick={() => setShowSelectModal(true)}>+ New Game</button>
                 </div>
                 
@@ -789,7 +790,16 @@ export default function History() {
                             </button>
                         </div>
 
-                        <div className={`history-filter-tab-content ${transitioning ? "fade-out" : "fade-in"}`}>
+                        <div className={`history-filter-tab-content 
+                            ${transitioning 
+                                ? slideDirection === "right" 
+                                    ? "slide-out-left" 
+                                    : "slide-out-right"
+                                : slideDirection === "right" 
+                                    ? "slide-in-right slide-active" 
+                                    : "slide-in-left slide-active"
+                            }`}>
+
                             {filterTab === 1 && (
                                 <>
                                     <p className="history-filter-game-text">Game to display:</p>
@@ -1211,6 +1221,20 @@ export default function History() {
                                 )}
                             </>
                         )}
+
+                        <div className="history-details-buttons-container">
+                            {selectedPoolMatch.winner === null && (
+                                <button className="history-match-button continue" 
+                                onClick={(e) => {e.stopPropagation(); continuePoolMatchPage(selectedPoolMatch);}}>
+                                    Continue Match
+                                </button>
+                            )}
+
+                            <button className="history-match-button delete" 
+                            onClick={(e) => {e.stopPropagation(); setShowDeletePoolModal(true); setSelectedPoolMatch(selectedPoolMatch);}}>
+                                Delete Match
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -1290,6 +1314,20 @@ export default function History() {
                         <p className="history-details-race-scores-text">
                             {selectedStraightMatch.player1_score} - {selectedStraightMatch.player2_score}
                         </p>
+
+                        <div>
+                            {selectedStraightMatch.winner === null && (
+                                <button className="history-match-button continue" 
+                                onClick={(e) => {e.stopPropagation(); continueStraightMatchPage(selectedStraightMatch);}}>
+                                    Continue Match
+                                </button>
+                            )}
+
+                            <button className="history-match-button delete" 
+                            onClick={(e) => {e.stopPropagation(); setShowDeletePoolModal(true); setSelectedStraightMatch(selectedStraightMatch);}}>
+                                Delete Match
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

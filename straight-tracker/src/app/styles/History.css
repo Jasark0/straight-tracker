@@ -4,7 +4,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    height: calc(100vh - 6rem);
+    min-height: calc(100vh - 6rem);
     padding-top: 6rem;
 }
 
@@ -63,7 +63,7 @@
 
 /* Filter Tabs CSS */
 
-.history-filter-container{
+.history-filter-container{ /* SET A MEDIA CONTROL FOR THIS */
     display: flex;
     flex-direction: column;
     width: 18vw;
@@ -71,10 +71,11 @@
     background-color: white;
     border: 2px solid #ccc;
     border-radius: 0.5rem;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
-.history-filter-tabs{
+.history-filter-tabs{ /* SET A DIFFERENT MEDIA TAB FOR SMALLER MEDIA CONTROL */
     display: flex;
     gap: 0.25rem;
     margin-bottom: 1rem;
@@ -112,14 +113,26 @@
     margin: 0.5rem 0 0.25rem;
 }
 
-.history-filter-tab-content.fade-in{
-    opacity: 1;
-    transform: translateY(0px);
+.slide-in-left{
+    transform: translateX(-20px);
+    opacity: 0;
+}
+.slide-in-right{
+    transform: translateX(20px);
+    opacity: 0;
+}
+.slide-out-left{
+    transform: translateX(-20px);
+    opacity: 0;
+}
+.slide-out-right{
+    transform: translateX(20px);
+    opacity: 0;
 }
 
-.history-filter-tab-content.fade-out{
-    opacity: 0;
-    transform: translateY(5px);
+.slide-active{
+    transform: translateX(0);
+    opacity: 1;
 }
 
 
@@ -748,6 +761,11 @@
 .history-details-content::-webkit-scrollbar-thumb{
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
+}
+
+.history-details-buttons-container{
+    display: flex;
+    gap: 3rem;
 }
 
 
