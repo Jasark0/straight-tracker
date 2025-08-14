@@ -146,33 +146,13 @@ export default function History() {
         }
     }
 
-    const updateFilteredGameType = async (selectedFilteredGameType: string) => { //Update profiles with the last filtered game type selected
+    const handleFilteredGameType = async (selectedFilteredGameType: string) => { //Update profiles with the last filtered game type selected
         if (selectedFilteredGameType === selectedGameType){
             setSelectedGameType('');
             return;
         }
 
-        try{
-            setLoading(true);
-            setSelectedGameType(selectedFilteredGameType);
-
-            const res = await fetch('/api/updateFilteredGameType', {
-                method: 'POST',
-                headers: {'Content-Type': 'applications/json'},
-                body: JSON.stringify({
-                    filtered_game_type: selectedFilteredGameType,
-                })
-            });
-
-            const data = await res.json();
-            if (data.error){
-                console.error('Failed to update profiles:', data.error);
-            }
-            setLoading(false);
-        }
-        catch (err){
-            console.error('Error updating profiles:', err);
-        }
+        setSelectedGameType(selectedFilteredGameType);
     }
 
     const toggleRaceToFilter = () => {
@@ -447,7 +427,51 @@ export default function History() {
             );
         }
 
-        if (selectedGameType === "Straight Pool") {
+        const filterSetsActive = debouncedSets != null || debouncedMinSets != null || debouncedMaxSets != null;
+
+        if (selectedGameType === ''){ //No filters on game type, display all matches      
+            const poolMatchesWithType: (PoolMatch & { type: 'Pool' })[] = allPoolMatches.map(m => ({
+                ...m,
+                type: 'Pool' as const
+            }));
+
+            const straightMatchesWithType: (StraightMatch & { type: 'Straight Pool' })[] = allStraightMatches.map(m => ({
+                ...m,
+                type: 'Straight Pool' as const
+            }));
+
+            return [...poolMatchesWithType, ...straightMatchesWithType]
+            .filter((match) => {
+                return (
+                    match.game_name.toLowerCase().includes(gameNameSearch) &&
+                    filterByDate(match.created_at) &&
+                    (
+                        match.player1.toLowerCase().includes(playerNameSearch.toLowerCase()) ||
+                        match.player2.toLowerCase().includes(playerNameSearch.toLowerCase())
+                    ) &&
+                    (
+                        winnerPlayer === '' ||
+                        (winnerPlayer === 'player1' && match.winner === 1) ||
+                        (winnerPlayer === 'player2' && match.winner === 2)
+                    ) &&
+                    (
+                        winnerNameSearch.trim() === '' ||
+                        (match.winner === 1 && match.player1.toLowerCase().includes(winnerNameSearch.toLowerCase())) ||
+                        (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
+                    ) &&
+                    filterByRaceTo(match.race_to) &&
+                    filterByRaceToRange(match.race_to) &&
+                    (match.type === 'Pool'
+                        ? filterBySets(match.pool_matches_sets?.sets) &&
+                        filterBySetsRange(match.pool_matches_sets?.sets)
+                        : !filterSetsActive
+                    )
+                );
+            })
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        }
+
+        if (selectedGameType === "Straight Pool"){ //Filtering straight pool game type
             return allStraightMatches
             .filter((match) => 
                 match.game_name.toLowerCase().includes(gameNameSearch) && 
@@ -475,36 +499,35 @@ export default function History() {
             }));
         }
 
-        const selected = gameTypeMap[selectedGameType];
-
+        const selected = gameTypeMap[selectedGameType]; //Filtering pool games (8/9/10 Ball) game type
         return allPoolMatches
-            .filter((match) => 
-                match.game_type === selected && 
-                match.game_name.toLowerCase().includes(gameNameSearch) && 
-                filterByDate(match.created_at) &&
-                (
-                    match.player1.toLowerCase().includes(playerNameSearch.toLowerCase()) || 
-                    match.player2.toLowerCase().includes(playerNameSearch.toLowerCase())
-                ) &&
-                (
-                    winnerPlayer === '' ||
-                    (winnerPlayer === 'player1' && match.winner === 1) ||
-                    (winnerPlayer === 'player2' && match.winner === 2)
-                ) &&
-                (
-                    winnerNameSearch.trim() === '' ||
-                    (match.winner === 1 && match.player1.toLowerCase().includes(winnerNameSearch.toLowerCase())) ||
-                    (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
-                ) && 
-                filterByRaceTo(match.race_to) &&
-                filterByRaceToRange(match.race_to) &&
-                filterBySets(match.pool_matches_sets?.sets) &&
-                filterBySetsRange(match.pool_matches_sets?.sets)
-            )
-            .map((match) => ({
-                ...match,
-                type: "pool" as const
-            }));
+        .filter((match) => 
+            match.game_type === selected && 
+            match.game_name.toLowerCase().includes(gameNameSearch) && 
+            filterByDate(match.created_at) &&
+            (
+                match.player1.toLowerCase().includes(playerNameSearch.toLowerCase()) || 
+                match.player2.toLowerCase().includes(playerNameSearch.toLowerCase())
+            ) &&
+            (
+                winnerPlayer === '' ||
+                (winnerPlayer === 'player1' && match.winner === 1) ||
+                (winnerPlayer === 'player2' && match.winner === 2)
+            ) &&
+            (
+                winnerNameSearch.trim() === '' ||
+                (match.winner === 1 && match.player1.toLowerCase().includes(winnerNameSearch.toLowerCase())) ||
+                (match.winner === 2 && match.player2.toLowerCase().includes(winnerNameSearch.toLowerCase()))
+            ) && 
+            filterByRaceTo(match.race_to) &&
+            filterByRaceToRange(match.race_to) &&
+            filterBySets(match.pool_matches_sets?.sets) &&
+            filterBySetsRange(match.pool_matches_sets?.sets)
+        )
+        .map((match) => ({
+            ...match,
+            type: "Pool" as const
+        }));
     }, [allPoolMatches, allStraightMatches, selectedGameType, debouncedSearchTerm, startDate, endDate, 
         debouncedPlayerName, debouncedWinnerName, winnerPlayer, debouncedRaceTo, debouncedSets, 
         debouncedMinRaceTo, debouncedMaxRaceTo, debouncedMinSets, debouncedMaxSets]);
@@ -527,7 +550,7 @@ export default function History() {
         setFilterTab(1);
     };
 
-    useEffect(() => {
+    useEffect(() => { //Transitioning to next tab
         if (transitioning) {
             const timeout = setTimeout(() => {
                 setFilterTab(nextTab);
@@ -536,28 +559,6 @@ export default function History() {
             return () => clearTimeout(timeout);
         }
     }, [transitioning, nextTab]);
-
-    useEffect(() => { //Get filtered game type
-        const fetchFilteredGameType = async () => {
-            setLoading(true);
-
-            try{
-                const res = await fetch('/api/getFilteredGameType');
-                const json = await res.json();
-
-                if (!res.ok){
-                    setError(json.error);
-                }
-
-                setSelectedGameType(json.filtered_game_type);
-                setLoading(false);
-            }
-            catch (err){
-                setError('Network error');
-            }
-        };
-        fetchFilteredGameType();
-    }, [])
 
     useEffect(() => { //Get all matches
         const fetchAllMatches = async () => {
@@ -582,7 +583,7 @@ export default function History() {
         };
         fetchAllMatches();
     }, []);
-    
+
     useEffect(() => { //Set a timeout to search game name
         if (searchTerm === "") {
             setDebouncedSearchTerm("");
@@ -766,7 +767,7 @@ export default function History() {
                 </div>
                 
                 <div className="history-content-container">
-                    <div className="history-filter-container">
+                    {/* <div className="history-filter-container">
                         <div className="history-filter-tabs">
                             <button 
                                 className={`history-filter-tab ${filterTab === 1 ? "active" : ""}`}
@@ -803,7 +804,7 @@ export default function History() {
                                                 <button
                                                     key={type}
                                                     className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'Straight Pool' ? 'smaller-font' : ''}`}
-                                                    onClick={() => {updateFilteredGameType(type)}}
+                                                    onClick={() => {handleFilteredGameType(type)}}
                                                     >
                                                     {type === 'Straight Pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
                                                 </button>
@@ -859,6 +860,7 @@ export default function History() {
                                     </div>
                                     
                                     <p>Filter by race to:</p>
+
                                     <div className="history-search-number-container">
                                         {!enableRaceToRange ? (
                                             <>
@@ -884,8 +886,6 @@ export default function History() {
                                                         onChange={handleMinRaceToFilter}
                                                     />
                                                     
-                                                    
-
                                                     <p>To</p>
 
                                                     <input
@@ -896,7 +896,6 @@ export default function History() {
                                                         value={maxRaceTo ?? ''}
                                                         onChange={handleMaxRaceToFilter}
                                                     />
-                                                             
                                                 </div>
                                                 {minMaxRaceToError && <p className="history-race-to-error">{minMaxRaceToError}</p>}
                                                 {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}   
@@ -911,6 +910,8 @@ export default function History() {
                                             {enableRaceToRange ? "Disable Race Range" : "Enable Race Range"}
                                         </span>
                                     </label>
+                                    
+                                    <p>Filter by sets:</p>
 
                                     {selectedGameType != "Straight Pool" && (
                                         <>
@@ -974,7 +975,7 @@ export default function History() {
                         <button className="history-clear-button" onClick={handleClearFilters}>
                             Clear Filters
                         </button>
-                    </div>
+                    </div> */}
                     
                     <div className="history-matches-container">
                         {filteredMatches.length === 0 ? (
@@ -985,16 +986,16 @@ export default function History() {
                             <div>
                                 <div className="history-matches-header">
                                     <span className="history-matches-header-game-type">
-                                        {selectedGameType === 'Straight Pool'                                                                                                                
+                                        {selectedGameType === '' ? 'All' : selectedGameType === 'Straight Pool'                                                                                                                
                                             ? 'Straight Pool (14.1 Continuous)'
-                                            : revGameTypeMap[parseInt(selectedGameType)] ?? selectedGameType} Matches
+                                            : revGameTypeMap[parseInt(selectedGameType)] ?? selectedGameType } Matches
                                     </span>                                                                                         
                                     <span className="history-matches-count">
                                         {filteredMatches.length} match{filteredMatches.length !== 1 && 'es'} found
                                     </span>
                                 </div>
                                 {filteredMatches.map((match) => {
-                                    if (match.type === "pool"){
+                                    if (match.type === "Pool"){
                                         const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
                                         
                                         let currentPlayer1Sets: number = 0;
@@ -1111,6 +1112,7 @@ export default function History() {
                                         );
                                     }
                                 })}
+
                             </div>
                         )}
                     </div>

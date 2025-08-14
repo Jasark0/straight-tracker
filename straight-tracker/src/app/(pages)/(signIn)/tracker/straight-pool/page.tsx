@@ -764,7 +764,7 @@ const Tracker: React.FC = () => {
                         High Run: {player2HighRun}
                     </div>
                     <div className="high-style player2-curr-high-run">
-                        Current High Run: {player2CurrRun}
+                        Current Run: {player2CurrRun}
                     </div>
                 </div>
             </div>
