@@ -65,6 +65,7 @@ export default function History() {
     const searchParams = useSearchParams();
     
     const [showFilter, setShowFilter] = useState(false);
+    const [closingFilter, setClosingFilter] = useState(false);
     const [filterTab, setFilterTab] = useState(1); //Filter tab selection
     const [prevTab, setPrevTab] = useState(1);
     const [transitioning, setTransitioning] = useState(false);
@@ -132,9 +133,17 @@ export default function History() {
         }, 250);
     };
 
+    const closeFilter = () => {
+        setClosingFilter(true);
+        setTimeout(() => {
+            setShowFilter(false);
+            setClosingFilter(false);
+        }, 150);
+    }
+
     const gameSelect = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
-    }
+    };
 
     const selectPage = (selectedCreateGameType: string) => {
         if (selectedCreateGameType === "8-Ball"){
@@ -149,7 +158,7 @@ export default function History() {
         else if (selectedCreateGameType === "Straight Pool (14.1 Continuous)"){
             router.push('/select/straight-pool'); 
         }
-    }
+    };
 
     const handleFilteredGameType = async (selectedFilteredGameType: string) => {
         if (selectedFilteredGameType === selectedGameType){
@@ -158,7 +167,7 @@ export default function History() {
         }
 
         setSelectedGameType(selectedFilteredGameType);
-    }
+    };
 
     const toggleRaceToFilter = () => {
         setEnableRaceToRange(!enableRaceToRange); 
@@ -168,7 +177,7 @@ export default function History() {
         setRaceToError('');
         setRaceToRangeError('');
         setMinMaxRaceToError('');
-    }
+    };
 
     const toggleSetsFilter = () => {
         setEnableSetsRange(!enableSetsRange); 
@@ -178,7 +187,7 @@ export default function History() {
         setSetsError('');
         setSetsRangeError('');
         setMinMaxSetsError('');
-    }
+    };
 
     const handleRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -202,7 +211,7 @@ export default function History() {
         else{
             setRaceToError('Race to can only be between 1-500.');
         }
-    }
+    };
 
     const handleMinRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -227,7 +236,7 @@ export default function History() {
             setMinMaxRaceToError('Race to can only be between 1-500.');
             return;
         }
-    }
+    };
 
     const handleMaxRaceToFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -252,7 +261,7 @@ export default function History() {
             setMinMaxRaceToError('Race to can only be between 1-500.');
             return;
         }
-    }
+    };
 
     const validateRaceToRange = (min: number | null, max: number | null) => {
         if (min !== null && max !== null && min > max){
@@ -286,7 +295,7 @@ export default function History() {
         else{
             setSetsError('Sets can only be an odd input between 1-99.');
         }
-    }
+    };
 
     const handleMinSetsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -311,7 +320,7 @@ export default function History() {
             setMinMaxSetsError('Race to can only be between 1-500.');
             return;
         }
-    }
+    };
 
     const handleMaxSetsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -336,7 +345,7 @@ export default function History() {
             setMinMaxSetsError('Race to can only be between 1-500.');
             return;
         }
-    }
+    };
 
     const validateSetsRange = (min: number | null, max: number | null) => {
         if (min !== null && max !== null && min > max){
@@ -349,11 +358,11 @@ export default function History() {
 
     const continuePoolMatchPage = (match: PoolMatch) => {    
         router.push(`/tracker/pool-games?matchID=${match.match_id}`);
-    }
+    };
 
     const continueStraightMatchPage = (match: StraightMatch) => {
         router.push(`/tracker/straight-pool?matchID=${match.match_id}`);
-    }
+    };
     
     const deletePoolMatch = async () => {
         await fetch(`/api/deletePoolMatch?matchID=${selectedPoolMatch?.match_id}`, {
@@ -361,7 +370,7 @@ export default function History() {
         });
         
         window.location.reload();
-    }
+    };
 
     const deleteStraightMatch = async () => {
         await fetch(`/api/deleteStraightMatch?matchID=${selectedStraightMatch?.match_id}`, {
@@ -369,7 +378,7 @@ export default function History() {
         });
         
         window.location.reload();
-    }
+    };
 
     const availableGameTypes = useMemo(() => { //Returning all game types user has created
         const types = new Set<string>();
@@ -758,17 +767,12 @@ export default function History() {
             <ToastContainer className="history-toast"/>
             <div className={`history-container ${showSelectModal ? "blurred" : ""}`}>
                 <div className="history-new-game-container">
-                    <button 
-                        className="hamburger-button" 
-                        onClick={() => setShowFilter(!showFilter)}
-                    >
-                        ☰
-                    </button>
+                    <img src='/hamburger-filter.png' className="history-hamburger" onClick={() => setShowFilter(true)}></img>
                     <button className="history-new-game-button" onClick={() => setShowSelectModal(true)}>+ New Game</button>
                 </div>
                 
                 <div className="history-content-container">
-                    <div className="history-filter-container">
+                    {!showFilter && (<div className="history-filter-container">
                         <div className="history-filter-tabs">
                             <button 
                                 className={`history-filter-tab ${filterTab === 1 ? "active" : ""}`}
@@ -985,15 +989,241 @@ export default function History() {
                         <button className="history-clear-button" onClick={handleClearFilters}>
                             Clear Filters
                         </button>
-                    </div>
+                    </div>)}
                     
+                    {showFilter && (
+                        <div className="history-filter-overlay" onClick={() => setShowFilter(false)}>
+                            <div className={`history-filter-container mobile ${closingFilter ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+                                <div className="history-filter-close" onClick={closeFilter}>
+                                    &times;
+                                </div>
+                                <div className="history-filter-tabs">
+                                    <button 
+                                        className={`history-filter-tab ${filterTab === 1 ? "active" : ""}`}
+                                        onClick={() => handleTabChange(1)}
+                                    >
+                                        Game Type
+                                    </button>
+                                    <button 
+                                        className={`history-filter-tab ${filterTab === 2 ? "active" : ""}`}
+                                        onClick={() => handleTabChange(2)}
+                                    >
+                                        General
+                                    </button>
+                                    <button 
+                                        className={`history-filter-tab ${filterTab === 3 ? "active" : ""}`}
+                                        onClick={() => handleTabChange(3)}
+                                    >
+                                        Advanced
+                                    </button>
+                                </div>
+
+                                <div className={`history-filter-tab-content 
+                                    ${transitioning 
+                                        ? slideDirection === "right" 
+                                            ? "slide-out-left" 
+                                            : "slide-out-right"
+                                        : slideDirection === "right" 
+                                            ? "slide-in-right slide-active" 
+                                            : "slide-in-left slide-active"
+                                    }`}>
+
+                                    {filterTab === 1 && (
+                                        <>
+                                            <p className="history-filter-game-text">Game to display:</p>
+
+                                            {availableGameTypes.length === 0 ? (
+                                                <p className="history-filter-no-text">No matches found yet, make a new game today!</p>
+                                            ) : (
+                                                <div className="history-filter-grid">
+                                                    {allGameTypes
+                                                        .filter(type => availableGameTypes.includes(type))
+                                                        .map((type) => (
+                                                        <button
+                                                            key={type}
+                                                            className={`history-filter-game-button ${selectedGameType === type ? 'active' : ''} ${type === 'Straight Pool' ? 'smaller-font' : ''}`}
+                                                            onClick={() => {handleFilteredGameType(type)}}
+                                                            >
+                                                            {type === 'Straight Pool' ? <>Straight Pool <br /> (14.1 Continuous)</> : type}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {filterTab === 2 && (
+                                        <>
+                                            <p>Search game name:</p>
+                                            <div className="history-search-container">
+                                                <span className="history-search-icon">🔍</span>
+                                                <input className="history-search-input" placeholder="Search game name" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
+                                            </div>
+
+                                            <p>Filter by date:</p>
+                                            <div className="history-date-container">
+                                                <input type="date" className="history-date-input" placeholder="Start date" value={startDate} min={earliestMatchDate} max={endDate || today} 
+                                                onChange={(e) => setStartDate(e.target.value)}/>
+
+                                                <input type="date" className="history-date-input" placeholder="End date" value={endDate} min={earliestMatchDate || startDate} max={today}
+                                                onChange={(e) => setEndDate(e.target.value)}/>
+                                            </div>
+
+                                            <p>Filter by player name:</p>
+                                            <div className="history-search-container">
+                                                <span className="history-search-icon">🔍</span>
+                                                <input className="history-search-input" placeholder="Search player name" value={playerName} onChange={(e) => setPlayerName(e.target.value)}/>
+                                            </div>
+
+                                            <p>Filter by winner name:</p>
+                                            <div className="history-search-container">
+                                                <span className="history-search-icon">🔍</span>
+                                                <input className="history-search-input" placeholder="Search winner name" value={winnerName} onChange={(e) => setWinnerName(e.target.value)}/>
+                                            </div>
+                                        </>
+                                    )}
+                                    
+                                    {filterTab === 3 && (
+                                        <>        
+                                            <p>Filter by player win:</p>
+                                            <div className="history-filter-grid">
+                                                <button className={`history-filter-game-button ${winnerPlayer === 'player1' ? 'active' : ''}`} 
+                                                onClick={() => setWinnerPlayer(winnerPlayer === 'player1' ? '' : 'player1')}>
+                                                    Player 1 Wins
+                                                </button>
+                                                <button className={`history-filter-game-button ${winnerPlayer === 'player2' ? 'active' : ''}`} 
+                                                onClick={() => setWinnerPlayer(winnerPlayer === 'player2' ? '' : 'player2')}>
+                                                    Player 2 Wins
+                                                </button>
+                                            </div>
+                                            
+                                            <p>Filter by race to:</p>
+
+                                            <div className="history-search-number-container">
+                                                {!enableRaceToRange ? (
+                                                    <>
+                                                        <input
+                                                            className="history-search-input number-input"
+                                                            placeholder="Search race to"
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            value={raceTo ?? ''}
+                                                            onChange={handleRaceToFilter}
+                                                        />
+                                                        {raceToError && <p className="history-race-to-error">{raceToError}</p>}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="history-range-container">
+                                                            <input
+                                                                className="history-search-input number-input"
+                                                                placeholder="Min race to"
+                                                                type="text"
+                                                                inputMode="numeric"
+                                                                value={minRaceTo ?? ''}
+                                                                onChange={handleMinRaceToFilter}
+                                                            />
+                                                            
+                                                            <p>To</p>
+
+                                                            <input
+                                                                className="history-search-input number-input"
+                                                                placeholder="Max race to"
+                                                                type="text"
+                                                                inputMode="numeric"
+                                                                value={maxRaceTo ?? ''}
+                                                                onChange={handleMaxRaceToFilter}
+                                                            />
+                                                        </div>
+                                                        {minMaxRaceToError && <p className="history-race-to-error">{minMaxRaceToError}</p>}
+                                                        {raceToRangeError && <p className="history-race-to-error">{raceToRangeError}</p>}   
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            <label className="history-filter-toggle-container">
+                                                <input type="checkbox" checked={enableRaceToRange} onChange={toggleRaceToFilter}/>
+                                                <span className="history-filter-slider"></span>
+                                                <span className="history-filter-toggle-label">
+                                                    {enableRaceToRange ? "Disable Race Range" : "Enable Race Range"}
+                                                </span>
+                                            </label>
+                                            
+                                            <p>Filter by sets:</p>
+
+                                            {selectedGameType != "Straight Pool" && (
+                                                <>
+                                                    <div className="history-search-number-container">
+                                                        {!enableSetsRange ? (
+                                                            <>
+                                                                <input
+                                                                    className="history-search-input number-input"
+                                                                    placeholder="Search sets"
+                                                                    type="text"
+                                                                    inputMode="numeric"
+                                                                    value={sets ?? ''}
+                                                                    onChange={handleSetsFilter}
+                                                                />
+                                                                {setsError && <p className="history-race-to-error">{setsError}</p>}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <div className="history-range-container">
+                                                                    <input
+                                                                        className="history-search-input number-input"
+                                                                        placeholder="Min sets"
+                                                                        type="text"
+                                                                        inputMode="numeric"
+                                                                        value={minSets ?? ''}
+                                                                        onChange={handleMinSetsFilter}
+                                                                    />
+                                                                    
+
+                                                                    <p>To</p>
+
+                                                                    <input
+                                                                        className="history-search-input number-input"
+                                                                        placeholder="Max sets"
+                                                                        type="text"
+                                                                        inputMode="numeric"
+                                                                        value={maxSets ?? ''}
+                                                                        onChange={handleMaxSetsFilter}
+                                                                    />
+                                                                    
+                                                                </div>
+                                                                {minMaxRaceToError && <p className="history-race-to-error">{minMaxSetsError}</p>}
+                                                                {setsRangeError && <p className="history-race-to-error">{setsRangeError}</p>}
+                                                            </>
+                                                        )}
+                                                    </div>
+
+                                                    <label className="history-filter-toggle-container">
+                                                        <input type="checkbox" checked={enableSetsRange} onChange={toggleSetsFilter}/>
+                                                        <span className="history-filter-slider"></span>
+                                                        <span className="history-filter-toggle-label">
+                                                            {enableSetsRange ? "Disable Sets Range" : "Enable Sets Range"}
+                                                        </span>
+                                                    </label>
+                                                </>
+                                            )}
+                                        </>
+                                    )}    
+                                </div>
+
+                                <button className="history-clear-button" onClick={handleClearFilters}>
+                                    Clear Filters
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="history-matches-container">
                         {filteredMatches.length === 0 ? (
                             <p className="history-no-match-text">
                                 No match history found. 
                             </p>
                         ) : (
-                            <div>
+                            <>
                                 <div className="history-matches-header">
                                     <span className="history-matches-header-game-type">
                                         {selectedGameType === '' ? 'All' : selectedGameType === 'Straight Pool'                                                                                                                
@@ -1031,8 +1261,6 @@ export default function History() {
                                                         year: 'numeric',
                                                         month: 'short', 
                                                         day: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
                                                         hour12: true, 
                                                     })}
                                                     </span>
@@ -1122,8 +1350,7 @@ export default function History() {
                                         );
                                     }
                                 })}
-
-                            </div>
+                            </>
                         )}
                     </div>
                 </div>
@@ -1161,6 +1388,18 @@ export default function History() {
                         </p>
                         <p className="history-details-player-names-text">
                             {selectedPoolMatch.player1} vs. {selectedPoolMatch.player2}
+                        </p>
+                        <p className="history-details-created-at-text">
+                            Match created on: {" "} 
+                            <span className="history-match-created-at-text">{new Date(selectedPoolMatch.created_at).toLocaleString(undefined, {
+                                year: 'numeric',
+                                month: 'short', 
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true, 
+                            })}
+                            </span>
                         </p>
                         <p className="history-details-winner-text">
                             {selectedPoolMatch.pool_matches_lag?.lag_winner != null && (

@@ -28,17 +28,21 @@
 
 .history-new-game-container{
     display: flex;
-    justify-content: flex-end;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.history-hamburger{
+    display: none;
 }
 
 .history-new-game-button{
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 15rem;
-    height: 4rem;
-    margin: 2rem 0;
-    font-size: 1.4rem;
+    padding: 1rem 2rem;
+    margin: 1.5rem 0;
+    font-size: 1.25rem;
     color: white;
     background-color: #007bff;
     border: none;
@@ -63,7 +67,7 @@
 
 /* Filter Tabs CSS */
 
-.history-filter-container{ /* SET A MEDIA CONTROL FOR THIS */
+.history-filter-container{
     display: flex;
     flex-direction: column;
     width: 18vw;
@@ -75,7 +79,68 @@
     overflow-y: auto;
 }
 
-.history-filter-tabs{ /* SET A DIFFERENT MEDIA TAB FOR SMALLER MEDIA CONTROL */
+.history-filter-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4); 
+    backdrop-filter: blur(4px);  
+    z-index: 5; 
+}
+
+.history-filter-container.mobile{
+    all: unset;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60vw;
+    max-width: 20rem;
+    height: 100%;
+    background-color: white;
+    border-radius: 0;
+    padding: 2rem 2rem;
+    margin-top: 6rem;
+    transform: translateX(-100%);
+    animation: slideIn 0.2s forwards ease-out;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.history-filter-container.mobile.closing{
+    animation: slideOut 0.15s forwards ease-in;
+}
+
+@keyframes slideIn{
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut{
+    from{
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.history-filter-close{
+    position: absolute;
+    top: 0.2rem;
+    right: 0.7rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.history-filter-close:hover{
+    color: #333;
+    transform: scale(1.1);
+}
+
+.history-filter-tabs{ 
     display: flex;
     gap: 0.25rem;
     margin-bottom: 1rem;
@@ -114,19 +179,22 @@
 }
 
 .slide-in-left{
-    transform: translateX(-20px);
+    transform: translateX(-20%);
     opacity: 0;
 }
+
 .slide-in-right{
-    transform: translateX(20px);
+    transform: translateX(20%);
     opacity: 0;
 }
+
 .slide-out-left{
-    transform: translateX(-20px);
+    transform: translateX(-20%);
     opacity: 0;
 }
+
 .slide-out-right{
-    transform: translateX(20px);
+    transform: translateX(20%);
     opacity: 0;
 }
 
@@ -170,6 +238,22 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
+.history-filter-game-button.smaller-font{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.5rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
 .history-filter-game-button:hover{
     background-color: #f1f5ff;
     border-color: #b3d4ff;
@@ -183,10 +267,6 @@
     border-color: transparent;
     box-shadow: 0 4px 10px rgba(0, 123, 255, 0.25);
     transform: translateY(-1px);
-}
-
-.history-filter-game-button.smaller-font{
-    font-size: 0.9rem;
 }
 
 
@@ -691,7 +771,8 @@
 }
 
 .history-details-game-name-text,
-.history-details-player-names-text{
+.history-details-player-names-text,
+.history-details-created-at-text{
     margin: 0 0 1rem;
     font-size: 1.4rem;
     font-weight: 500;
@@ -853,6 +934,38 @@
     }
 }
 
+
+/* Mobile CSS */
+
+@media (max-width: 1200px){
+    .history-hamburger{
+        display: flex;
+        width: 4rem;
+        height: 4rem;
+        cursor: pointer;
+    }
+
+    .history-filter-container{ 
+        display: none;
+    }
+}
+
+@media (max-width: 568px){
+    .history-match-container{
+        max-height: 8rem;
+    }
+
+    .history-match-container:hover{
+        max-height: 15rem;
+        background-color: #dddddd; 
+        border-radius: 8px;
+    }
+
+    .history-match-container:hover .history-match-button-container{
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
 
 
 
