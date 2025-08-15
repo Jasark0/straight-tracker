@@ -1297,8 +1297,6 @@ export default function History() {
                                                         year: 'numeric',
                                                         month: 'short', 
                                                         day: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
                                                         hour12: true, 
                                                     })}
                                                     </span>
@@ -1496,7 +1494,6 @@ export default function History() {
                                 {selectedStraightMatch.player1} vs. {selectedStraightMatch.player2}
                             </p>
                         </div>
-
                         <p className="history-details-winner-text">
                             {selectedStraightMatch.straight_pool_matches_lag?.lag_winner != null && (
                                 <>
@@ -1524,8 +1521,18 @@ export default function History() {
                                     : `Player 2 - ${selectedStraightMatch.player2}`
                                 : "In Progress"}
                         </p>
-
-
+                        <p className="history-details-created-at-text">
+                            Created at: {" "}
+                            <span className="history-match-created-at-text">{new Date(selectedStraightMatch.created_at).toLocaleString(undefined, {
+                                    year: 'numeric',
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true, 
+                                })}
+                            </span>
+                        </p>
 
                         <img src="/divider.png" className="divider-css"></img>
 
@@ -1537,7 +1544,7 @@ export default function History() {
                             {selectedStraightMatch.player1_score} - {selectedStraightMatch.player2_score}
                         </p>
 
-                        <div>
+                        <div className="history-details-buttons-container">
                             {selectedStraightMatch.winner === null && (
                                 <button className="history-match-button continue" 
                                 onClick={(e) => {e.stopPropagation(); continueStraightMatchPage(selectedStraightMatch);}}>
