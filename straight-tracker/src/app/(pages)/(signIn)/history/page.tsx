@@ -130,7 +130,7 @@ export default function History() {
         setTimeout(() => {
             setSlideDirection(null);
             setFilterTab(tab);
-        }, 1000)
+        }, 400)
     };
 
     const closeFilter = () => {
