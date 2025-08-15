@@ -62,7 +62,13 @@
   font-size: 60px;
   font-family: 'Exo 2';
   letter-spacing: 2px;
-  margin-top: 0;
+  margin: 1rem 0;
+}
+
+.s-player1-foul, .s-player2-foul{
+  display: grid;
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
 .s-score-container{
