@@ -67,9 +67,8 @@ export default function History() {
     const [showFilter, setShowFilter] = useState(false);
     const [closingFilter, setClosingFilter] = useState(false);
     const [filterTab, setFilterTab] = useState(1); //Filter tab selection
-    const [prevTab, setPrevTab] = useState(1);
     const [transitioning, setTransitioning] = useState(false);
-    const [slideDirection, setSlideDirection] = useState("right");
+    const [slideDirection, setSlideDirection] = useState<"left"|"right"|null>(null);
 
     const [selectedGameType, setSelectedGameType] = useState('');
     const [searchTerm, setSearchTerm] = useState("");
@@ -123,14 +122,15 @@ export default function History() {
 
     const handleTabChange = (tab: number) => {
         if (tab === filterTab) return;
-        setSlideDirection(tab > filterTab ? "right" : "left");
-        setPrevTab(filterTab);
-        setTransitioning(true);
 
+        const direction = tab > filterTab ? "right" : "left";
+
+        setSlideDirection(direction);
+        
         setTimeout(() => {
+            setSlideDirection(null);
             setFilterTab(tab);
-            setTransitioning(false);
-        }, 250);
+        }, 1000)
     };
 
     const closeFilter = () => {
@@ -794,16 +794,7 @@ export default function History() {
                             </button>
                         </div>
 
-                        <div className={`history-filter-tab-content 
-                            ${transitioning 
-                                ? slideDirection === "right" 
-                                    ? "slide-out-left" 
-                                    : "slide-out-right"
-                                : slideDirection === "right" 
-                                    ? "slide-in-right slide-active" 
-                                    : "slide-in-left slide-active"
-                            }`}>
-
+                        <div className={`history-filter-tab-content ${slideDirection === "left" ? "slide-right" : slideDirection === "right" ? "slide-left" : ""}`}>
                             {filterTab === 1 && (
                                 <>
                                     <p className="history-filter-game-text">Game to display:</p>
@@ -1018,16 +1009,8 @@ export default function History() {
                                     </button>
                                 </div>
 
-                                <div className={`history-filter-tab-content 
-                                    ${transitioning 
-                                        ? slideDirection === "right" 
-                                            ? "slide-out-left" 
-                                            : "slide-out-right"
-                                        : slideDirection === "right" 
-                                            ? "slide-in-right slide-active" 
-                                            : "slide-in-left slide-active"
-                                    }`}>
-
+                            
+                                <div className={`history-filter-tab-content ${slideDirection === "left" ? "slide-right" : slideDirection === "right" ? "slide-left" : ""}`}>
                                     {filterTab === 1 && (
                                         <>
                                             <p className="history-filter-game-text">Game to display:</p>

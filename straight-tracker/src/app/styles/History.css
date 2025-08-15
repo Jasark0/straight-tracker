@@ -171,36 +171,22 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding-right: 0.5rem;
-    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .history-filter-tab-content p{
     margin: 0.5rem 0 0.25rem;
 }
 
-.slide-in-left{
-    transform: translateX(-20%);
+.slide-left{
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateX(-100%);
     opacity: 0;
 }
 
-.slide-in-right{
-    transform: translateX(20%);
+.slide-right{
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateX(100%);
     opacity: 0;
-}
-
-.slide-out-left{
-    transform: translateX(-20%);
-    opacity: 0;
-}
-
-.slide-out-right{
-    transform: translateX(20%);
-    opacity: 0;
-}
-
-.slide-active{
-    transform: translateX(0);
-    opacity: 1;
 }
 
 
