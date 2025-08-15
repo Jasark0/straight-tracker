@@ -18,15 +18,15 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
     const [profileHovered, setProfileHovered] = useState(false);
     
     const homePage = () => {
-        router.push('/');
+        window.location.href = '/';
     };
 
     const handleHistory = async () => {
-        router.push('/history');
+        window.location.href = '/history';
     }
 
     const settingsPage = () => {
-        router.push('/settings');
+        window.location.href = '/settings';
     }
 
     const signinPage = () => {

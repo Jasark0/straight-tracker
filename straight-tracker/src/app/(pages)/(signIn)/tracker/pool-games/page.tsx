@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Icon from '@mdi/react';
 import { mdiCog } from '@mdi/js';
 import { toast } from 'react-toastify';
@@ -13,6 +13,7 @@ import Loading from '@/src/components/PageLoading'
 const Tracker: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
+    const prevPathname = useRef(pathname);
     const searchParams = useSearchParams();
 
     const matchID = searchParams.get('matchID');
@@ -294,12 +295,6 @@ const Tracker: React.FC = () => {
         router.push(`/configure/pool-games?matchID=${matchID}`);
     }
 
-    const goToHistory = async () => {
-        await updatePoolMatch(player1Score, player2Score, toBreak);
-
-        router.push('/history');
-    }
-
     const handleExit = () => {
         const winnerValue = winner;
         handleWinner(winnerValue);
@@ -410,6 +405,22 @@ const Tracker: React.FC = () => {
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [matchID, id, player1Score, player2Score, toBreak]);
+
+    useEffect(() => { //Updating database with scores when page is unloaded
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            navigator.sendBeacon('/api/updatePoolMatch', JSON.stringify({
+                match_id: matchID,
+                player1_score: player1Score,
+                player2_score: player2Score,
+                to_break: toBreak,
+                winner: winner ?? null
+            }));
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [matchID, id, player1Score, player2Score, toBreak]);
+
 
     if (loading){
         return <Loading/>;
