@@ -589,6 +589,21 @@ export default function History() {
         fetchAllMatches();
     }, []);
 
+    const [page, setPage] = useState(0); //History matches paging
+    const pageSize = 5;
+    const total = filteredMatches.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const startIndex = page * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, total);
+    const pageItems = filteredMatches.slice(startIndex, endIndex);
+
+    const goPrevPage = () => setPage(p => Math.max(0, p - 1));
+    const goNextPage = () => setPage(p => Math.min(totalPages - 1, p + 1));
+
+    useEffect(() => {
+        setPage(0);
+    }, [filteredMatches]);
+
     useEffect(() => { //Set a timeout to search game name
         if (searchTerm === "") {
             setDebouncedSearchTerm("");
@@ -1213,12 +1228,17 @@ export default function History() {
                                         {selectedGameType === '' ? 'All' : selectedGameType === 'Straight Pool'                                                                                                                
                                             ? 'Straight Pool (14.1 Continuous)'
                                             : revGameTypeMap[parseInt(selectedGameType)] ?? selectedGameType } Matches
-                                    </span>                                                                                         
-                                    <span className="history-matches-count">
-                                        {filteredMatches.length} match{filteredMatches.length !== 1 && 'es'} found
-                                    </span>
+                                    </span>    
+
+                                    <div className="history-pagination">
+                                        <span>
+                                            {total === 0 ? '0–0' : `${startIndex + 1}–${endIndex}`} of {total} matches
+                                        </span>
+                                        <button onClick={goPrevPage} disabled={page === 0}>◀ Prev</button>
+                                        <button onClick={goNextPage} disabled={page >= totalPages - 1}>Next ▶</button>
+                                    </div>
                                 </div>
-                                {filteredMatches.map((match) => {
+                                {pageItems.map((match) => {
                                     if (match.type === "Pool"){
                                         const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
                                         
@@ -1497,6 +1517,9 @@ export default function History() {
             {showStraightDetailsModal && selectedStraightMatch && (
                 <div className="history-details-modal" onClick={() => setShowStraightDetailsModal(false)}>
                     <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="history-details-modal-close" onClick={() => setShowStraightDetailsModal(false)}>
+                            &times;
+                        </div>
                         <p className="history-details-game-type-text">
                             Game Type: Straight Pool (14.1 Continuous)
                         </p>

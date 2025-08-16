@@ -465,6 +465,40 @@
     color: #222;
 }
 
+.history-pagination{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: .75rem;
+  margin: .5rem 0;
+}
+
+.history-pagination button{
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: .25rem .75rem;
+  border-radius: .375rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.history-pagination button:hover:not(:disabled){
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.history-pagination button:active:not(:disabled){
+  background-color: #e0e0e0;
+  border-color: #666;
+  transform: translateY(0);
+}
+
+.history-pagination button:disabled{
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .history-matches-count{
     font-size: 0.9rem;
     font-weight: 500;
