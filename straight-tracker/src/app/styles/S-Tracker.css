@@ -12,7 +12,8 @@
 /* Toast Warning CSS */
 
 .s-toast-warning{
-  margin-top: 6rem;
+  margin-top: 3rem;
+  margin-bottom: 0;
 }
 
 /* Game Name & Race To CSS */

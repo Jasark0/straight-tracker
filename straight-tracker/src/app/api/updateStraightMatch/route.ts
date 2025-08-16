@@ -16,7 +16,8 @@ export async function POST(req: Request) {
         const { error } = await supabaseAdmin
         .from('straight_pool_matches')
         .update({ to_shoot, rack, remaining_balls, player1_score, player1_foul, player1_high_run, player1_curr_run, 
-            player2_score, player2_foul, player2_high_run, player2_curr_run })
+            player2_score, player2_foul, player2_high_run, player2_curr_run,
+            continued_at: new Date().toISOString() })
         .eq('match_id', match_id);
 
         if (error){

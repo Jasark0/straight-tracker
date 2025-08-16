@@ -17,6 +17,7 @@ export default function History() {
         race_to: number;
         winner: number | null;
         created_at: string;
+        continued_at: string;
         pool_matches_race: {
             player1_score: number;
             player2_score: number;
@@ -41,6 +42,7 @@ export default function History() {
         player2_high_run: number;
         winner: number | null;
         created_at: string;
+        continued_at: string;
         straight_pool_matches_lag: {
             lag_winner: number;
         }
@@ -67,7 +69,6 @@ export default function History() {
     const [showFilter, setShowFilter] = useState(false);
     const [closingFilter, setClosingFilter] = useState(false);
     const [filterTab, setFilterTab] = useState(1); //Filter tab selection
-    const [transitioning, setTransitioning] = useState(false);
     const [slideDirection, setSlideDirection] = useState<"left"|"right"|null>(null);
 
     const [selectedGameType, setSelectedGameType] = useState('');
@@ -482,7 +483,7 @@ export default function History() {
                     )
                 );
             })
-            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            .sort((a, b) => new Date(b.continued_at).getTime() - new Date(a.continued_at).getTime());
         }
 
         if (selectedGameType === "Straight Pool"){ //Filtering straight pool game type
@@ -1240,7 +1241,7 @@ export default function History() {
                                             <div key={match.match_id} className="history-match-container" onClick={() => {setShowPoolDetailsModal(true); setSelectedPoolMatch(match);}}>
                                                 <div className="history-match-row-container">
                                                     <span className="history-match-game-name-text">{match.game_name}</span>
-                                                    <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                                    <span className="history-match-created-at-text">{new Date(match.continued_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 
                                                         day: 'numeric',
@@ -1293,7 +1294,7 @@ export default function History() {
                                             <div key={match.match_id} className="history-match-container" onClick={() => {setShowStraightDetailsModal(true); setSelectedStraightMatch(match);}}>
                                                 <div className="history-match-row-container">
                                                     <span className="history-match-game-name-text">{match.game_name}</span>
-                                                    <span className="history-match-created-at-text">{new Date(match.created_at).toLocaleString(undefined, {
+                                                    <span className="history-match-created-at-text">{new Date(match.continued_at).toLocaleString(undefined, {
                                                         year: 'numeric',
                                                         month: 'short', 
                                                         day: 'numeric',
@@ -1382,6 +1383,19 @@ export default function History() {
                             })}
                             </span>
                         </p>
+                        <p className="history-details-created-at-text">
+                            Match continued till: {" "}
+                            <span className="history-match-created-at-text">{new Date(selectedPoolMatch.continued_at).toLocaleString(undefined, {
+                                    year: 'numeric',
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true, 
+                                })}
+                            </span>
+                        </p>
+
                         <p className="history-details-winner-text">
                             {selectedPoolMatch.pool_matches_lag?.lag_winner != null && (
                                 <>
@@ -1522,8 +1536,20 @@ export default function History() {
                                 : "In Progress"}
                         </p>
                         <p className="history-details-created-at-text">
-                            Created at: {" "}
+                            Match created on: {" "}
                             <span className="history-match-created-at-text">{new Date(selectedStraightMatch.created_at).toLocaleString(undefined, {
+                                    year: 'numeric',
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true, 
+                                })}
+                            </span>
+                        </p>
+                        <p className="history-details-created-at-text">
+                            Match continued till: {" "}
+                            <span className="history-match-created-at-text">{new Date(selectedStraightMatch.continued_at).toLocaleString(undefined, {
                                     year: 'numeric',
                                     month: 'short', 
                                     day: 'numeric',

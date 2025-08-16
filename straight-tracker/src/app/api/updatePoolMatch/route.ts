@@ -12,7 +12,10 @@ export async function POST(req: Request) {
 
         const { error: breakError } = await supabaseAdmin
         .from('pool_matches')
-        .update({to_break})
+        .update({
+            to_break,
+            continued_at: new Date().toISOString()
+        })
         .eq('match_id', match_id)
 
         if (breakError){
