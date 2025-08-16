@@ -1383,7 +1383,7 @@ export default function History() {
                         </p>
                         <p className="history-details-created-at-text">
                             Match created on: {" "} 
-                            <span className="history-match-created-at-text">{new Date(selectedPoolMatch.created_at).toLocaleString(undefined, {
+                            <span>{new Date(selectedPoolMatch.created_at).toLocaleString(undefined, {
                                 year: 'numeric',
                                 month: 'short', 
                                 day: 'numeric',
@@ -1395,7 +1395,7 @@ export default function History() {
                         </p>
                         <p className="history-details-created-at-text">
                             Match continued till: {" "}
-                            <span className="history-match-created-at-text">{new Date(selectedPoolMatch.continued_at).toLocaleString(undefined, {
+                            <span>{new Date(selectedPoolMatch.continued_at).toLocaleString(undefined, {
                                     year: 'numeric',
                                     month: 'short', 
                                     day: 'numeric',
@@ -1555,7 +1555,7 @@ export default function History() {
                         </p>
                         <p className="history-details-created-at-text">
                             Match created on: {" "}
-                            <span className="history-match-created-at-text">{new Date(selectedStraightMatch.created_at).toLocaleString(undefined, {
+                            <span>{new Date(selectedStraightMatch.created_at).toLocaleString(undefined, {
                                     year: 'numeric',
                                     month: 'short', 
                                     day: 'numeric',
@@ -1567,7 +1567,7 @@ export default function History() {
                         </p>
                         <p className="history-details-created-at-text">
                             Match continued till: {" "}
-                            <span className="history-match-created-at-text">{new Date(selectedStraightMatch.continued_at).toLocaleString(undefined, {
+                            <span>{new Date(selectedStraightMatch.continued_at).toLocaleString(undefined, {
                                     year: 'numeric',
                                     month: 'short', 
                                     day: 'numeric',

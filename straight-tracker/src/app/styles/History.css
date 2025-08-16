@@ -544,10 +544,6 @@
     font-size: 0.95rem;
 }
 
-.history-match-created-at-text{
-    font-size: 1.3rem;
-}
-
 .history-match-game-name-text{
     font-size: 1.5rem;
 }
@@ -566,7 +562,7 @@
     color: red;
 }
 
-.history-match-player-name-text{
+.history-match-player-name-text, .history-match-created-at-text{
     font-size: 1.3rem;
 }
 
@@ -791,10 +787,15 @@
 }
 
 .history-details-game-name-text,
-.history-details-player-names-text,
-.history-details-created-at-text{
+.history-details-player-names-text{
     margin: 0 0 1rem;
     font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.history-details-created-at-text{
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
     font-weight: 500;
 }
 
