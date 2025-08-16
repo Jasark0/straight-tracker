@@ -999,7 +999,7 @@ export default function History() {
                     </div>)}
                     
                     {showFilter && (
-                        <div className="history-filter-overlay" onClick={() => setShowFilter(false)}>
+                        <div className="history-filter-overlay" onClick={closeFilter}>
                             <div className={`history-filter-container mobile ${closingFilter ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
                                 <div className="history-filter-close" onClick={closeFilter}>
                                     &times;
@@ -1024,7 +1024,6 @@ export default function History() {
                                         Advanced
                                     </button>
                                 </div>
-
                             
                                 <div className={`history-filter-tab-content ${slideDirection === "left" ? "slide-right" : slideDirection === "right" ? "slide-left" : ""}`}>
                                     {filterTab === 1 && (
@@ -1232,10 +1231,10 @@ export default function History() {
 
                                     <div className="history-pagination">
                                         <span>
-                                            {total === 0 ? '0–0' : `${startIndex + 1}–${endIndex}`} of {total} matches
+                                            {total === 0 ? '0-0' : `${startIndex + 1}–${endIndex}`} of {total} <span className="history-pagination-text">matches</span>
                                         </span>
-                                        <button onClick={goPrevPage} disabled={page === 0}>◀ Prev</button>
-                                        <button onClick={goNextPage} disabled={page >= totalPages - 1}>Next ▶</button>
+                                        <button onClick={goPrevPage} disabled={page === 0}>◀ <span className="history-pagination-text">Prev</span></button>
+                                        <button onClick={goNextPage} disabled={page >= totalPages - 1}><span className="history-pagination-text">Next</span> ▶</button>
                                     </div>
                                 </div>
                                 {pageItems.map((match) => {
@@ -1277,15 +1276,15 @@ export default function History() {
                                                     <span className="history-match-score-text">
                                                         {match.pool_matches_sets
                                                         ? (
-                                                            <>
+                                                            <div className="history-match-score-container">
                                                                 Sets Score: <span className="history-match-current-sets-text">{currentPlayer1Sets}</span> - <span className="history-match-current-sets-text">{currentPlayer2Sets}</span> | 
                                                                 Score: <span className="history-match-current-scores-text">{currentPlayer1Score}</span> - <span className="history-match-current-scores-text">{currentPlayer2Score}</span>
-                                                            </>
+                                                            </div>
                                                         )
                                                         : (
-                                                            <>
+                                                            <div className="history-match-score-container">
                                                                 Score: <span className="history-match-current-scores-text">{currentPlayer1Score}</span> - <span className="history-match-current-scores-text">{currentPlayer2Score}</span>
-                                                            </>
+                                                            </div>
                                                         )}
                                                     </span>
                                                 </div>
@@ -1327,7 +1326,7 @@ export default function History() {
                                                     <span className="history-match-player-name-text">
                                                         {match.player1} vs. {match.player2}
                                                     </span>
-                                                    <span className="history-match-score-text">
+                                                    <span className="history-match-score-text history-match-score-container">
                                                         Score: <span className="history-match-current-scores-text">{match.player1_score}</span> - <span className="history-match-current-scores-text">{match.player2_score}</span>
                                                     </span>
                                                 </div>
@@ -1456,10 +1455,15 @@ export default function History() {
                             <>
                                 <p className="history-details-all-scores-text">All Scores:</p>
                                 {selectedPoolMatch.pool_matches_race?.length > 0 && (
-                                    <div className="history-details-sets-grid" style={{gridTemplateColumns: `repeat(${Math.min(selectedPoolMatch.pool_matches_race.length, 5)}, 1fr)`}}>
+                                    <div className="history-details-sets-grid" style={{"--cols": selectedPoolMatch.pool_matches_race.length} as React.CSSProperties}>
                                         {selectedPoolMatch.pool_matches_race.map((race, index) => (
                                             <p className="history-details-sets-scores-text" key={index}>
-                                                Set {index + 1}: <span className="history-match-current-scores-text">{race.player1_score}</span> - <span className="history-match-current-scores-text">{race.player2_score}</span>
+                                                <span className="history-details-set-label">Set {index + 1}: </span>
+                                                <span className="history-details-set-scores">
+                                                    <span className="history-match-current-scores-text">{race.player1_score}</span>
+                                                        {" - "} 
+                                                    <span className="history-match-current-scores-text">{race.player2_score}</span>
+                                                </span>
                                             </p>
                                         ))}
                                     </div>
