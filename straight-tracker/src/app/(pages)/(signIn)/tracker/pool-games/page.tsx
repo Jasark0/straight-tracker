@@ -13,7 +13,6 @@ import Loading from '@/src/components/PageLoading'
 const Tracker: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
-    const prevPathname = useRef(pathname);
     const searchParams = useSearchParams();
 
     const matchID = searchParams.get('matchID');

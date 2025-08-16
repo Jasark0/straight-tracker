@@ -36,17 +36,7 @@ export async function POST(req: Request) {
     let finalGameName = game_name;
     
     if (!finalGameName){
-        switch (game_type){
-            case 0:
-                finalGameName = '8 Ball - Match';
-                break;
-            case 1:
-                finalGameName = '9 Ball - Match';
-                break;
-            case 2:
-                finalGameName = '10 Ball - Match';
-                break;
-        }
+        finalGameName = `${game_type} Ball - Match`;
     }
 
 

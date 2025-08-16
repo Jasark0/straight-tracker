@@ -50,18 +50,6 @@ export default function History() {
 
     const allGameTypes = ['8-Ball', '9-Ball', '10-Ball', 'Straight Pool'];
 
-    const gameTypeMap: Record<string, number | "Straight Pool"> = {
-        "8-Ball": 0,
-        "9-Ball": 1,
-        "10-Ball": 2
-    };
-
-    const revGameTypeMap: Record<number, string> = {
-        0: "8-Ball",
-        1: "9-Ball",
-        2: "10-Ball"
-    }
-
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -148,13 +136,13 @@ export default function History() {
 
     const selectPage = (selectedCreateGameType: string) => {
         if (selectedCreateGameType === "8-Ball"){
-            router.push('/select/8-ball');
+            router.push('/select/pool-games?type=8');
         }
         else if (selectedCreateGameType === "9-Ball"){
-            router.push('/select/9-ball'); 
+            router.push('/select/pool-games?type=9'); 
         }
         else if (selectedCreateGameType === "10-Ball"){
-            router.push('/select/10-ball');
+            router.push('/select/pool-games?type=10');
         }
         else if (selectedCreateGameType === "Straight Pool (14.1 Continuous)"){
             router.push('/select/straight-pool'); 
@@ -385,11 +373,13 @@ export default function History() {
         const types = new Set<string>();
 
         allPoolMatches.forEach(match => {
-            const gameTypeStr = revGameTypeMap[match.game_type];
-            if (gameTypeStr) types.add(gameTypeStr);
+            const gameTypeStr = `${match.game_type}-Ball`;
+            if (gameTypeStr){
+                types.add(gameTypeStr);
+            }
         });
 
-        if (allStraightMatches.length > 0) {
+        if (allStraightMatches.length > 0){
             types.add('Straight Pool');
         }
 
@@ -514,7 +504,8 @@ export default function History() {
             }));
         }
 
-        const selected = gameTypeMap[selectedGameType]; //Filtering pool games (8/9/10 Ball) game type
+        const selected = parseInt(selectedGameType.split("-")[0]); //Filtering pool games (8/9/10 Ball) game type
+
         return allPoolMatches
         .filter((match) => 
             match.game_type === selected && 
@@ -1226,7 +1217,7 @@ export default function History() {
                                     <span className="history-matches-header-game-type">
                                         {selectedGameType === '' ? 'All' : selectedGameType === 'Straight Pool'                                                                                                                
                                             ? 'Straight Pool (14.1 Continuous)'
-                                            : revGameTypeMap[parseInt(selectedGameType)] ?? selectedGameType } Matches
+                                            : `${selectedGameType}` } Matches
                                     </span>    
 
                                     <div className="history-pagination">
@@ -1382,7 +1373,7 @@ export default function History() {
                             &times;
                         </div>
                         <p className="history-details-game-type-text">
-                            Game Type: {revGameTypeMap[selectedPoolMatch.game_type] ?? "None"}
+                            Game Type: {`${selectedPoolMatch.game_type}-Ball`}
                         </p>
                         <p className="history-details-game-name-text">
                             Game Name: {selectedPoolMatch.game_name}

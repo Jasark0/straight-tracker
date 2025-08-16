@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
@@ -8,6 +8,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Select: React.FC = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const gameType = searchParams.get('type');
 
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
@@ -99,7 +102,7 @@ const Select: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    game_type: 0,
+                    game_type: gameType,
                     game_name: gameName,
                     player1: player1,
                     player2: player2,
@@ -150,7 +153,7 @@ const Select: React.FC = () => {
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
                 <form onSubmit={handleSubmit}>
-                    <p className="game-name-message">What would your legendary 8-ball game name be today?</p>
+                    <p className="game-name-message">What would your legendary {gameType}-ball game name be today?</p>
                     <input className="game-name-input" type="text" placeholder="Game Name (optional)" value={gameName} onChange={(e) => setGameName(e.target.value)} />
                     
                     <img src="/divider.png" className="divider-css"></img>
