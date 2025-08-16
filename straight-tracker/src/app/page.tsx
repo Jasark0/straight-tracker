@@ -25,6 +25,10 @@ export default function Home() {
         router.push('signup');
     }
 
+    const homePage = () => {
+        router.push('/');
+    };
+
     const handleGuest = () => {
         router.push('/guest/selectGame');
     }
@@ -64,6 +68,51 @@ export default function Home() {
         }
     };
 
+    const [isChangelogOpen, setIsChangelogOpen] = useState(false);
+
+    const changelog = [
+        {
+        version: "v0.1.3",
+        date: "2025-08-16",
+        changes: [
+            "Footer added in homepage",
+            "Change log added in footer that keeps track of versions & updates",
+            "History page now functions in mobile devices",
+            "History page now has pagination",
+            "Straight pool page now has foul counter",
+            "Matches in history page will update continued at time, this will be displayed differently in details modal"
+        ]
+        },
+        {
+        version: "v0.1.2",
+        date: "2025-08-14",
+        changes: [
+            "Lag winner will only display in details tab if user selects a lag winner.",
+            "Winner name is now more clear in the event of player1 and player2 being identical",
+            "Filter container redesign (Tabs + Better outlook)",
+            "Filter buttons can be deselected",
+            "Filter by winner, player, race to & sets, race to ranges & sets ranges",
+            "Filter container will be displayed as a hamburger icon on mobile devices",
+            "Filter container now has horizontal swiping animations",
+            "History matches will all display if filtering game type has no selections",
+            "Details tab now has created at time & continue/delete match buttons",
+            "Fixed a critical bug of match not saving when clicking on header buttons in tracker pages"
+        ]
+        },
+        {
+        version: "v0.1.0",
+        date: "2025-08-03",
+        changes: [
+            "Update database tables to link matches with profile using UUID instead of username",
+            "History, Configure, Guest select page css touchups",
+            "Header dynamically buttons depending on what page you're on",
+            "Profile picture working, nickname & username fixes",
+            "Small general changes",
+            "Select page > select game doesn't require you to click the next button."
+        ]
+        }
+    ];
+
     useEffect(() => {
         const fetchUser = async () => {
             const session = await getUserSession();
@@ -83,6 +132,15 @@ export default function Home() {
             window.history.replaceState({}, '', url.toString());
         }
     }, [searchParams]);
+
+    // Prevent scrolling if the changelog is open
+    useEffect(() => {
+        if (isChangelogOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+    }, [isChangelogOpen]);
 
     if (loading){
         return <Loading/>;
@@ -155,6 +213,53 @@ export default function Home() {
                     <button type="submit">Submit</button>
                 </form>
             </section>
+
+            <section className="home-footer-container">
+                <div className="home-footer-content">
+                    <div className="home-footer-logo-container" onClick={homePage}>
+                        <img src="/straight-header-logo.png" className="header-logo"></img>
+                        <img src="/straight-header-logo-text.png" className="header-logo-text"></img>
+                    </div>
+                    <button
+                        onClick={() => setIsChangelogOpen(true)}
+                        className="changelog-link-button"
+                        >
+                        Change Log
+                    </button>
+                </div>
+                <div className="home-footer-bottom">
+                    <p>© {new Date().getFullYear()} Straight Tracker — All rights reserved.</p>
+                </div>
+            </section>
+
+            {isChangelogOpen && (
+                <div className="changelog-overlay">
+                <div className="changelog-modal">
+                    <button
+                    className="changelog-close-button"
+                    onClick={() => setIsChangelogOpen(false)}
+                    >
+                    ✕
+                    </button>
+                    <h1>Change Log</h1>
+                    <div className="changelog-modal-content">
+                    {changelog.map((entry, index) => (
+                        <div key={index} className="changelog-entry">
+                        <h2>
+                            {entry.version} —{" "}
+                            <span className="changelog-entry-date">{entry.date}</span>
+                        </h2>
+                        <ul>
+                            {entry.changes.map((change, i) => (
+                                <li key={i}>{change}</li>
+                            ))}
+                        </ul>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+                </div>
+            )}
         </div>
     );
 }
