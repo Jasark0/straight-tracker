@@ -72,6 +72,18 @@ export default function Home() {
 
     const changelog = [
         {
+        version: "v0.1.3",
+        date: "2025-08-16",
+        changes: [
+            "Footer added in homepage",
+            "Change log added in footer that keeps track of versions & updates",
+            "History page now functions in mobile devices",
+            "History page now has pagination",
+            "Straight pool page now has foul counter",
+            "Matches in history page will update continued at time, this will be displayed differently in details modal"
+        ]
+        },
+        {
         version: "v0.1.2",
         date: "2025-08-14",
         changes: [
