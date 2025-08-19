@@ -7,7 +7,6 @@
     justify-content: center;
     min-height: calc(100vh - 6rem);
     padding-top: 6rem;
-    overflow-y: hidden;
 }
 
 
@@ -43,7 +42,7 @@
     font-size: 3rem;
     letter-spacing: 1px;
     margin-top: 0;
-    margin-bottom: 2vh;
+    margin-bottom: 1rem;
 }
 
 
@@ -54,11 +53,14 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 5vh;
+    gap: 1rem;
     padding-bottom: 0;
     margin-bottom: 0;
-    height: 5vh;
     position: relative;
+}
+
+.tracker-race-sets-container p{
+    margin: 0;
 }
 
 .tracker-race-text, .tracker-sets-text{
@@ -84,6 +86,10 @@
     gap: 1rem;
 }
 
+.tracker-rack-text-container p{
+    margin: 0;
+}
+
 .tracker-rack-text{
     display: flex;
     justify-content: center;
@@ -95,7 +101,7 @@
 /* Divider CSS */
 
 .tracker-divider-css{
-  width: 50%;
+    width: 50%;
 }
 
 
@@ -103,9 +109,11 @@
 
 .tracker-score-container{
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: center;
     gap: 3rem;
+    height: 100%;
 }
 
 .tracker-player1-container, .tracker-player2-container{
@@ -113,14 +121,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 30rem;
 }
 
 .tracker-player1-name-text, .tracker-player2-name-text{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
     margin-top: 0;
     margin-bottom: 0;
 }
@@ -249,38 +256,24 @@
 
 /* To Break & Undo CSS */
 
-.tracker-to-break-undo-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 30rem;
-    row-gap: 14rem;
-}
-
 .tracker-to-break-container{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 1rem;
 }
 
 .tracker-to-break-player-text{
     display: flex;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
     margin: 0;
 }
 
 .tracker-to-break-text{
     display: flex;
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
     align-items: center;
     margin: 0;
-}
-
-.tracker-undo-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .tracker-undo-button{
@@ -377,15 +370,20 @@
     }
     
     .tracker-gear-button{
-        top: 5rem;
-        padding: 0.5rem;
+        top: 4.2rem;
+        right: 0.5rem;
+        padding: 0.25rem;
     }
 
     .tracker-game-name-text{
         display: none;
     }
 
-    .tracker-race-text, .tracker-rack-text{
+    .tracker-race-text, .tracker-rack-text, .tracker-sets-text{
         font-size: 1.2rem;
+    }
+
+    .tracker-divider-css{
+        width: 100%;
     }
 }

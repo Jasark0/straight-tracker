@@ -474,76 +474,73 @@ const Tracker: React.FC = () => {
                 </p>
             </div>
 
+            <div className="tracker-to-break-container">
+                <p className="tracker-to-break-player-text">
+                    {toBreak === 1 ? `${player1}` : `${player2}`}
+                </p>
+                
+                <p className="tracker-to-break-text">
+                    to break!
+                </p>
+            </div>
+
+
             <img src="/divider.png" className="tracker-divider-css"></img>
             
             <div className="tracker-score-container">
-                <div className="tracker-player1-container">
-                    <p className="tracker-player1-name-text">
-                        {player1}
-                    </p>
-
-                    <div className="tracker-player1-score-container">
-                        <p className="tracker-player-score-text player1">
-                            {player1Score}
+                    <div className="tracker-player1-container">
+                        <p className="tracker-player1-name-text">
+                            {player1}
                         </p>
-                        <button className="tracker-player1-increment" onClick={incrementPlayer1}>
-                            +
-                        </button>
-                    </div>
 
-                    {sets && (
-                        <div className="tracker-player1-sets-container">
-                            <p className="tracker-player-set-text player1">
-                                {player1Set}
+                        <div className="tracker-player1-score-container">
+                            <p className="tracker-player-score-text player1">
+                                {player1Score}
                             </p>
-                            <p className="tracker-player-set-label">
-                                Sets
-                            </p>
+                            <button className="tracker-player1-increment" onClick={incrementPlayer1}>
+                                +
+                            </button>
                         </div>
-                    )}    
-                </div>
-                
-                <div className="tracker-to-break-undo-container">
-                    <div className="tracker-to-break-container">
-                        <p className="tracker-to-break-player-text">
-                            {toBreak === 1 ? `${player1}` : `${player2}`}
-                        </p>
-                        
-                        <p className="tracker-to-break-text">
-                            to break!
-                        </p>
+
+                        {sets && (
+                            <div className="tracker-player1-sets-container">
+                                <p className="tracker-player-set-text player1">
+                                    {player1Set}
+                                </p>
+                                <p className="tracker-player-set-label">
+                                    Sets
+                                </p>
+                            </div>
+                        )}    
                     </div>
+                    
+                    <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
 
-                    <div className="tracker-undo-container">
-                        <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
-                    </div>
-                </div>
-
-                <div className="tracker-player2-container">
-                    <p className="tracker-player2-name-text">
-                        {player2}
-                    </p>
-
-                    <div className="tracker-player2-score-container">
-                        <p className="tracker-player-score-text player2">
-                            {player2Score}
+                    <div className="tracker-player2-container">
+                        <p className="tracker-player2-name-text">
+                            {player2}
                         </p>
-                        <button className="tracker-player2-increment" onClick={incrementPlayer2}>
-                            +
-                        </button>
-                    </div>
 
-                    {sets && (
-                        <div className="tracker-player2-sets-container">
-                            <p className="tracker-player-set-text player2">
-                                {player2Set}
+                        <div className="tracker-player2-score-container">
+                            <p className="tracker-player-score-text player2">
+                                {player2Score}
                             </p>
-                            <p className="tracker-player-set-label">
-                                Sets
-                            </p>
+                            <button className="tracker-player2-increment" onClick={incrementPlayer2}>
+                                +
+                            </button>
                         </div>
-                    )}
-                </div>
+
+                        {sets && (
+                            <div className="tracker-player2-sets-container">
+                                <p className="tracker-player-set-text player2">
+                                    {player2Set}
+                                </p>
+                                <p className="tracker-player-set-label">
+                                    Sets
+                                </p>
+                            </div>
+                        )}
+                    </div>
             </div>
             
 
