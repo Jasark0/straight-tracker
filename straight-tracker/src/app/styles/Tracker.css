@@ -13,14 +13,14 @@
 
 /* Gear CSS */
 
-.tracker-gear-button{ /* To be changed */
+.tracker-gear-button{
     display: flex;
     position: absolute;
-    top: 1.2rem;
+    top: 7.2rem;
     right: 1.5rem;
-    background: linear-gradient(135deg, #4e54c8, #8f94fb);
     border: none;
     border-radius: 50%;
+    background-color: #F0F1D3;
     padding: 0.6rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
@@ -32,7 +32,6 @@
 }
 
 .tracker-gear-button:hover {
-    background: linear-gradient(135deg, #3a3fc4, #777df8);
     transform: rotate(15deg) scale(1.1);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
@@ -369,4 +368,24 @@
 
 .tracker-winner-button:hover{
     background-color: #cfcfcf;
+}
+
+@media (max-width: 768px){
+    .tracker-page-container{
+        min-height: calc(100vh - 4rem);
+        padding-top: 4rem;
+    }
+    
+    .tracker-gear-button{
+        top: 5rem;
+        padding: 0.5rem;
+    }
+
+    .tracker-game-name-text{
+        display: none;
+    }
+
+    .tracker-race-text, .tracker-rack-text{
+        font-size: 1.2rem;
+    }
 }

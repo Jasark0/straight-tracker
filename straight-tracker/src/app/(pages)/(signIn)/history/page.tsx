@@ -1228,6 +1228,7 @@ export default function History() {
                                         <button onClick={goNextPage} disabled={page >= totalPages - 1}><span className="history-pagination-text">Next</span> ▶</button>
                                     </div>
                                 </div>
+                                
                                 {pageItems.map((match) => {
                                     if (match.type === "Pool"){
                                         const lastRace = match.pool_matches_race?.[match.pool_matches_race.length - 1];
@@ -1434,7 +1435,7 @@ export default function History() {
                                 : "In Progress"}
                         </p>
 
-                        <img src="/divider.png" className="divider-css"></img>
+                        <img src="/divider.png" className="history-divider"></img>
 
                         <p className="history-details-race-to-text">
                             Race to {selectedPoolMatch.race_to}

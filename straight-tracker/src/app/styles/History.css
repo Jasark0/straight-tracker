@@ -92,17 +92,19 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 70vw;
+    width: 90vw;
+    padding: 2rem 2rem calc(2rem + env(safe-area-inset-bottom)) 2rem;
     max-width: 25rem;
-    height: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     background-color: white;
     border-radius: 0;
-    padding: 2rem 2rem;
-    margin-top: 6rem;
+    box-sizing: border-box;
     transform: translateX(-100%);
     animation: slideIn 0.2s forwards ease-out;
     overflow-y: auto;
-    z-index: 10;
+    z-index: 100;
 }
 
 .history-filter-container.mobile.closing{
@@ -546,6 +548,12 @@
 
 .history-match-game-name-text{
     font-size: 1.5rem;
+    max-width: 35rem;
+    white-space: nowrap;    
+    overflow: hidden;      
+    text-overflow: ellipsis; 
+    display: inline-block;  
+    vertical-align: middle;
 }
 
 .history-match-score-text{
@@ -655,6 +663,7 @@
     position: relative;
     width: 90%;
     max-width: 500px;
+    max-height: 25rem;
     padding: 3rem 3rem;
     text-align: center;
     background-color: #ffffff;
@@ -806,6 +815,11 @@
     color: #2563eb;
 }
 
+.history-divider{
+    opacity: 80%;
+    width: 80%;
+}
+
 .history-details-race-to-text{
     font-size: 1.5rem;
     margin: 0.5rem 0;
@@ -847,7 +861,7 @@
 
 .history-details-race-scores-text{
     margin: 0.5rem 0 0;
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     color: #d32f2f;
 }
@@ -987,13 +1001,39 @@
     }
 }
 
-@media (max-width: 800px){
+@media (max-width: 768px){
+    .history-page-container{
+        min-height: calc(100vh - 4rem);
+        padding-top: 4rem;
+    }
+
+    .history-hamburger{
+        width: 2.3rem;
+        height: 2.3rem;
+    }
+
+    .history-new-game-button{
+        padding: 0.5rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .history-content-container{
+        height: calc(100vh - 8.5rem);
+        gap: 1rem;
+    }
+
+    .history-matches-header-game-type{
+        font-size: 1rem;
+    }
+
     .history-match-container{
-        max-height: 4rem;
+        max-height: auto;
     }
 
     .history-match-container:hover{
-        max-height: 8rem;
+        max-height: 12rem;
     }
 
     .history-match-container:hover .history-match-button-container{
@@ -1005,6 +1045,14 @@
         display: none;
     }
 
+    .history-match-game-name-text, .history-match-created-at-text, .history-match-player-name-text{
+        font-size: 1rem;
+    }
+
+    .history-match-game-name-text{
+        max-width: 20rem;
+    }
+
     .history-match-score-container{
         display: none;
     }
@@ -1012,29 +1060,67 @@
     .history-details-sets-grid{
         --max-cols: clamp(1, var(--cols), 3);
     }
-}
 
-@media (max-height: 568px){
-    .history-page-container{
-        min-height: calc(100vh - 4rem);
-        padding-top: 4rem;
+    .history-date-input{
+        height: 2rem;
+        padding: 0.25rem 0.25rem;
     }
 
-    .history-new-game-button{
-        padding: 0.75rem 1.5rem;
-        margin: 1rem 0;
-        font-size: 0.9rem;
+    .history-details-content{
+        width: 75%;
     }
 
-    .history-content-container{
-        height: calc(100vh - 10rem);
+    .history-details-game-name-text,
+    .history-details-player-names-text{
+        font-size: 1.2rem;
+        max-width: 15rem;
+        white-space: normal;
+        word-wrap: break-word;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .history-divider{
+        width: 100%;
+    }
+
+    .history-select-modal-content{
+        position: relative;
+        width: 70%;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .history-select-modal-content h2{
+        font-size: 1.6rem;
+        margin-top: 0;
+    }
+
+    .history-select-game-options{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         gap: 1rem;
     }
 
-    .history-filter-container.mobile{
-        margin-top: 4rem;
+    .history-select-game-option{
+        background-color: #dadada;
+        border: none;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
+}
 
+@media (max-width: 468px){
+    .history-match-game-name-text{
+        max-width: 9rem;
+    }
 }
 
 

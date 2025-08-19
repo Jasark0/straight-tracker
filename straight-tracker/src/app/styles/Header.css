@@ -8,7 +8,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 1;
     height: 6rem;
     background-color: hsl(198, 55%, 75%);
     border-bottom: 1px solid black;
@@ -50,7 +50,7 @@
     justify-content: center;
     height: 100%;
     padding-right: 5vw;
-    gap: 2vw;
+    gap: 2rem;
 }
 
 .header-contact-us-button, .header-learn-more-button{
@@ -76,9 +76,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6vw 1.6vw;
+    padding: 0.6rem 1.6rem;
     font-family: 'Inter', sans-serif;
-    font-size: 1.4vw;
+    font-size: 1.5rem;
     font-weight: 500;
     color: black;
     background-color: hsl(198, 55%, 75%);
@@ -227,13 +227,13 @@
     transform: translateY(-2px) scale(1.03);
 }
 
-@media (max-height: 568px){
+@media (max-width: 768px){
     .header-container{
         height: 4rem;
     }
 
     .header-logo-container{
-        margin-left: 1rem;
+        margin-left: 0.5rem;
     }
     
     .header-logo{
@@ -246,6 +246,15 @@
 
     .header-logo-container:hover{
         transform: scale(1.04);
+    }  
+
+    .header-info-container{
+        gap: 0.8rem;
+    }
+
+    .header-my-games-button{
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
     }
 
     .header-profile{
