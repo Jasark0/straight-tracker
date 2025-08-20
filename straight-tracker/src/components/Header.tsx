@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { signOut } from '@/actions/auth';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
@@ -44,15 +44,47 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
         }
     };
 
+    const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const handleMouseEnter = () => {
-        setTimeout(() => setProfileHovered(true), 70);
+        if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
+            hideTimeoutRef.current = null;
+        }
+
+        showTimeoutRef.current = setTimeout(() => {
+            setProfileHovered(true);
+            showTimeoutRef.current = null;
+        }, 70);
+
         setProfileVisible(true);
     };
 
     const handleMouseLeave = () => {
+        if (showTimeoutRef.current) {
+            clearTimeout(showTimeoutRef.current);
+            showTimeoutRef.current = null;
+        }
+
         setProfileHovered(false);
-        setTimeout(() => setProfileVisible(false), 250);
+
+        hideTimeoutRef.current = setTimeout(() => {
+            setProfileVisible(false);
+            hideTimeoutRef.current = null;
+        }, 250);
     };
+
+    useEffect(() => {
+        return () => {
+            if (hideTimeoutRef.current){
+                clearTimeout(hideTimeoutRef.current);
+            }
+            if (showTimeoutRef.current){
+                clearTimeout(showTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const isGuestPage = pathname.startsWith('/guest');
     const isHomePage = pathname === '/';

@@ -749,18 +749,24 @@ const Tracker: React.FC = () => {
     }
 
     return (
-        <div className="s-main-container">  
+        <div className="s-page-container">  
             <ToastContainer className="s-toast-warning"/>
             <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
                 <Icon path={mdiCog} size={1} />
             </button>
 
             <p className="s-game-name-text">
-                Game Name: {gameName}
+                {gameName}
             </p>
             <p className="s-race-to-text">
-                Race To: {raceTo} Balls
+                Race To - {raceTo} Balls
             </p>
+
+            <div className="s-remaining-balls-container">
+                <p className="s-remaining-balls-style remaining-balls">{remainingBalls}</p>
+                <p className="s-remaining-balls-style">Remaining Balls</p>
+                <p className="s-rack-number">(Rack {rack})</p>
+            </div>
 
             <img src="/divider.png" className="s-tracker-divider-css"></img>
 
@@ -773,27 +779,22 @@ const Tracker: React.FC = () => {
                         <p className="s-player1-score">{player1Score}</p>
                         <div className="s-increment-container">
                             <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
-                            <div className="CR-container">
+                            <div className="s-CR-container">
                                 <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
-                                <button className="CR-icon">i</button>
+                                <button className="s-CR-icon">i</button>
                             </div>
                         </div>
                     </div>
         
-                    <div className="high-style player1-high-run">
+                    <div className="s-run-text">
                         High Run: {player1HighRun}
                     </div>
-                    <div className="high-style player1-curr-high-run">
+                    <div className="s-run-text">
                         Current Run: {player1CurrRun}
                     </div>
                 </div>
 
                 <div className="remaining-turn-container">
-                    <div className="remaining-balls-container">
-                        <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
-                        <p className="remaining-balls-style">Remaining Balls</p>
-                        <p className="rack-number">(Rack {rack})</p>
-                    </div>
                     <p className="s-to-shoot-text"> 
                         {toShoot === 1 ? `${player1}` : `${player2}`} to shoot!
                     </p>
@@ -828,10 +829,10 @@ const Tracker: React.FC = () => {
                         </div>     
                     </div>
 
-                    <div className="high-style player2-high-run">
+                    <div className="s-run-text">
                         High Run: {player2HighRun}
                     </div>
-                    <div className="high-style player2-curr-high-run">
+                    <div className="s-run-text">
                         Current Run: {player2CurrRun}
                     </div>
                 </div>

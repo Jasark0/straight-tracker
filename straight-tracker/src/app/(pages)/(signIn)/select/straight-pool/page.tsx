@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import Loading from '@/src/components/PageLoading'
+
 const Select: React.FC = () => {
     const router = useRouter();
 
@@ -15,8 +17,11 @@ const Select: React.FC = () => {
     const [lagPopup, setLagPopup] = useState(false);
     const [lagWinnerSelected, setLagWinnerSelected] = useState<1|2|null>(null);
 
+    const [error, setError] = useState('');
     const [raceToError, setRaceToError] = useState('');
-    
+    const [setsError, setSetsError] = useState('');
+    const [loading, setLoading] = useState(true);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -58,6 +63,31 @@ const Select: React.FC = () => {
         }
     }
 
+    useEffect(() => {
+        const fetchNickname = async () => {
+            setLoading(true);
+            try{
+                const res = await fetch('/api/getNickname');
+                const json = await res.json();
+
+                if (!res.ok){
+                    setError(json.error);
+                }
+                
+                setPlayer1(json.nickname);
+                setLoading(false);
+            }
+            catch (err){
+                setError('Network error');
+                console.error(err);
+            }
+        }
+        fetchNickname();
+    }, []);
+
+    if (loading){
+        return <Loading/>;
+    }
 
     return (
         <div className="select-page-box">

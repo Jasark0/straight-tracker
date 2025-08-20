@@ -1,242 +1,251 @@
 /* Main CSS */
 
-.s-main-container{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: calc(100vh - 20vh);
-  padding-top: 20vh;
-  overflow-y: hidden;
+.s-page-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 6rem);
+    padding-top: 6rem;
+    overflow-y: hidden;
 }
+
 
 /* Toast Warning CSS */
 
 .s-toast-warning{
-  margin-top: 3rem;
-  margin-bottom: 0;
+    margin-top: 3rem;
+    margin-bottom: 0;
 }
 
-/* Game Name & Race To CSS */
+
+/* Game Title & Info CSS*/
 
 .s-game-name-text{
-  text-align: center;
-  font-size: 2rem;
-  margin-top: 0;
-  margin-bottom: 2vh;
+    display: block;
+    font-size: clamp(1rem, calc(100vw / 50), 3rem);
+    max-width: 60rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 1px;
+    margin: 0;
+    margin-bottom: 0.5rem;
 }
 
 .s-race-to-text{
-  text-align: center;
-  font-size: 1.75rem;
-  margin-top: 0;
-  margin-bottom: 1vh;
+    margin: 0;
+    text-align: center;
+    font-size: 1.75rem;
+    color: rgb(170, 0, 0);
 }
+
+.s-remaining-balls-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    margin: 0;
+    color: #0077cc;
+}
+
+.s-remaining-balls-style{
+    font-size: 2.5rem;
+    letter-spacing: 0.05rem;
+    word-spacing: 2px;
+    margin: 0;
+}
+
+.s-rack-number{
+    font-size: 20px;
+}
+
+.s-to-shoot-text{
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+
+/* Divider CSS */
 
 .s-tracker-divider-css{
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40%;
+  height: 2rem;
 }
+
 
 /* Player Stats CSS */
 
 .s-player-container{
-  color: black;
-  display: grid;
-  grid-template-columns: 2fr auto 2fr;
-  gap: 15vh;
-  align-items: flex-start;
-  justify-content: center;
+    color: black;
+    display: grid;
+    grid-template-columns: 2fr auto 2fr;
+    gap: 6rem;
+    align-items: flex-end;
+    justify-content: flex-end;
 }
 
 .s-player1-container, .s-player2-container{
-  display: grid;
-  align-items: center;
-  justify-content: center;
+    display: grid;
+    align-items: center;
+    justify-content: center;
 }
 
 .s-player1-name, .s-player2-name{
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  font-size: 60px;
-  font-family: 'Exo 2';
-  letter-spacing: 2px;
-  margin: 1rem 0;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    font-family: 'Exo 2';
+    letter-spacing: 2px;
+    margin: 1rem 0;
 }
 
 .s-player1-foul, .s-player2-foul{
-  display: grid;
-  justify-content: center;
-  font-size: 1.2rem;
+    display: grid;
+    justify-content: center;
+    font-size: 1.2rem;
 }
 
 .s-score-container{
-  display: grid;
-  grid-template-columns: 1fr 2fr auto;
-  align-items: center;
-  justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    align-items: center;
+    justify-content: center;
 }
 
 .s-increment-container{
-  display: grid;
-  grid-template-rows: repeat(2, auto);
-  row-gap: 10px;
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    row-gap: 10px;
 }
 
 .s-decrement-button, .s-increment-button{
-  display: flex;
-  height: 85px;
-  width: 85px;
-  border: 1px solid black;
-  border-radius: 43px;
-  font-size: 25px;
-  background-color:antiquewhite;
-  color: rgb(50, 50, 50);
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+    display: flex;
+    height: 85px;
+    width: 85px;
+    border: 1px solid black;
+    border-radius: 43px;
+    font-size: 25px;
+    background-color:antiquewhite;
+    color: rgb(50, 50, 50);
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 }
 
 .s-decrement-button:hover, .s-increment-button:hover{
-  border: 1px solid black;
-  background-color: rgb(240, 228, 212);
-  box-shadow: 0 0 5px rgb(234, 205, 167);
-  transition: 0.3s ease;
+    border: 1px solid black;
+    background-color: rgb(240, 228, 212);
+    box-shadow: 0 0 5px rgb(234, 205, 167);
+    transition: 0.3s ease;
 }
 
 .s-decrement-button:focus, .s-increment-button:focus{
-  outline: none;
-  border: 1px solid black;
-  box-shadow: 0 0 5px rgb(234, 205, 167);
+    outline: none;
+    border: 1px solid black;
+    box-shadow: 0 0 5px rgb(234, 205, 167);
 }
 
 .s-decrement-button:active, .s-increment-button:active{
-  box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
-  background-color: rgb(242, 224, 200);;
-  top: 5px;
-  left: 5px;
-  border: 1px solid black;
-  transition: 0ms;
+    box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
+    background-color: rgb(242, 224, 200);;
+    top: 5px;
+    left: 5px;
+    border: 1px solid black;
+    transition: 0ms;
 }
 
-.CR-container{
-  display: inline-flex;
-  gap: 2vh;
+.s-CR-container{
+    display: inline-flex;
+    gap: 1rem;
 }
 
-.CR-icon{
-  border: none;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 12px;
-  cursor: pointer;
-  position: relative;
-  margin-top: 2.5vh;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  background-color: black;
-  color: white;
-  align-items: center;
+.s-CR-icon{
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    cursor: pointer;
+    position: relative;
+    margin-top: 2.5vh;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    color: white;
+    align-items: center;
 }
 
-.CR-icon:hover{
-  border: 1px solid black;
-  background-color: rgb(64, 63, 61);
-  transition: 0.15s ease;
+.s-CR-icon:hover{
+    border: 1px solid black;
+    background-color: rgb(64, 63, 61);
+    transition: 0.15s ease;
 }
 
-.CR-icon:hover::after{
-  opacity: 1;
+.s-CR-icon:hover::after{
+    opacity: 1;
 }
 
-.CR-icon::after {
-  content: "CR (Clear Rack): Player clears current rack moving onto next rack.";
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgb(38, 38, 38);
-  color: white;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+.s-CR-icon::after {
+    content: "CR (Clear Rack): Player clears current rack moving onto next rack.";
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(38, 38, 38);
+    color: white;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
-.CR-icon:focus{
-  outline: none;
+.s-CR-icon:focus{
+    outline: none;
 }
 
 .s-player1-score{
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  font-size: 125px;
-  color: hsl(6, 93%, 71%);
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-size: 125px;
+    color: hsl(6, 93%, 71%);
 }
 
 .s-player2-score{
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  font-size: 125px;
-  color: hsl(250, 100%, 65%);
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-size: 125px;
+    color: hsl(250, 100%, 65%);
 }
 
-.high-style{
-  margin-top: 2vh;
-  font-size: 25px;
-  font-family: 'exo 2';
-  text-align: center;
+.s-run-text{
+    margin-top: 1rem;
+    font-size: 25px;
+    font-family: 'exo 2';
+    text-align: center;
 }
 
-
-/* Remaining and Turn CSS */
-
-.remaining-turn-container{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.remaining-balls-container{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  margin: 0;
-}
-
-.remaining-balls-style{
-  color: black;
-  font-size: 2.75rem;
-  font-family: 'Exo 2';
-  letter-spacing: 0.05rem;
-  word-spacing: 2px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.rack-number{
-  color: black;
-  font-size: 20px;
-  font-family: 'Exo 2';
-}
-
-.s-to-shoot-text{
-  font-size: 1.25rem;
-}
 
 /* Arrow Image CSS */
+
+.remaining-turn-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
 .arrow-container{
   margin-bottom: 5vh;
@@ -274,3 +283,10 @@
   font-weight: 600;
 }
 
+
+@media (max-width: 768px){
+    .s-page-container{
+        min-height: calc(100vh - 4rem);
+        padding-top: 4rem;
+    }
+}
