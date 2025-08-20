@@ -7,20 +7,19 @@
     justify-content: center;
     min-height: calc(100vh - 6rem);
     padding-top: 6rem;
-    overflow-y: hidden;
 }
 
 
 /* Gear CSS */
 
-.tracker-gear-button{ /* To be changed */
+.tracker-gear-button{
     display: flex;
     position: absolute;
-    top: 1.2rem;
+    top: 7.2rem;
     right: 1.5rem;
-    background: linear-gradient(135deg, #4e54c8, #8f94fb);
     border: none;
     border-radius: 50%;
+    background-color: #F0F1D3;
     padding: 0.6rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
@@ -32,7 +31,6 @@
 }
 
 .tracker-gear-button:hover {
-    background: linear-gradient(135deg, #3a3fc4, #777df8);
     transform: rotate(15deg) scale(1.1);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
@@ -41,10 +39,15 @@
 /* Game Name CSS */
 
 .tracker-game-name-text{
-    font-size: 3rem;
+    display: block;
+    font-size: clamp(1rem, calc(100vw / 50), 3rem);
+    max-width: 60rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     letter-spacing: 1px;
     margin-top: 0;
-    margin-bottom: 2vh;
+    margin-bottom: 1rem;
 }
 
 
@@ -55,11 +58,14 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 5vh;
+    gap: 1rem;
     padding-bottom: 0;
     margin-bottom: 0;
-    height: 5vh;
     position: relative;
+}
+
+.tracker-race-sets-container p{
+    margin: 0;
 }
 
 .tracker-race-text, .tracker-sets-text{
@@ -85,6 +91,10 @@
     gap: 1rem;
 }
 
+.tracker-rack-text-container p{
+    margin: 0;
+}
+
 .tracker-rack-text{
     display: flex;
     justify-content: center;
@@ -96,7 +106,7 @@
 /* Divider CSS */
 
 .tracker-divider-css{
-  width: 50%;
+    width: 50%;
 }
 
 
@@ -104,9 +114,11 @@
 
 .tracker-score-container{
     display: flex;
-    align-items: center;
+    position: relative;
+    align-items: flex-end;
     justify-content: center;
-    gap: 3rem;
+    gap: 5rem;
+    height: 100%;
 }
 
 .tracker-player1-container, .tracker-player2-container{
@@ -114,14 +126,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 30rem;
+    height: 100%;
 }
 
 .tracker-player1-name-text, .tracker-player2-name-text{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
     margin-top: 0;
     margin-bottom: 0;
 }
@@ -158,8 +170,8 @@
 
 .tracker-player1-increment, .tracker-player2-increment{
     display: flex;
-    height: 64px;
-    width: 64px;
+    height: 5rem;
+    width: 5rem;
     border-radius: 50%;
     font-size: 2rem;
     font-weight: bold;
@@ -233,6 +245,10 @@
     color: #444;
 }
 
+.tracker-flip-text{
+    display: none;
+}
+
 .tracker-player-set-text.player1{
     color: hsl(0, 85%, 60%);
     text-shadow:
@@ -250,38 +266,24 @@
 
 /* To Break & Undo CSS */
 
-.tracker-to-break-undo-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 30rem;
-    row-gap: 14rem;
-}
-
 .tracker-to-break-container{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 1rem;
 }
 
 .tracker-to-break-player-text{
     display: flex;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
     margin: 0;
 }
 
 .tracker-to-break-text{
     display: flex;
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
     align-items: center;
     margin: 0;
-}
-
-.tracker-undo-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .tracker-undo-button{
@@ -291,7 +293,8 @@
     border-radius: 6px;
     font-size: 1.25rem;
     cursor: pointer;
-    padding: 2vh 4vh;
+    padding: 1rem 2rem;
+    margin-bottom: 1rem;
     transition: 0.15s ease;
 }
 
@@ -334,12 +337,12 @@
 
 .tracker-winner-modal-content{
     background-color: #fff;
-    padding: 8vh 12vh;
+    padding: 8vh 5vw;
     border-radius: 1rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     text-align: center;
     max-width: 90%;
-    width: 400px;
+    width: 35rem;
     animation: fadeInScale 0.3s ease-out;
 }
 
@@ -369,4 +372,89 @@
 
 .tracker-winner-button:hover{
     background-color: #cfcfcf;
+}
+
+@media (max-width: 768px){
+    .tracker-page-container{
+        min-height: calc(100vh - 4rem);
+        padding-top: 4rem;
+    }
+    
+    .tracker-gear-button{
+        top: 4.2rem;
+        right: 0.5rem;
+        padding: 0.25rem;
+    }
+
+    .tracker-game-name-text{
+        display: none;
+    }
+
+    .tracker-race-text, .tracker-rack-text, .tracker-sets-text{
+        font-size: 1.2rem;
+    }
+
+    .tracker-divider-css{
+        width: 100%;
+        height: 1.75rem;
+    }
+
+    .tracker-score-container{
+        gap: 5rem;
+    }
+
+    .tracker-player-score-text{
+        font-size: 5rem;
+    }
+
+    .tracker-player-set-text{
+        font-size: 2.5rem;
+    }
+
+    .tracker-player1-increment, .tracker-player2-increment{
+        height: 4rem;
+        width: 4rem;
+    }
+
+    .tracker-undo-button{
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .tracker-winner-modal-content{
+        max-width: 80%;
+    }
+
+    .tracker-winner-title-text{
+        font-size: 1.25rem;
+    }
+
+    .tracker-winner-text{
+        font-size: 1.5rem;
+        text-align: center;
+    }
+}
+
+@media screen and (orientation: portrait){
+    .tracker-score-container{
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+    }
+
+    .tracker-player-score-text{
+        font-size: 6rem;
+    }
+
+    .tracker-undo-button{
+        margin: 0;
+    }
+
+    .tracker-flip-text{
+        display: flex;
+        margin: 0;
+        font-size: 0.8rem;
+        opacity: 80%;
+    }
 }
