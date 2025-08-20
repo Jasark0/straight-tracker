@@ -1,16 +1,13 @@
 "use client";
 
 import React from 'react';
+import '@/src/app/styles/Loading.css'
 
 const PageLoading: React.FC = () => {
     return (
-        <div className="page-box">
-            <div className="loading-screen">
-                <div className="loading-content">
-                    <p>Loading page info...</p>
-                    <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
-                </div>
-            </div>
+        <div className="loading-page-container">           
+            <div className="loading-spinner"></div>
+            <p className="loading-text">Loading page info...</p>
         </div>
     );
 };

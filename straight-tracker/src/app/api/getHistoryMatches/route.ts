@@ -28,9 +28,9 @@ export async function GET(req: Request) {
             player1,
             player2,
             race_to,
-            lag_winner,
             winner,
             created_at,
+            continued_at,
             pool_matches_race (
                 player1_score,
                 player2_score,
@@ -38,11 +38,15 @@ export async function GET(req: Request) {
             ),
             pool_matches_sets (
                 sets
+            ),
+            pool_matches_lag (
+                lag_winner
             )
         `)
         .eq('user_id', user_id)
-        .order('created_at', { ascending: false });
+        .order('continued_at', { ascending: false });
     
+
     if (matchesError || !allPoolMatches){
         return NextResponse.json({ redirect: '/history' }, { status: 403 });
     }
@@ -60,10 +64,14 @@ export async function GET(req: Request) {
             player2_score,
             player2_high_run,
             winner,
-            created_at
+            created_at,
+            continued_at,
+            straight_pool_matches_lag (
+                lag_winner
+            )
         `)
         .eq('user_id', user_id)
-        .order('created_at', { ascending: false });
+        .order('continued_at', { ascending: false });
 
     if (straightMatchesError || !allStraightMatches){
         return NextResponse.json({ redirect: '/history' }, { status: 403 });

@@ -16,17 +16,18 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
     const pathname = usePathname();
 
     const [profileHovered, setProfileHovered] = useState(false);
-    
+    const [profileVisible, setProfileVisible] = useState(false);
+
     const homePage = () => {
-        router.push('/');
+        window.location.href = '/';
     };
 
     const handleHistory = async () => {
-        router.push('/history');
+        window.location.href = '/history';
     }
 
     const settingsPage = () => {
-        router.push('/settings');
+        window.location.href = '/settings';
     }
 
     const signinPage = () => {
@@ -41,6 +42,16 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
         catch (error){
             toast.error('Error signing out.');
         }
+    };
+
+    const handleMouseEnter = () => {
+        setTimeout(() => setProfileHovered(true), 70);
+        setProfileVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+        setProfileHovered(false);
+        setTimeout(() => setProfileVisible(false), 250);
     };
 
     const isGuestPage = pathname.startsWith('/guest');
@@ -79,13 +90,23 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
                         )}
 
                         {user && (
-                            <div className="header-profile-container" onMouseEnter={() => setProfileHovered(true)} onMouseLeave={() => setProfileHovered(false)}>
-                                <img src={user.user_metadata?.avatar_url || "/default-profile-picture.jpg"} className="header-profile"></img>
-                                {profileHovered && (
-                                    <div className="header-profile-dropdown">
-                                        <button className="header-profile-dropdown-button" onClick={settingsPage}><span className="header-profile-dropdown-icon">⚙️</span>Settings</button>
+                            <div className="header-profile-container" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                                <img
+                                    src={user.user_metadata?.avatar_url || "/default-profile-picture.jpg"}
+                                    className="header-profile"
+                                    alt="Profile"
+                                />
+                                {profileVisible && (
+                                    <div className={`header-profile-dropdown header-slide-fade ${profileHovered ? "show" : "hide"}`}>
+                                        <button className="header-profile-dropdown-button" onClick={settingsPage}>
+                                            <span className="header-profile-dropdown-icon">⚙️</span>
+                                            <span className="header-profile-dropdown-text">Settings</span>
+                                        </button>
                                         <div className="header-profile-dropdown-divider"></div>
-                                        <button className="header-profile-dropdown-button sign-out" onClick={handleSignOut}><span className="header-profile-dropdown-icon">⏻</span>Sign Out</button>
+                                        <button className="header-profile-dropdown-button sign-out" onClick={handleSignOut}>
+                                            <span className="header-profile-dropdown-icon">⏻</span>
+                                            <span className="header-profile-dropdown-text">Sign Out</span>
+                                        </button>
                                     </div>
                                 )}
                             </div>

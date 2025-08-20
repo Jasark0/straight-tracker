@@ -2,14 +2,19 @@
 
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
-import { useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
+import Icon from '@mdi/react';
+import { mdiCog } from '@mdi/js';
+import { useSearchParams, usePathname } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import Loading from '@/src/components/PageLoading'
 
 const Tracker: React.FC = () => {
     const router = useRouter();
-
+    const pathname = usePathname();
     const searchParams = useSearchParams();
+    
     const matchID = searchParams.get('matchID');
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
@@ -17,32 +22,35 @@ const Tracker: React.FC = () => {
     const player1Ref = useRef(player1);
     const player2Ref = useRef(player2);
     const [raceTo, setRaceTo] = useState<number>(0);
-    const [toShoot, setToShoot] = useState('');
+    const [toShoot, setToShoot] = useState<1|2>(1);
     const toShootRef = useRef(toShoot);
     const [rack, setRack] = useState<number>(1);
     const [remainingBalls, setRemainingBalls] = useState<number>(15);
     const [player1Score, setPlayer1Score] = useState<number>(0);
+    const [player1Foul, setPlayer1Foul] = useState<number>(0);
+    const player1FoulRef = useRef(player1Foul);
     const [player1HighRun, setPlayer1HighRun] = useState<number>(0);
     const [player1CurrRun, setPlayer1CurrRun] = useState<number>(0);
     const player1HighRunRef = useRef(player1HighRun);
     const player1CurrRunRef = useRef(player1CurrRun);
     const [player2Score, setPlayer2Score] = useState<number>(0);
+    const [player2Foul, setPlayer2Foul] = useState<number>(0);
+    const player2FoulRef = useRef(player2Foul);
     const [player2HighRun, setPlayer2HighRun] = useState<number>(0);
     const [player2CurrRun, setPlayer2CurrRun] = useState<number>(0);
     const player2HighRunRef = useRef(player2HighRun);
     const player2CurrRunRef = useRef(player2CurrRun);
     
-    const [winner, setWinner] = useState('');
+    const [winner, setWinner] = useState<1|2|null>(null);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
-    type ActionType = 'increment' | 'foul' | 'miss' | '3_foul_penalty';
 
     type Action = {
         player: string;
         ActionType: string;
         prevRemainingBalls?: number; //Only store this for 3 foul rule & CR
+        prevFouls?: number;
         prevPlayerHighRun?: number;
         prevPlayerCurrRun?: number;
     };
@@ -60,9 +68,15 @@ const Tracker: React.FC = () => {
         const updatedHighRun = Math.max(updatedCurrRun, player1HighRun);
 
         setPlayer1Score(updatedScore);
+
+        if (player1Foul !== 0){
+            action.prevFouls = player1Foul;
+            setPlayer1Foul(0);
+        }
+        
         setPlayer1CurrRun(updatedCurrRun);
 
-        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -80,8 +94,9 @@ const Tracker: React.FC = () => {
         }  
 
         if (updatedScore === raceTo){
-            updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
-            handleWinner(player1);
+            updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, player1Foul, updatedHighRun, updatedCurrRun, 
+                player2Score, player2Foul, player2HighRun, player2CurrRun);
+            handleWinner(1);
         }
 
         setActionHistory(history => [...history, action]);
@@ -101,7 +116,7 @@ const Tracker: React.FC = () => {
             prevRemainingBalls: remainingBalls,
         }
 
-        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -110,6 +125,12 @@ const Tracker: React.FC = () => {
         const updatedHighRun = Math.max(updatedCurrRun, player1HighRun);
 
         setPlayer1Score(updatedScore);
+
+        if (player1Foul !== 0){
+            action.prevFouls = player1Foul;
+            setPlayer1Foul(0);
+        }
+
         setPlayer1CurrRun(updatedCurrRun);
 
         if (updatedHighRun > player1HighRun){ //Replace highRun by currRun if higher
@@ -121,15 +142,16 @@ const Tracker: React.FC = () => {
         setRack(rack + 1);
 
         if (updatedScore >= raceTo){
-            updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, updatedHighRun, updatedCurrRun, player2Score, player2HighRun, player2CurrRun);
-            handleWinner(player1);
+            updateStraightMatch(toShoot, rack, remainingBalls, updatedScore, player1Foul, updatedHighRun, updatedCurrRun, 
+                player2Score, player2Foul, player2HighRun, player2CurrRun);
+            handleWinner(1);
         }
 
         setActionHistory(history => [...history, action]);
     }
 
     const decrementPlayer1 = async () => {
-        if (toShoot === player2){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 2){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -137,24 +159,12 @@ const Tracker: React.FC = () => {
             player: 'player1',
             ActionType: 'foul',
             prevPlayerCurrRun: player1CurrRun,
+            prevFouls: player1Foul,
         }
 
-        let foulCount = 0;
+        const finalFouls = player1Foul + 1;
 
-        for (let i = actionHistory.length-1; i>=0; i--){ //3 foul rule iteration check
-            const pastAction = actionHistory[i];
-
-            if (pastAction.player === 'player1'){
-                if (pastAction.ActionType === 'foul'){
-                    foulCount++;
-                }
-                else{
-                    break;
-                }
-            }
-        }
-
-        if (foulCount === 1){
+        if (finalFouls === 2){
             toast.error(`${player1} is on 2 consecutive fouls, with a 3rd foul, ${player1} will take a 15 point penalty alongside with a rack reset.`, {
                 className: "s-toast-warning",
                 position: "top-right",
@@ -164,7 +174,7 @@ const Tracker: React.FC = () => {
                 pauseOnHover: true,
             });
         }
-        else if (foulCount === 2){
+        else if (finalFouls === 3){
             toast.error(`${player1} is on 3 consecutive fouls, a 15 point penalty is applied. At this time, please reset the rack.`, {
                 className: "s-toast-warning",
                 position: "top-right",
@@ -178,17 +188,19 @@ const Tracker: React.FC = () => {
             action.prevRemainingBalls = remainingBalls;
 
             setPlayer1Score(player1Score - 16);
+            setPlayer1Foul(0);
             setPlayer1CurrRun(0);
             setRemainingBalls(15);
             setRack(rack + 1);
-            setToShoot(player2);
+            setToShoot(2);
             setActionHistory(history => [...history, action]);
             return;
         }
 
         setPlayer1Score(player1Score - 1);
+        setPlayer1Foul(finalFouls);
         setPlayer1CurrRun(0);
-        setToShoot(player2);
+        setToShoot(2);
 
         setActionHistory(history => [...history, action]);
     }
@@ -204,9 +216,15 @@ const Tracker: React.FC = () => {
         const updatedHighRun = Math.max(updatedCurrRun, player2HighRun);
 
         setPlayer2Score(updatedScore);
+        
+        if (player2Foul !== 0){
+            action.prevFouls = player2Foul;
+            setPlayer2Foul(0);
+        }
+        
         setPlayer2CurrRun(updatedCurrRun);
 
-        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -224,8 +242,9 @@ const Tracker: React.FC = () => {
         }  
 
         if (updatedScore === raceTo){
-            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
-            handleWinner(player2);
+            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1Foul, player1HighRun, player1CurrRun, 
+                updatedScore, player2Foul, updatedHighRun, updatedCurrRun);
+            handleWinner(2);
         }
 
         setActionHistory(history => [...history, action]);
@@ -245,7 +264,7 @@ const Tracker: React.FC = () => {
             prevRemainingBalls: remainingBalls,
         }
 
-        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -254,6 +273,12 @@ const Tracker: React.FC = () => {
         const updatedHighRun = Math.max(updatedCurrRun, player2HighRun);
 
         setPlayer2Score(updatedScore);
+
+        if (player2Foul !== 0){
+            action.prevFouls = player2Foul;
+            setPlayer2Foul(0);
+        }
+
         setPlayer2CurrRun(updatedCurrRun);
 
         if (updatedHighRun > player2HighRun){ //Replace highRun by currRun if higher
@@ -265,15 +290,16 @@ const Tracker: React.FC = () => {
         setRack(rack + 1);
 
         if (updatedScore >= raceTo){
-            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, updatedScore, updatedHighRun, updatedCurrRun);
-            handleWinner(player2);
+            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1Foul, player1HighRun, player1CurrRun, 
+                updatedScore, player2Foul, updatedHighRun, updatedCurrRun);
+            handleWinner(2);
         }
 
         setActionHistory(history => [...history, action]);
     }
 
     const decrementPlayer2 = async () => {
-        if (toShoot === player1){ //Handles when user forgets to press spacebar to miss
+        if (toShoot === 1){ //Handles when user forgets to press spacebar to miss
             missPlayer();
         }
 
@@ -281,24 +307,12 @@ const Tracker: React.FC = () => {
             player: 'player2',
             ActionType: 'foul',
             prevPlayerCurrRun: player2CurrRun,
+            prevFouls: player2Foul,
         }
 
-        let foulCount = 0;
+        let finalFouls = player2Foul + 1;
 
-        for (let i = actionHistory.length-1; i>=0; i--){ //3 foul rule iteration check
-            const pastAction = actionHistory[i];
-
-            if (pastAction.player === 'player2'){
-                if (pastAction.ActionType === 'foul'){
-                    foulCount++;
-                }
-                else{
-                    break;
-                }
-            }
-        }
-
-        if (foulCount === 1){
+        if (finalFouls === 2){
             toast.error(`${player2} is on 2 consecutive fouls, with a 3rd foul, ${player2} will take a 15 point penalty alongside with a rack reset.`, {
                 className: "s-toast-warning",
                 position: "top-right",
@@ -308,7 +322,7 @@ const Tracker: React.FC = () => {
                 pauseOnHover: true,
             });
         }
-        else if (foulCount === 2){
+        else if (finalFouls === 3){
             toast.error(`${player2} is on 3 consecutive fouls, a 15 point penalty is applied. At this time, please reset the rack.`, {
                 className: "s-toast-warning",
                 position: "top-right",
@@ -322,41 +336,53 @@ const Tracker: React.FC = () => {
             action.prevRemainingBalls = remainingBalls;
 
             setPlayer2Score(player2Score - 16);
+            setPlayer2Foul(0);
             setPlayer2CurrRun(0);
             setRemainingBalls(15);
             setRack(rack + 1);
-            setToShoot(player1);
+            setToShoot(1);
             setActionHistory(history => [...history, action]);
             return;
         }
 
         setPlayer2Score(player2Score - 1);
+        setPlayer2Foul(finalFouls);
         setPlayer2CurrRun(0);
-        setToShoot(player1);
+        setToShoot(1);
 
         setActionHistory(history => [...history, action]);
     }
 
     const missPlayer = () => {
         const currentToShoot = toShootRef.current;
-        const currentPlayer1 = player1Ref.current;
-        const currentPlayer2 = player2Ref.current;
 
         const action: Action = {
-            player: currentToShoot === currentPlayer1 ? 'player1' : 'player2',
+            player: currentToShoot === 1 ? 'player1' : 'player2',
             ActionType: 'miss',
         };
 
-        if (currentToShoot === currentPlayer1){
+        if (currentToShoot === 1){
             action.prevPlayerCurrRun = player1CurrRunRef.current;
             setPlayer1CurrRun(0);
+            
+            const currentFoul = player1FoulRef.current;
+            if (currentFoul !== 0){
+                action.prevFouls = currentFoul;
+                setPlayer1Foul(0);
+            }
         }
-        else if (currentToShoot === currentPlayer2){
+        else if (currentToShoot === 2){
             action.prevPlayerCurrRun = player2CurrRunRef.current;
             setPlayer2CurrRun(0);
+            
+            const currentFoul = player2FoulRef.current;
+            if (currentFoul !== 0){
+                action.prevFouls = currentFoul;
+                setPlayer2Foul(0);
+            }
         }
 
-        const nextPlayer = currentToShoot === currentPlayer1 ? currentPlayer2 : currentPlayer1;
+        const nextPlayer = currentToShoot === 1 ? 2 : 1;
 
         setToShoot(nextPlayer);
         setActionHistory((history) => [...history, action]);
@@ -368,7 +394,7 @@ const Tracker: React.FC = () => {
 
         if (lastAction.player === 'player1'){
             if (lastAction.ActionType === 'increment'){
-                if (lastAction.prevRemainingBalls !== undefined){
+                if (lastAction.prevRemainingBalls !== undefined){ //Undo for clear rack
                     const clearScore = lastAction.prevRemainingBalls - 1;
                     setPlayer1Score(player1Score - clearScore);
                     setPlayer1CurrRun(player1CurrRun - clearScore);
@@ -390,23 +416,37 @@ const Tracker: React.FC = () => {
                     }
                 }
 
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer1Foul(lastAction.prevFouls);
+                }
+
                 if (lastAction.prevPlayerHighRun !== undefined){
                     setPlayer1HighRun(lastAction.prevPlayerHighRun);
                 }
             }
             else if (lastAction.ActionType === 'foul'){
-                setPlayer1Score(player1Score+1);
+                setPlayer1Score(player1Score + 1);
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer1Foul(lastAction.prevFouls);
+                }
+                else{
+                    setPlayer1Foul(0);
+                }
 
                 if (lastAction.prevPlayerCurrRun !== undefined){
                     setPlayer1CurrRun(lastAction.prevPlayerCurrRun);
                 }
             }
             else if (lastAction.ActionType === '3_foul_penalty'){
-                setPlayer1Score(player1Score+16);
+                setPlayer1Score(player1Score + 16);
                 setRack(rack - 1);
 
                 if (lastAction.prevRemainingBalls !== undefined){
                     setRemainingBalls(lastAction.prevRemainingBalls);
+                }
+
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer1Foul(lastAction.prevFouls);
                 }
 
                 if (lastAction.prevPlayerCurrRun !== undefined){
@@ -417,13 +457,16 @@ const Tracker: React.FC = () => {
                 if (lastAction.prevPlayerCurrRun !== undefined){
                     setPlayer1CurrRun(lastAction.prevPlayerCurrRun);
                 }
-            }
-            setToShoot(player1);
 
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer1Foul(lastAction.prevFouls);
+                }
+            }
+            setToShoot(1);
         }
         else if (lastAction.player === 'player2'){
             if (lastAction.ActionType === 'increment'){
-                if (lastAction.prevRemainingBalls !== undefined){
+                if (lastAction.prevRemainingBalls !== undefined){ //Undo for clear rack
                     const clearScore = lastAction.prevRemainingBalls - 1;
                     setPlayer2Score(player2Score - clearScore);
                     setPlayer2CurrRun(player2CurrRun - clearScore);
@@ -445,22 +488,37 @@ const Tracker: React.FC = () => {
                     }
                 }
                 
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer2Foul(lastAction.prevFouls);
+                }
+
                 if (lastAction.prevPlayerHighRun !== undefined){
                     setPlayer2HighRun(lastAction.prevPlayerHighRun);
                 }
             }
             else if (lastAction.ActionType === 'foul'){
-                setPlayer2Score(player2Score+1);
+                setPlayer2Score(player2Score + 1);
+
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer2Foul(lastAction.prevFouls);
+                }
+                else{
+                    setPlayer2Foul(0);
+                }
 
                 if (lastAction.prevPlayerCurrRun !== undefined){
                     setPlayer2CurrRun(lastAction.prevPlayerCurrRun);
                 }
             }
             else if (lastAction.ActionType === '3_foul_penalty'){
-                setPlayer2Score(player2Score+16);
+                setPlayer2Score(player2Score + 16);
 
                 if (lastAction.prevRemainingBalls !== undefined){
                     setRemainingBalls(lastAction.prevRemainingBalls);
+                }
+
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer2Foul(lastAction.prevFouls);
                 }
 
                 if (lastAction.prevPlayerCurrRun !== undefined){
@@ -471,15 +529,20 @@ const Tracker: React.FC = () => {
                 if (lastAction.prevPlayerCurrRun !== undefined){
                     setPlayer2CurrRun(lastAction.prevPlayerCurrRun);
                 }
+
+                if (lastAction.prevFouls !== undefined){
+                    setPlayer2Foul(lastAction.prevFouls);
+                }
             }
-            setToShoot(player2);
+            setToShoot(2);
         }
 
         setActionHistory(prev => prev.slice(0, -1));
     }
 
-    const updateStraightMatch = async (toShoot: string, rack: number, remainingBalls: number, updatedPlayer1Score: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
-        updatedPlayer2Score: number, updatedPlayer2HighRun: number, updatedPlayer2CurrRun: number) => { //updates scores to database
+    const updateStraightMatch = async (toShoot: 1|2, rack: number, remainingBalls: number, 
+        updatedPlayer1Score: number, updatedPlayer1Foul: number, updatedPlayer1HighRun: number, updatedPlayer1CurrRun: number,
+        updatedPlayer2Score: number, updatedPlayer2Foul: number, updatedPlayer2HighRun: number, updatedPlayer2CurrRun: number) => { //updates scores to database
         try {
             const res = await fetch('/api/updateStraightMatch', {
                 method: 'POST',
@@ -490,9 +553,11 @@ const Tracker: React.FC = () => {
                     rack,
                     remaining_balls: remainingBalls,
                     player1_score: updatedPlayer1Score,
+                    player1_foul: updatedPlayer1Foul,
                     player1_high_run: updatedPlayer1HighRun,
                     player1_curr_run: updatedPlayer1CurrRun,
                     player2_score: updatedPlayer2Score,
+                    player2_foul: updatedPlayer2Foul,
                     player2_high_run: updatedPlayer2HighRun,
                     player2_curr_run: updatedPlayer2CurrRun,
                 }),
@@ -507,7 +572,7 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+    const handleWinner = async (winnerValue: 1 | 2 | null) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -539,15 +604,10 @@ const Tracker: React.FC = () => {
     }
 
     const handleConfigureGame = async () => {
-        await updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
+        await updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1Foul, player1HighRun, player1CurrRun, 
+            player2Score, player2Foul, player2HighRun, player2CurrRun);
 
         router.push(`/configure/straight-pool?matchID=${matchID}`);
-    }
-
-    const goToHistory = async () => {
-        await updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
-
-        router.push('/history');
     }
 
     const handleExit = () => {
@@ -556,22 +616,26 @@ const Tracker: React.FC = () => {
         router.push('/history');
     }
 
-    useEffect(() => { //Toastify notification on configuring match success
-        const params = new URLSearchParams(window.location.search);
+    useEffect(() => { //Toastify notification on match updated successfully
+        if (loading) return;
 
-        if (params.get('success') === '1') {
-            toast.success("Match config updated successfully.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-            });
+        const success = searchParams.get('success');
+        if (success === '1') {
+            setTimeout(() => {
+                toast.success("Match config updated successfully.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            }, 0);
 
+            const params = new URLSearchParams(searchParams.toString());
             params.delete('success');
-            router.replace(`${window.location.pathname}?${params.toString()}`);
+            router.replace(`${pathname}?${params.toString()}`);
         }
-    }, [])
+    }, [loading]);
 
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
@@ -592,9 +656,11 @@ const Tracker: React.FC = () => {
                 setRack(json.straightMatch.rack);
                 setRemainingBalls(json.straightMatch.remaining_balls);
                 setPlayer1Score(json.straightMatch.player1_score);
+                setPlayer1Foul(json.straightMatch.player1_foul);
                 setPlayer1HighRun(json.straightMatch.player1_high_run);
                 setPlayer1CurrRun(json.straightMatch.player1_curr_run);
                 setPlayer2Score(json.straightMatch.player2_score);
+                setPlayer2Foul(json.straightMatch.player2_foul);
                 setPlayer2HighRun(json.straightMatch.player2_high_run);
                 setPlayer2CurrRun(json.straightMatch.player2_curr_run)
             }
@@ -608,15 +674,17 @@ const Tracker: React.FC = () => {
         fetchMatch();
     }, [matchID]);
 
-    useEffect(() => { //Updates references of player1, player2, toShoot for keybaordEvent's sake
+    useEffect(() => { //Updates references of player1, player2, toShoot, for keybaordEvent's sake
         player1Ref.current = player1;
         player2Ref.current = player2;
         toShootRef.current = toShoot;
+        player1FoulRef.current = player1Foul;
         player1HighRunRef.current = player1HighRun;
         player1CurrRunRef.current = player1CurrRun;
+        player2FoulRef.current = player2Foul;
         player2HighRunRef.current = player2HighRun;
         player2CurrRunRef.current = player2CurrRun;
-    }, [player1, player2, toShoot, player1HighRun, player1CurrRun, player2HighRun, player2CurrRun]);
+    }, [player1, player2, toShoot, player1Foul, player1HighRun, player1CurrRun, player2Foul, player2HighRun, player2CurrRun]);
 
     useEffect(() => { //Spacebar event calls a player miss
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -634,11 +702,13 @@ const Tracker: React.FC = () => {
         if (!matchID) return;
 
         const interval = setInterval(() => {
-            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun);
+            updateStraightMatch(toShoot, rack, remainingBalls, player1Score, player1Foul, player1HighRun, player1CurrRun, 
+                player2Score, player2Foul, player2HighRun, player2CurrRun);
         }, 15000);
 
         return () => clearInterval(interval);
-    }, [matchID, toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
+    }, [matchID, toShoot, rack, remainingBalls, player1Score, player1Foul, player1HighRun, player1CurrRun, 
+        player2Score, player2Foul, player2HighRun, player2CurrRun])
 
     useEffect(() => { //Updating database with scores and runs on reload & leaving tab
         if (!matchID) return;
@@ -651,9 +721,11 @@ const Tracker: React.FC = () => {
                     rack,
                     remaining_balls: remainingBalls,
                     player1_score: player1Score,
+                    player1_foul: player1Foul,
                     player1_high_run: player1HighRun,
                     player1_curr_run: player1CurrRun,
                     player2_score: player2Score,
+                    player2_foul: player2Foul,
                     player2_high_run: player2HighRun,
                     player2_curr_run: player2CurrRun,
                 });
@@ -668,128 +740,123 @@ const Tracker: React.FC = () => {
         return () => {
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [matchID, toShoot, rack, remainingBalls, player1Score, player1HighRun, player1CurrRun, player2Score, player2HighRun, player2CurrRun])
+    }, [matchID, toShoot, rack, remainingBalls, player1Score, player1Foul, player1HighRun, player1CurrRun, 
+        player2Score, player2Foul, player2HighRun, player2CurrRun])
+
+
+    if (loading){
+        return <Loading/>;
+    }
 
     return (
-        <div className="s-main-container">
-            {loading && (
-                <div className="page-box">
-                    <div className="loading-screen">
-                        <div className="loading-content">
-                            <p>Loading match info...</p>
-                            <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
+        <div className="s-main-container">  
+            <ToastContainer className="s-toast-warning"/>
+            <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
+                <Icon path={mdiCog} size={1} />
+            </button>
+
+            <p className="s-game-name-text">
+                Game Name: {gameName}
+            </p>
+            <p className="s-race-to-text">
+                Race To: {raceTo} Balls
+            </p>
+
+            <img src="/divider.png" className="s-tracker-divider-css"></img>
+
+            <div className="s-player-container">
+                <div className="s-player1-container">
+                    <p id = "player1" className="s-player1-name">{player1}</p>
+                    {player1Foul > 0 && (<p className="s-player1-foul">{player1} is on {player1Foul} foul.</p>)}
+                    <div className="s-score-container">
+                        <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
+                        <p className="s-player1-score">{player1Score}</p>
+                        <div className="s-increment-container">
+                            <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
+                            <div className="CR-container">
+                                <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
+                                <button className="CR-icon">i</button>
+                            </div>
                         </div>
+                    </div>
+        
+                    <div className="high-style player1-high-run">
+                        High Run: {player1HighRun}
+                    </div>
+                    <div className="high-style player1-curr-high-run">
+                        Current Run: {player1CurrRun}
                     </div>
                 </div>
-            )}
 
-            {!loading && (
-                <>
-                    <div className="hamburger-container">
-                        <img src="/hamburger-menu.png" className="hamburger-icon" />
-                        <div className="dropdown-menu">
-                            <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
-                            <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
-                        </div>
+                <div className="remaining-turn-container">
+                    <div className="remaining-balls-container">
+                        <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
+                        <p className="remaining-balls-style">Remaining Balls</p>
+                        <p className="rack-number">(Rack {rack})</p>
                     </div>
-
-                    <p className="s-game-name-text">
-                        Game Name: {gameName}
+                    <p className="s-to-shoot-text"> 
+                        {toShoot === 1 ? `${player1}` : `${player2}`} to shoot!
                     </p>
-                    <p className="s-race-to-text">
-                        Race To: {raceTo} Balls
-                    </p>
-
-                    <img src="/divider.png" className="s-tracker-divider-css"></img>
-
-                    <div className="s-player-container">
-                        <div className="s-player1-container">
-                            <p id = "player1" className="s-player1-name">{player1}</p>
-                            <div className="s-score-container">
-                                <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
-                                <p className="s-player1-score">{player1Score}</p>
-                                <div className="s-increment-container">
-                                    <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
-                                    <div className="CR-container">
-                                        <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
-                                        <button className="CR-icon">i</button>
-                                    </div>
-                                </div>
-                            </div>
-                
-                            <div className="high-style player1-high-run">
-                                High Run: {player1HighRun}
-                            </div>
-                            <div className="high-style player1-curr-high-run">
-                                Current Run: {player1CurrRun}
-                            </div>
+                    <div className="arrow-container">
+                        <img src={toShoot === 1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
+                        <div className="player-turn-text-style" id="player-turn-text">
                         </div>
-
-                        <div className="remaining-turn-container">
-                            <div className="remaining-balls-container">
-                                <p className="remaining-balls-style remaining-balls">{remainingBalls}</p>
-                                <p className="remaining-balls-style">Remaining Balls</p>
-                                <p className="rack-number">(Rack {rack})</p>
+                        <div className="player-swap-text-container">
+                            <div className="player-swap-text-style">
+                                (Press 
                             </div>
-                            <p className="s-to-shoot-text"> 
-                                {toShoot} to shoot!
-                            </p>
-                            <div className="arrow-container">
-                                <img src={toShoot === player1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
-                                <div className="player-turn-text-style" id="player-turn-text">
-                                </div>
-                                <div className="player-swap-text-container">
-                                    <div className="player-swap-text-style">
-                                        (Press 
-                                    </div>
-                                    <div className="player-swap-spacebar-text-style">
-                                        spacebar
-                                    </div>
-                                    <div className="player-swap-text-style">
-                                        to swap turn)
-                                    </div>
-                                </div>
+                            <div className="player-swap-spacebar-text-style">
+                                spacebar
                             </div>
-                            <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
-                        </div>
-
-                        <div className="s-player2-container">
-                            <p id = "player2" className="s-player2-name">{player2}</p>
-                            <div className="s-score-container">
-                                <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
-                                <p className="s-player2-score">{player2Score}</p>
-                                <div className="s-increment-container">
-                                    <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
-                                    <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
-                                </div>     
-                            </div>
-
-                            <div className="high-style player2-high-run">
-                                High Run: {player2HighRun}
-                            </div>
-                            <div className="high-style player2-curr-high-run">
-                                Current High Run: {player2CurrRun}
+                            <div className="player-swap-text-style">
+                                to swap turn)
                             </div>
                         </div>
                     </div>
-                </>
-            )}
+                    <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                </div>
+
+                <div className="s-player2-container">
+                    <p id = "player2" className="s-player2-name">{player2}</p>
+                    {player2Foul > 0 && (<p className="s-player2-foul">{player2} is on {player2Foul} foul.</p>)}
+                    <div className="s-score-container">
+                        <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
+                        <p className="s-player2-score">{player2Score}</p>
+                        <div className="s-increment-container">
+                            <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
+                            <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
+                        </div>     
+                    </div>
+
+                    <div className="high-style player2-high-run">
+                        High Run: {player2HighRun}
+                    </div>
+                    <div className="high-style player2-curr-high-run">
+                        Current Run: {player2CurrRun}
+                    </div>
+                </div>
+            </div>
 
             {winner && (
-                <div className="winner-modal">
-                    <div className="winner-content-modal">
-                        <p className="winner-notice-text">
+                <div className="tracker-winner-modal">
+                    <div className="tracker-winner-modal-content">
+                        <p className="tracker-winner-title-text">
                             And the winner is...
                         </p>
-                        <p className="winner-text">
-                            {winner}
+                        <p className="tracker-winner-text">
+                            {winner === 1
+                                ? player1 === 'Player1'
+                                ? 'Player 1'
+                                : `Player 1 - ${player1}`
+                            : winner === 2
+                                ? player2 === 'Player2'
+                                ? 'Player 2'
+                                : `Player 2 - ${player2}`
+                                : ''}
                         </p>
-                        <div className="winner-button-box">
-                            <button className="winner-button" onClick={handleExit}>
+                        <div className="tracker-winner-button-container">
+                            <button className="tracker-winner-button" onClick={handleExit}>
                                 exit match
-                            </button>
-                            <button className="winner-button">
-                                continue match
                             </button>
                         </div>
                     </div>

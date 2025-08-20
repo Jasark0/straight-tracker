@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Loading from '@/src/components/PageLoading'
+
 const Select: React.FC = () => {
     const router = useRouter();
 
@@ -17,7 +19,6 @@ const Select: React.FC = () => {
     const [raceTo, setRaceTo] = useState('5');
     const [raceWarning, setRaceWarning] = useState('');
     const [toShoot, setToShoot] = useState('');
-    const [lagWinner, setLagWinner] = useState('');
 
     const [lagPopup, setLagPopup] = useState(false);
 
@@ -29,10 +30,10 @@ const Select: React.FC = () => {
 
     const [showWinnerVerificationModal, setShowWinnerVerificationModal] = useState(false);
     const [showBackVerificationModal, setShowBackVerificationModal] = useState(false);
-    const [playerToWin, setPlayerToWin] = useState('');
+    const [playerToWin, setPlayerToWin] = useState<1|2|null>(null);
     const [playerToWinScore, setPlayerToWinScore] = useState<number | undefined>(0);
     const [isOpen, setIsOpen] = useState(false);
-    const [winner, setWinner] = useState('');
+    const [winner, setWinner] = useState<1|2|null>();
 
     const [oldMatchInfo, setOldMatchInfo] = useState({
         "game_name": "",
@@ -40,7 +41,6 @@ const Select: React.FC = () => {
         "player2": "",
         "race_to": 0,
         "to_shoot": "",
-        "lag_winner": "",
         "rack": 1,
         "remaining_balls": 15,
         "player1_score": 0,
@@ -61,7 +61,6 @@ const Select: React.FC = () => {
 
     const handleNewRace = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
-
 
         if (/^\d*$/.test(val)) {
             setRaceTo(val);
@@ -97,22 +96,6 @@ const Select: React.FC = () => {
         await updateMatchConfig(null);
     };
 
-    const updatePlayerName = async (player: number, newName: string) => {
-        if(player == 1) {
-            if(lagWinner === player1)
-                setLagWinner(newName);
-            if(toShoot === player1)
-                setToShoot(newName);
-            setPlayer1(newName);
-        } else if(player == 2) {
-            if(lagWinner === player2)
-                setLagWinner(newName);
-            if(toShoot === player2)
-                setToShoot(newName);
-            setPlayer2(newName);
-        }
-    }
-
     const updateMatchConfig = async (finalLagWinner: string|null) => {
         try {
             if (!matchID) return;
@@ -127,7 +110,6 @@ const Select: React.FC = () => {
                     player1: player1,
                     player2: player2,
                     race_to: parseInt(raceTo),
-                    lag_winner: lagWinner,
                     to_shoot: toShoot
                 }),
             });
@@ -156,7 +138,7 @@ const Select: React.FC = () => {
         }
     }
 
-    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+    const handleWinner = async (winnerValue: 1 | 2 | null) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -188,8 +170,7 @@ const Select: React.FC = () => {
     }
 
     const handleExit = () => {
-        const winnerValue = playerToWin;
-        handleWinner(winnerValue);
+        handleWinner(playerToWin);
         router.push('/history');
     }
 
@@ -225,7 +206,6 @@ const Select: React.FC = () => {
                 setPlayer2(json.straightMatch.player2);
                 setRaceTo(json.straightMatch.race_to);
                 setToShoot(json.straightMatch.to_shoot);
-                setLagWinner(json.straightMatch.lag_winner);
                 setPlayer1Score(json.straightMatch.player1_score);
                 setPlayer2Score(json.straightMatch.player2_score);
             }
@@ -248,17 +228,8 @@ const Select: React.FC = () => {
         setPlayerAheadRace(player1Score > player2Score ? player1 : player2);
     }, [player1Score, player2Score, player1, player2]);
 
-    if(loading) { //Loading screen
-        return (
-            <div className="page-box">
-                <div className="loading-screen">
-                    <div className="loading-content">
-                        <p>Loading match configuration...</p>
-                        <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
-                    </div>
-                </div>
-            </div>
-        );
+    if(loading){
+        return <Loading/>;
     }
 
     return (
@@ -287,7 +258,7 @@ const Select: React.FC = () => {
                                 type="text"
                                 placeholder="Type your name"
                                 value={player1}
-                                onChange={(e) => updatePlayerName(1, e.target.value)}
+                                onChange={(e) => {setPlayer1(e.target.value)}}
                                 title="Please enter the name of player1."
                             />
                         </div>
@@ -299,7 +270,7 @@ const Select: React.FC = () => {
                                 type="text"
                                 placeholder="Type your name"
                                 value={player2}
-                                onChange={(e) => updatePlayerName(2, e.target.value)}
+                                onChange={(e) => {setPlayer2(e.target.value)}}
                                 title="Please enter the name of player2."
                             />
                         </div>
@@ -334,12 +305,16 @@ const Select: React.FC = () => {
                                     <div className="button-selection-box">
                                         <button type="button" className="submit-button" onClick={() => {
                                             setShowWinnerVerificationModal(true);
-                                            setPlayerToWin(player1);
+                                            setPlayerToWin(1);
                                             setPlayerToWinScore(player1Score);
                                         }}>
                                             {player1}
                                         </button>
-                                        <button type="button" className="submit-button" onClick={() => {setShowWinnerVerificationModal(true); setPlayerToWin(player2); setPlayerToWinScore(player2Score);}}>
+                                        <button type="button" className="submit-button" onClick={() => {
+                                            setShowWinnerVerificationModal(true); 
+                                            setPlayerToWin(2); 
+                                            setPlayerToWinScore(player2Score);
+                                        }}>
                                             {player2}
                                         </button>
                                     </div>
@@ -354,8 +329,8 @@ const Select: React.FC = () => {
                 </form>
             </div>
         {showBackVerificationModal && (
-        <div className="details-modal-overlay" onClick={() => setShowBackVerificationModal(false)}>
-            <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="history-details-modal" onClick={() => setShowBackVerificationModal(false)}>
+            <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
                 <p className="game-name-message">Are you sure you want to leave?  Your changes won't be saved.</p>
                 <div className="button-selection-box">
                     <button type="button" className="submit-button" onClick={() => {handleReturnToTracker()}}>
@@ -369,9 +344,9 @@ const Select: React.FC = () => {
         </div>
         )}
         {showWinnerVerificationModal && (
-            <div className="details-modal-overlay" onClick={() => setShowWinnerVerificationModal(false)}>
-                <div className="details-modal-content" onClick={(e) => e.stopPropagation()}>
-                    <p className="game-name-message">Are you sure you want to make {playerToWin} the winner? They have a score of {playerToWinScore}.</p>
+            <div className="history-details-modal" onClick={() => setShowWinnerVerificationModal(false)}>
+                <div className="history-details-content" onClick={(e) => e.stopPropagation()}>
+                    <p className="game-name-message">Are you sure you want to make {playerToWin === 1 ? player1 : player2} the winner? <br/> They have a score of {playerToWinScore}.</p>
                     <div className="button-selection-box">
                         <button type="button" className="submit-button" onClick={() => {handleExit()}}>
                             Yes

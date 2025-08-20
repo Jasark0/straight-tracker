@@ -1,10 +1,14 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import Icon from '@mdi/react';
+import { mdiCog } from '@mdi/js';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import Loading from '@/src/components/PageLoading'
 
 const Tracker: React.FC = () => {
     const router = useRouter();
@@ -17,8 +21,8 @@ const Tracker: React.FC = () => {
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
     const [raceTo, setRaceTo] = useState<number>();
-    const [breakFormat, setBreakFormat] = useState(0);
-    const [toBreak, setToBreak] = useState('');
+    const [breakFormat, setBreakFormat] = useState<1|2>();
+    const [toBreak, setToBreak] = useState<1|2>(1);
     const [player1Score, setPlayer1Score] = useState<number>(0);
     const [player2Score, setPlayer2Score] = useState<number>(0);
 
@@ -27,12 +31,12 @@ const Tracker: React.FC = () => {
     const [player1Set, setPlayer1Set] = useState<number | undefined>();
     const [player2Set, setPlayer2Set] = useState<number | undefined>();
 
-    const [winner, setWinner] = useState('');
+    const [winner, setWinner] = useState<1|2|null>(null);
 
     type Action = {
         player: string;
         prevScore: number;
-        toBreak: string;
+        toBreak: 1|2;
         prevSet?: number;
         prevRaceId?: number;
     };
@@ -64,31 +68,29 @@ const Tracker: React.FC = () => {
 
                 if (prevSet + 1 !== raceSets){
                     action.prevRaceId = id;
-                    await completeSet(prev + 1, player2Score, 'player1');
+                    await completeSet(prev + 1, player2Score, toBreak, 1);
                 }
                 else{
-                    await updatePoolMatch(prev + 1, player2Score);
-                    const winnerValue = player1;
-                    handleWinner(winnerValue);
+                    await updatePoolMatch(prev + 1, player2Score, toBreak);
+                    handleWinner(1);
                 }
             }
         }
         else{
             if (prev + 1 === raceTo){
-                await updatePoolMatch(prev + 1, player2Score);
-                const winnerValue = player1;
-                handleWinner(winnerValue);
+                await updatePoolMatch(prev + 1, player2Score, toBreak);
+                handleWinner(1);
             }
         }
 
-        if (breakFormat === 0){
-            setToBreak(player1);
+        if (breakFormat === 1){
+            setToBreak(1);
         } 
-        else if (toBreak === player1){
-            setToBreak(player2);
+        else if (toBreak === 1){
+            setToBreak(2);
         } 
         else{
-            setToBreak(player1);
+            setToBreak(1);
         }
 
         setActionHistory(history => [...history, action]);
@@ -116,31 +118,29 @@ const Tracker: React.FC = () => {
 
                 if (prevSet + 1 !== raceSets){
                     action.prevRaceId = id;
-                    await completeSet(player1Score, prev + 1, 'player2');
+                    await completeSet(player1Score, prev + 1, toBreak, 2);
                 }
                 else{
-                    await updatePoolMatch(player1Score, prev + 1);
-                    const winnerValue = player2;
-                    handleWinner(winnerValue);
+                    await updatePoolMatch(player1Score, prev + 1, toBreak);
+                    handleWinner(2);
                 }
             }
         }
         else{
             if (prev + 1 === raceTo){
-                await updatePoolMatch(player1Score, prev + 1);
-                const winnerValue = player2;
-                handleWinner(winnerValue);
+                await updatePoolMatch(player1Score, prev + 1, toBreak);
+                handleWinner(2);
             }
         }
 
-        if (breakFormat === 0){
-            setToBreak(player2);
+        if (breakFormat === 1){
+            setToBreak(2);
         } 
-        else if (toBreak === player1){
-            setToBreak(player2);
+        else if (toBreak === 1){
+            setToBreak(2);
         } 
         else{
-            setToBreak(player1);
+            setToBreak(1);
         }
 
         setActionHistory(history => [...history, action]);
@@ -205,15 +205,17 @@ const Tracker: React.FC = () => {
         setActionHistory(prev => prev.slice(0, -1));
     };
 
-    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number, winner?: 'player1' | 'player2' | null) => { //updates scores to database
+    const updatePoolMatch = async (updatedPlayer1Score: number, updatedPlayer2Score: number, toBreak: number, winner?: 1 | 2 | null) => { //updates scores to database
         try {
             const res = await fetch('/api/updatePoolMatch', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    match_id: matchID,
                     id,
                     player1_score: updatedPlayer1Score,
                     player2_score: updatedPlayer2Score,
+                    to_break: toBreak,
                     winner: winner ?? null
                 }),
             });
@@ -227,10 +229,10 @@ const Tracker: React.FC = () => {
         }
     };
 
-    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number, winner: 'player1' | 'player2') => { //creates a new set when a player reaches the race_to requirement
+    const completeSet = async (finalPlayer1Score: number, finalPlayer2Score: number, toBreak: 1 | 2, winner: 1 | 2) => { //creates a new set when a player reaches the race_to requirement
         try{
             setLoading(true);
-            await updatePoolMatch(finalPlayer1Score, finalPlayer2Score, winner);
+            await updatePoolMatch(finalPlayer1Score, finalPlayer2Score, toBreak, winner);
 
             const res = await fetch(`/api/createNewRace?matchID=${matchID}`, {
                 method: 'POST',
@@ -255,7 +257,7 @@ const Tracker: React.FC = () => {
         }
     }
     
-    const handleWinner = async (winnerValue: string) => { //Updates winner when score matches requirement
+    const handleWinner = async (winnerValue: 1 | 2 | null) => { //Updates winner when score matches requirement
         setWinner(winnerValue);
         setLoading(true);
         try{
@@ -284,18 +286,12 @@ const Tracker: React.FC = () => {
         finally{
             setLoading(false);
         }
-    }
+    } 
 
     const handleConfigureGame = async () => {
-        await updatePoolMatch(player1Score, player2Score);
+        await updatePoolMatch(player1Score, player2Score, toBreak);
 
         router.push(`/configure/pool-games?matchID=${matchID}`);
-    }
-
-    const goToHistory = async () => {
-        await updatePoolMatch(player1Score, player2Score);
-
-        router.push('/history');
     }
 
     const handleExit = () => {
@@ -304,22 +300,26 @@ const Tracker: React.FC = () => {
         router.push('/history');
     }
 
-    useEffect(() => { //Toastify notification on configuring match success
-        const params = new URLSearchParams(window.location.search);
+    useEffect(() => { //Toastify notification on match updated successfully
+        if (loading) return;
 
-        if (params.get('success') === '1') {
-            toast.success("Match config updated successfully.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-            });
+        const success = searchParams.get('success');
+        if (success === '1') {
+            setTimeout(() => {
+                toast.success("Match config updated successfully.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            }, 0);
 
+            const params = new URLSearchParams(searchParams.toString());
             params.delete('success');
-            router.replace(`${window.location.pathname}?${params.toString()}`);
+            router.replace(`${pathname}?${params.toString()}`);
         }
-    }, [])
+    }, [loading]);
 
     useEffect(() => { //Get match info
         const fetchMatch = async () => {
@@ -370,24 +370,26 @@ const Tracker: React.FC = () => {
     }, [matchID]);
 
     useEffect(() => { //Updating database with scores every 15 seconds
-        if (!id) return;
+        if (!matchID || !id) return;
 
         const interval = setInterval(() => {
-            updatePoolMatch(player1Score, player2Score);
+            updatePoolMatch(player1Score, player2Score, toBreak);
         }, 15000);
 
         return () => clearInterval(interval);
-    }, [id, player1Score, player2Score]);
+    }, [matchID, id, player1Score, player2Score, toBreak]);
     
     useEffect(() => { //Updating database with scores on reload & leaving tab
-        if (!id) return;
+        if (!matchID || !id) return;
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
                 const payload = JSON.stringify({
+                    match_id: matchID,
                     id,
                     player1_score: player1Score,
                     player2_score: player2Score,
+                    to_break: toBreak,
                 });
 
                 const blob = new Blob([payload], { type: 'application/json' });
@@ -401,160 +403,169 @@ const Tracker: React.FC = () => {
         return () => {
             window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [id, player1Score, player2Score]);
+    }, [matchID, id, player1Score, player2Score, toBreak]);
 
+    useEffect(() => { //Updating database with scores when page is unloaded
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            navigator.sendBeacon('/api/updatePoolMatch', JSON.stringify({
+                match_id: matchID,
+                player1_score: player1Score,
+                player2_score: player2Score,
+                to_break: toBreak,
+                winner: winner ?? null
+            }));
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [matchID, id, player1Score, player2Score, toBreak]);
+
+
+    if (loading){
+        return <Loading/>;
+    }
 
     return (
-        <div className="tracker-page-box">
+        <div className="tracker-page-container">
             <ToastContainer className="s-toast-warning"/>
+            <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
+                <Icon path={mdiCog} size={1} />
+            </button>
             
-            {loading && (
-                <div className="page-box">
-                    <div className="loading-screen">
-                        <div className="loading-content">
-                            <p>Loading match info...</p>
-                            <img src="/spinner.gif" className="spinner-css" alt="Loading..."></img>
-                        </div>
-                    </div>
+            <p className="tracker-game-name-text">
+                {gameName}  
+            </p>
+            
+            <div className="tracker-race-sets-container">
+                <p className="tracker-race-text">Race to {raceTo}</p>
+                {sets && (
+                    <>
+                        <p>-</p>
+                        <p className="tracker-sets-text">Best of {sets} Sets</p>
+                    </>
+                )}
+            </div>
+            
+            <div className="tracker-rack-container">
+                <p className="tracker-rack-text bracket">
+                    (
+                </p>
+                        
+                <div className="tracker-rack-text-container">
+                    {sets !== undefined && (
+                        <>
+                            <p className="tracker-rack-text">
+                                Set {player1Set !== undefined && player2Set !== undefined ? player1Set + player2Set + 1: 1}
+                            </p>
+
+                            <p>
+                                -
+                            </p>
+                        </>
+                    )}
+                    
+                    <p className="tracker-rack-text">
+                        Rack {player1Score + player2Score + 1}
+                    </p>
                 </div>
-            )}
 
-            {!loading && (
-                <div className="tracker-box">
-                    <div className="game-name-box">
-                        <div className="hamburger-container">
-                            <img src="/hamburger-menu.png" className="hamburger-icon"/>
-                            <div className="dropdown-menu">
-                                <div className="dropdown-item" onClick={handleConfigureGame}>Configure Match</div>
-                                <div className="dropdown-item" onClick={goToHistory}>Go to History</div>
-                            </div>
+                <p className="tracker-rack-text bracket">
+                    )
+                </p>
+            </div>
+
+            <img src="/divider.png" className="tracker-divider-css"></img>
+            
+            <div className="tracker-score-container">
+                <div className="tracker-player1-container">
+                    <p className="tracker-player1-name-text">
+                        {player1}
+                    </p>
+
+                    <div className="tracker-player1-score-container">
+                        <p className="tracker-player-score-text player1">
+                            {player1Score}
+                        </p>
+                        <button className="tracker-player1-increment" onClick={incrementPlayer1}>
+                            +
+                        </button>
+                    </div>
+
+                    {sets && (
+                        <div className="tracker-player1-sets-container">
+                            <p className="tracker-player-set-text player1">
+                                {player1Set}
+                            </p>
+                            <p className="tracker-player-set-label">
+                                Sets
+                            </p>
                         </div>
-                        <p className="game-name-text">
-                            {gameName}  
-                        </p>
-                    </div>
-                    
-                    <div className="race-text-box">
-                        <p className="race-text">Race to {raceTo}</p>
-                        {sets && (
-                            <div className="race-text-box">
-                                <p className="race-text">-</p>
-                                <p className="race-text">Best of {sets} Sets</p>
-                            </div>
-                        )}
-                    </div>
-                    
-                    
-                    <div className="rack-box">
-                        <p className="rack-text">
-                            (
-                        </p>
-                        {sets !== undefined && (
-                            <div className="rack-box">
-                                <p className="rack-text">
-                                    Set {player1Set !== undefined && player2Set !== undefined ? player1Set + player2Set + 1: 1}
-                                </p>
-
-                                <p className="rack-text">
-                                    -
-                                </p>
-                            </div>
-                        )}
-                        
-                        <p className="rack-text">
-                            Rack {player1Score + player2Score + 1}
-                        </p>
-
-                        <p className="rack-text">
-                            )
-                        </p>
-                    </div>
-
-                    <img src="/divider.png" className="tracker-divider-css"></img>
-
-                    <div className="to-break-box">
-                        <p className="to-break-player-text">
-                            {toBreak}
+                    )}    
+                </div>
+                
+                <div className="tracker-to-break-undo-container">
+                    <div className="tracker-to-break-container">
+                        <p className="tracker-to-break-player-text">
+                            {toBreak === 1 ? `${player1}` : `${player2}`}
                         </p>
                         
-                        <p className="to-break-text">
+                        <p className="tracker-to-break-text">
                             to break!
                         </p>
                     </div>
-                    
-                    
-                    <div className="score-box">
-                        <div className="player1-box">
-                            <p className="player1-text">
-                                {player1}
-                            </p>
 
-                            <div className="player1-score-box">
-                                <p className="player1-score">
-                                    {player1Score}
-                                </p>
-                                <button className="player1-increment" onClick={incrementPlayer1}>
-                                    +
-                                </button>
-                            </div>
-
-                            {sets && (
-                                <div className="player1-sets-box">
-                                    <p className="player1-set">
-                                        {player1Set}
-                                    </p>
-                                    <p className="player1-set-text">
-                                        Sets
-                                    </p>
-                                </div>
-                            )}    
-                        </div>
-
-                        <div className="player2-box">
-                            <p className="player2-text">
-                                {player2}
-                            </p>
-
-                            <div className="player2-score-box">
-                                <p className="player2-score">
-                                    {player2Score}
-                                </p>
-                                <button className="player2-increment" onClick={incrementPlayer2}>
-                                    +
-                                </button>
-                            </div>
-
-                            {sets && (
-                                <div className="player2-sets-box">
-                                    <p className="player2-set">
-                                        {player2Set}
-                                    </p>
-                                    <p className="player2-set-text"> 
-                                        Sets
-                                    </p>
-                                </div>
-                            )}
-                        </div>
+                    <div className="tracker-undo-container">
+                        <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
                     </div>
-                
+                </div>
 
-                    <div className={sets ? 'undo-set-box' : 'undo-box'}>
-                        <button className="undo-style" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+                <div className="tracker-player2-container">
+                    <p className="tracker-player2-name-text">
+                        {player2}
+                    </p>
+
+                    <div className="tracker-player2-score-container">
+                        <p className="tracker-player-score-text player2">
+                            {player2Score}
+                        </p>
+                        <button className="tracker-player2-increment" onClick={incrementPlayer2}>
+                            +
+                        </button>
                     </div>
-                </div>     
-            )}
+
+                    {sets && (
+                        <div className="tracker-player2-sets-container">
+                            <p className="tracker-player-set-text player2">
+                                {player2Set}
+                            </p>
+                            <p className="tracker-player-set-label">
+                                Sets
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+            
 
             {winner && (
-                <div className="winner-modal">
-                    <div className="winner-content-modal">
-                        <p className="winner-notice-text">
+                <div className="tracker-winner-modal">
+                    <div className="tracker-winner-modal-content">
+                        <p className="tracker-winner-title-text">
                             And the winner is...
                         </p>
-                        <p className="winner-text">
-                            {winner}
+                        <p className="tracker-winner-text">
+                            {winner === 1
+                                ? player1 === 'Player1'
+                                ? 'Player 1'
+                                : `Player 1 - ${player1}`
+                            : winner === 2
+                                ? player2 === 'Player2'
+                                ? 'Player 2'
+                                : `Player 2 - ${player2}`
+                                : ''}
                         </p>
-                        <div className="winner-button-box">
-                            <button className="winner-button" onClick={handleExit}>
+                        <div className="tracker-winner-button-container">
+                            <button className="tracker-winner-button" onClick={handleExit}>
                                 exit match
                             </button>
                         </div>

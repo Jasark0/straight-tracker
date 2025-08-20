@@ -4,6 +4,8 @@ import { redirect, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { forgotPassword, resetPassword, signIn, signInWithGoogle } from '@/actions/auth';
 
+import Loading from '@/src/components/PageLoading'
+
 const Changepassword: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -18,7 +20,6 @@ const Changepassword: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
         setError(null);
 
         const formData = new FormData(event.currentTarget);
@@ -35,6 +36,10 @@ const Changepassword: React.FC = () => {
 
     const signUpPage = () => {
         router.push('/signup');
+    }
+
+    if (loading){
+        return <Loading/>;
     }
 
     return (

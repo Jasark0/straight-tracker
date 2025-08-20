@@ -1,113 +1,56 @@
-/* Page CSS */
+/* Tracker Page CSS */
 
-.tracker-page-box{
+.tracker-page-container{
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 15vh);
-    padding-top: 15vh;
     align-items: center;
     justify-content: center;
+    min-height: calc(100vh - 6rem);
+    padding-top: 6rem;
     overflow-y: hidden;
 }
 
 
-/* Loading Screen */
+/* Gear CSS */
 
-.loading-screen {
+.tracker-gear-button{ /* To be changed */
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    font-size: 1.5rem;
-}
-
-.loading-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0;
-}
-
-.spinner-css{
-    display: flex;
-    width: 100%;
-    margin-bottom: 20vh;
-}
-
-/* Hamburger Icon + Game Name CSS */
-
-.tracker-box{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.game-name-box{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 0;
-    margin-bottom: 0;
-    height: 5vh;
-    position: relative;
-}
-
-.hamburger-container {
-    position: fixed;
-    left: 5vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.hamburger-icon {
-    height: 8vh;
-    width: 7vh;
-    cursor: pointer;
-}
-
-.dropdown-menu {
-    display: none;
     position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    flex-direction: column;
-    min-width: 150px;
-}
-
-.dropdown-item {
-    padding: 10px 15px;
-    font-size: 1rem;
+    top: 1.2rem;
+    right: 1.5rem;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    border: none;
+    border-radius: 50%;
+    padding: 0.6rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    white-space: nowrap;
+    transition:
+        background 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    z-index: 10;
 }
 
-.dropdown-item:hover {
-    background-color: #f0f0f0;
+.tracker-gear-button:hover {
+    background: linear-gradient(135deg, #3a3fc4, #777df8);
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
-.hamburger-container:hover .dropdown-menu {
-    display: flex;
-}
 
-.game-name-text{
+/* Game Name CSS */
+
+.tracker-game-name-text{
     font-size: 3rem;
     letter-spacing: 1px;
     margin-top: 0;
     margin-bottom: 2vh;
 }
 
+
 /* Race & Sets CSS */
 
-.race-text-box {
+.tracker-race-sets-container{
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -119,8 +62,7 @@
     position: relative;
 }
 
-
-.race-text{
+.tracker-race-text, .tracker-sets-text{
     display: flex;
     justify-content: center;
     font-size: 2rem;
@@ -128,172 +70,221 @@
     color: rgb(170, 0, 0);
 }
 
+
 /* Rack CSS */
 
-.rack-box{
+.tracker-rack-container{
     display: flex;
-    gap: 0.5vh;
+    align-items: center;
 }
 
-.rack-text{
+.tracker-rack-text-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tracker-rack-text{
     display: flex;
     justify-content: center;
-    text-align: center;
     font-size: 2rem;
     margin: 0;
-    color: rgb(0, 102, 255);
+    color: #0077cc;
 }
-
 
 /* Divider CSS */
 
 .tracker-divider-css{
-  width: 100%;
+  width: 50%;
 }
 
 
-/* To Break */
+/* Score CSS */
 
-.to-break-box{
+.tracker-score-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+}
+
+.tracker-player1-container, .tracker-player2-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 30rem;
+}
+
+.tracker-player1-name-text, .tracker-player2-name-text{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.tracker-player1-score-container, .tracker-player2-score-container{
     display: flex;
     flex-direction: row;
+    align-items: center;
+    gap: 2rem;
 }
 
-.to-break-player-text{
+.tracker-player-score-text{
     display: flex;
-    font-size: 2.5rem;
+    justify-content: center;
     margin: 0;
-    margin-right: 1vh;
+    font-size: 14rem;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.to-break-text{
+.tracker-player-score-text.player1{
+    color: hsl(0, 85%, 60%);
+    text-shadow:
+        0 0 2px hsla(0, 85%, 60%, 0.8),
+        0 0 4px hsla(0, 85%, 60%, 0.6);
+}
+
+.tracker-player-score-text.player2{
+    color: hsl(220, 100%, 65%);
+    text-shadow:
+        0 0 2px hsla(220, 100%, 65%, 0.8),
+        0 0 4px hsla(220, 100%, 65%, 0.6);
+}
+
+.tracker-player1-increment, .tracker-player2-increment{
+    display: flex;
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+    font-size: 2rem;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tracker-player1-increment{
+    background-color: hsl(0, 85%, 60%);
+    color: #fff;
+    box-shadow: 0 0 10px hsla(0, 85%, 60%, 0.6);
+}
+
+.tracker-player1-increment:hover{
+    background-color: hsl(0, 85%, 67%);
+    box-shadow: 0 0 16px hsla(0, 85%, 67%, 0.7);
+    transform: scale(1.05);
+}
+
+.tracker-player1-increment:active{
+    background-color: hsl(0, 85%, 52%);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
+}
+
+.tracker-player2-increment{
+    background-color: hsl(220, 100%, 65%);
+    color: #fff;
+    box-shadow: 0 0 10px hsla(220, 100%, 65%, 0.6);
+}
+
+.tracker-player2-increment:hover{
+    background-color: hsl(220, 100%, 72%);
+    box-shadow: 0 0 16px hsla(220, 100%, 72%, 0.7);
+    transform: scale(1.05);
+}
+
+.tracker-player2-increment:active{
+    transform: scale(0.95);
+    box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Sets CSS */
+
+.tracker-player1-sets-container, .tracker-player2-sets-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.tracker-player-set-text{
+    font-size: 5rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.tracker-player-set-label{
+    font-size: 2rem;
+    margin: 0;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    color: #444;
+}
+
+.tracker-player-set-text.player1{
+    color: hsl(0, 85%, 60%);
+    text-shadow:
+        0 0 2px hsla(0, 85%, 60%, 0.8),
+        0 0 4px hsla(0, 85%, 60%, 0.6);
+}
+
+.tracker-player-set-text.player2{
+    color: hsl(220, 100%, 65%);
+    text-shadow:
+        0 0 2px hsla(220, 100%, 65%, 0.8),
+        0 0 4px hsla(220, 100%, 65%, 0.6);
+}
+
+
+/* To Break & Undo CSS */
+
+.tracker-to-break-undo-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 30rem;
+    row-gap: 14rem;
+}
+
+.tracker-to-break-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tracker-to-break-player-text{
+    display: flex;
+    font-size: 3rem;
+    margin: 0;
+}
+
+.tracker-to-break-text{
     display: flex;
     font-size: 1.5rem;
     align-items: center;
     margin: 0;
 }
 
-/* Score Box */
-
-.score-box{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 60vh;
-    margin-top: -7vh;
-}
-
-.player1-text, .player2-text{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 4rem;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.player1-score-box, .player2-score-box{
-    display: flex;
-    flex-direction: row;
-    gap: 3vh;
-    align-items: center;
-}
-
-.player1-score{
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    font-size: 12rem;
-    color: hsl(6, 93%, 71%);
-}
-
-.player2-score{
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    font-size: 12rem;
-    color: hsl(250, 100%, 65%);
-}
-
-.player1-increment, .player2-increment{
-    display: flex;
-    height: 60px;
-    width: 60px;
-    border: 1px solid black;
-    border-radius: 43px;
-    font-size: 25px;
-    background-color:antiquewhite;
-    color: rgb(50, 50, 50);
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-.player1-increment:hover, .player2-increment:hover{
-    border: 1px solid black;
-    background-color: rgb(240, 228, 212);
-    box-shadow: 0 0 5px rgb(234, 205, 167);
-    transition: 0.3s ease;
-}
-
-.player1-increment:focus, .player2-increment:focus{
-    outline: none;
-    border: 1px solid black;
-    box-shadow: 0 0 5px rgb(234, 205, 167);
-}
-
-.player1-increment:active, .player2-increment:active{
-    box-shadow: inset 3px 3px 5px rgb(234, 204, 164);
-    background-color: rgb(242, 224, 200);;
-    top: 5px;
-    left: 5px;
-    border: 1px solid black;
-    transition: 0ms;
-}
-
-.player1-sets-box, .player2-sets-box{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 2vh;
-}
-
-.player1-set{
-    display: flex;
-    font-size: 4rem;
-    color: hsl(6, 93%, 71%);
-    margin-top: 0;
-}
-
-.player2-set{
-    display: flex;
-    font-size: 4rem;
-    color: hsl(250, 100%, 65%);
-    margin-top: 0;
-}
-
-.player1-set-text, .player2-set-text{
-    display: flex;
-    font-size: 2rem;
-    margin-top: 2vh;
-}
-
-/* Undo CSS */
-
-.undo-box{
+.tracker-undo-container{
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.undo-set-box{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: -20vh;
-}
-
-.undo-style{
+.tracker-undo-button{
     background-color: rgb(32, 32, 32);
     color: white;
     border: none;
@@ -304,68 +295,71 @@
     transition: 0.15s ease;
 }
 
-.undo-style:hover{
+.tracker-undo-button:hover{
     background-color: rgb(63, 63, 63);
 }
 
-.undo-style:focus{
+.tracker-undo-button:focus{
     outline: none;
 }
 
-.undo-style:active{
+.tracker-undo-button:active{
     background-color: rgb(85, 85, 85);
     outline: none;
     border: none;
     transition: 0.15s ease;
 }
 
-.undo-style:disabled{
+.tracker-undo-button:disabled{
     background-color: #888;
     cursor: not-allowed;
     opacity: 0.6;
 }
 
-.winner-modal{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
+
+/* Winner Modal CSS */
+
+.tracker-winner-modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
 }
 
-.winner-content-modal{
-  background-color: #fff;
-  padding: 8vh 12vh;
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  max-width: 90%;
-  width: 400px;
-  animation: fadeInScale 0.3s ease-out;
+.tracker-winner-modal-content{
+    background-color: #fff;
+    padding: 8vh 12vh;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+    animation: fadeInScale 0.3s ease-out;
 }
 
-.winner-notice-text{
+.tracker-winner-title-text{
     font-size: 2rem;
 }
 
-.winner-text{
+.tracker-winner-text{
     font-size: 2.5rem;
     color: red;
 }
 
-.winner-button-box{
+.tracker-winner-button-container{
     display: flex;
     gap: 6vh;
     align-items: center;
     justify-content: center;
 }
 
-.winner-button{
+.tracker-winner-button{
     padding: 2vh 3vh;
     font-size: 1.25rem;
     border-radius: 5px;
@@ -373,6 +367,6 @@
     transition: 0.2s ease;
 }
 
-.winner-button:hover{
+.tracker-winner-button:hover{
     background-color: #cfcfcf;
 }
