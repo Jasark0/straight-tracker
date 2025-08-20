@@ -541,6 +541,10 @@ const Tracker: React.FC = () => {
                             </div>
                         )}
                     </div>
+
+                    <p className="tracker-flip-text">
+                        Tips: flip your screen for better display!
+                    </p>
             </div>
             
 

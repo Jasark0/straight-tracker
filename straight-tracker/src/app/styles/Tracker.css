@@ -39,7 +39,12 @@
 /* Game Name CSS */
 
 .tracker-game-name-text{
-    font-size: 3rem;
+    display: block;
+    font-size: clamp(1rem, calc(100vw / 50), 3rem);
+    max-width: 60rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     letter-spacing: 1px;
     margin-top: 0;
     margin-bottom: 1rem;
@@ -110,9 +115,9 @@
 .tracker-score-container{
     display: flex;
     position: relative;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: 3rem;
+    gap: 5rem;
     height: 100%;
 }
 
@@ -121,6 +126,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 
 .tracker-player1-name-text, .tracker-player2-name-text{
@@ -164,8 +170,8 @@
 
 .tracker-player1-increment, .tracker-player2-increment{
     display: flex;
-    height: 64px;
-    width: 64px;
+    height: 5rem;
+    width: 5rem;
     border-radius: 50%;
     font-size: 2rem;
     font-weight: bold;
@@ -239,6 +245,10 @@
     color: #444;
 }
 
+.tracker-flip-text{
+    display: none;
+}
+
 .tracker-player-set-text.player1{
     color: hsl(0, 85%, 60%);
     text-shadow:
@@ -283,7 +293,8 @@
     border-radius: 6px;
     font-size: 1.25rem;
     cursor: pointer;
-    padding: 2vh 4vh;
+    padding: 1rem 2rem;
+    margin-bottom: 1rem;
     transition: 0.15s ease;
 }
 
@@ -326,12 +337,12 @@
 
 .tracker-winner-modal-content{
     background-color: #fff;
-    padding: 8vh 12vh;
+    padding: 8vh 5vw;
     border-radius: 1rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     text-align: center;
     max-width: 90%;
-    width: 400px;
+    width: 35rem;
     animation: fadeInScale 0.3s ease-out;
 }
 
@@ -385,5 +396,65 @@
 
     .tracker-divider-css{
         width: 100%;
+        height: 1.75rem;
+    }
+
+    .tracker-score-container{
+        gap: 5rem;
+    }
+
+    .tracker-player-score-text{
+        font-size: 5rem;
+    }
+
+    .tracker-player-set-text{
+        font-size: 2.5rem;
+    }
+
+    .tracker-player1-increment, .tracker-player2-increment{
+        height: 4rem;
+        width: 4rem;
+    }
+
+    .tracker-undo-button{
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .tracker-winner-modal-content{
+        max-width: 80%;
+    }
+
+    .tracker-winner-title-text{
+        font-size: 1.25rem;
+    }
+
+    .tracker-winner-text{
+        font-size: 1.5rem;
+        text-align: center;
+    }
+}
+
+@media screen and (orientation: portrait){
+    .tracker-score-container{
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+    }
+
+    .tracker-player-score-text{
+        font-size: 6rem;
+    }
+
+    .tracker-undo-button{
+        margin: 0;
+    }
+
+    .tracker-flip-text{
+        display: flex;
+        margin: 0;
+        font-size: 0.8rem;
+        opacity: 80%;
     }
 }
