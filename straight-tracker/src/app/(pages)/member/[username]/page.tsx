@@ -4,6 +4,7 @@ import "@/src/app/styles/Home.css";
 import "@/src/app/styles/Member.css";
 import { notFound } from 'next/navigation';
 import React from 'react';
+import { OnlineStatus } from '@/src/components/OnlineStatus'
 
 type Profile = {
     username: string;
@@ -18,6 +19,41 @@ export default async function MemberPage({ params }: { params: { username: strin
     if (error || !profile) {
         notFound();
     }
+
+    
+    const getDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC',
+        });
+    };
+
+    const timeAgo = (dateString: string | null): string => {
+        if (!dateString) {
+            return 'Unknown';
+        }
+
+        const now = new Date();
+        const past = new Date(dateString);
+        const seconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+        if (seconds < 10) return "just now";
+        if (seconds < 60) return `${seconds} seconds ago`;
+
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        
+        const days = Math.floor(hours / 24);
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+    };
+
+    
 
     const profileImage = profile.avatar_url || "/default-profile-picture.jpg";
 
@@ -45,9 +81,17 @@ export default async function MemberPage({ params }: { params: { username: strin
                         <button className="member-editProfile-Button">Edit Profile</button>
 
                         <div className="member-user-details-info">
-                            <p className="member-user-details-text">User Details</p>
+                            <p className="member-user-details-text">{getDate(profile.created_at)} joined</p>
+                            <p className="member-user-details-text"> 
+                                Last Online: {timeAgo(profile.last_sign_in_at)}
+                            </p>
+                            <p className="member-user-details-text">
+                                <OnlineStatus userId={profile.id} />
+                            </p>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>

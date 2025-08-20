@@ -370,13 +370,14 @@ export async function updateProfile() {
 export async function getPublicProfile(username: string) {
         const { data, error } = await supabaseAdmin
         .from('profiles')
-        .select('username, nickname, avatar_url')
+        .select('id, username, nickname, avatar_url, created_at, last_sign_in_at')
         .eq('username', username)
         .single();
-    
+
         if (error) {
         return { data: null, error: 'User not found' };
         }
     
     return { data, error: null };
 }
+
