@@ -366,3 +366,17 @@ export async function updateProfile() {
     revalidatePath("/", "layout");
     return { status: "success", profile: profile };
 }
+
+export async function getPublicProfile(username: string) {
+        const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .select('username, nickname, avatar_url')
+        .eq('username', username)
+        .single();
+    
+        if (error) {
+        return { data: null, error: 'User not found' };
+        }
+    
+    return { data, error: null };
+}
