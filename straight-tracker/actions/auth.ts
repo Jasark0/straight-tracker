@@ -370,7 +370,7 @@ export async function updateProfile() {
 export async function getPublicProfile(username: string) {
         const { data, error } = await supabaseAdmin
         .from('profiles')
-        .select('id, username, nickname, avatar_url, created_at, last_sign_in_at')
+        .select('id, username, nickname, avatar_url, created_at, last_sign_in_at, last_online')
         .eq('username', username)
         .single();
 
@@ -379,5 +379,21 @@ export async function getPublicProfile(username: string) {
         }
     
     return { data, error: null };
+}
+
+export async function grabRandomUsername() {
+    const { data, error } = await supabaseAdmin
+        .rpc('get_random_username')
+        .single<{ username: string }>();
+
+    
+    if (error) {
+        console.error("Error fetching random username:", error);
+        return { data: null, error: 'Error fetching random username' };
+    }
+
+   
+
+    return { data: data?.username, error: null };
 }
 

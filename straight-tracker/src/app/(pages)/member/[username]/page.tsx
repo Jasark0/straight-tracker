@@ -1,25 +1,41 @@
 import { getPublicProfile } from '@/actions/auth';
+import { getUserSession, grabRandomUsername } from '@/actions/auth';
+import { notFound } from 'next/navigation';
+import React from 'react';
+import { LastOnlineStatus} from '@/src/components/LastOnlineStatus';
+import { OnlineStatusIcon } from '@/src/components/OnlineStatusIcon';
+import  EditProfileButton  from '@/src/components/EditProfileButton';
+import { MemberNavbar } from '@/src/components/MemberNavbar';
 import "@/src/app/styles/General.css";
 import "@/src/app/styles/Home.css";
 import "@/src/app/styles/Member.css";
-import { notFound } from 'next/navigation';
-import React from 'react';
-import { OnlineStatus } from '@/src/components/OnlineStatus'
+
+
 
 type Profile = {
     username: string;
     nickname: string;
     avatar_url: string;
+    id: string;
+    created_at: string;
+    last_online: string | null;
 };
 
 export default async function MemberPage({ params }: { params: { username: string } }) {
     const { username } = await params;
     const { data: profile, error } = await getPublicProfile(username);
-
+    
     if (error || !profile) {
         notFound();
     }
 
+    const randomUsernameResult = await grabRandomUsername();
+    const randomUsername = randomUsernameResult.data || username;
+
+    const checkIfMemberOnThePageIsTheMemberThatIsLogin = async () => {
+        const response = await getUserSession();
+        return response?.user.id === profile.id;
+    }
     
     const getDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -53,7 +69,9 @@ export default async function MemberPage({ params }: { params: { username: strin
         return `${days} day${days > 1 ? 's' : ''} ago`;
     };
 
-    
+    const settingsPage = () => {
+        window.location.href = '/settings';
+    }
 
     const profileImage = profile.avatar_url || "/default-profile-picture.jpg";
 
@@ -61,7 +79,6 @@ export default async function MemberPage({ params }: { params: { username: strin
         <div className="member-page-box">
             <div className="member-layout">
                 <div className="member-container">
-
                     <div className="member-content">
                         <div className="member-profileSection">
                             <div className="member-profileImage">
@@ -70,6 +87,7 @@ export default async function MemberPage({ params }: { params: { username: strin
                                     alt="Profile"
                                     className="member-profileImageInner"
                                 />
+                                <OnlineStatusIcon userId={profile.id} />
                             </div>
                         </div>
 
@@ -78,21 +96,24 @@ export default async function MemberPage({ params }: { params: { username: strin
                             <h2 className="member-infoUsername">@{profile.username}</h2>
                         </div>
 
-                        <button className="member-editProfile-Button">Edit Profile</button>
+                        {await checkIfMemberOnThePageIsTheMemberThatIsLogin() && (
+                            <EditProfileButton />
+                        )}
 
                         <div className="member-user-details-info">
                             <p className="member-user-details-text">{getDate(profile.created_at)} joined</p>
-                            <p className="member-user-details-text"> 
-                                Last Online: {timeAgo(profile.last_sign_in_at)}
-                            </p>
                             <p className="member-user-details-text">
-                                <OnlineStatus userId={profile.id} />
+                                <LastOnlineStatus userId={profile.id} lastOnline={profile.last_online} />
                             </p>
                         </div>
                     </div>
+                    
 
 
                 </div>
+
+                <MemberNavbar username={profile.username} randomUsername={randomUsername} />
+                
             </div>
         </div>
     );

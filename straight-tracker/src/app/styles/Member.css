@@ -19,12 +19,151 @@
   box-sizing: border-box;
 }
 
+  .member-navbar {
+    background-color: rgb(255, 255, 255);
+    box-sizing: border-box;
+    border-radius: 24px;
+    margin: 0 auto;
+    max-width: 1624px;
+    padding: 0px 16px;
+    margin-top: 1%;
+    justify-content: center;
+    display: flex;
+    position: relative;
+  }
+
+  .member-navbar-link {
+    padding: 16px 32px;
+    position: relative;
+    text-decoration: none;
+    color: #333;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    outline: none;
+  }
+
+  .member-navbar-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 1px;
+    width: 0%;
+    height: 1px;
+    background-color: #2563eb;
+    transition: all 0.3s ease-out;
+    transform: translateX(-50%);
+  }
+
+  .member-navbar-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #111;
+  }
+
+  .member-navbar-link:hover::after {
+    width: 60%;
+  }
+
+  .member-navbar-link:active {
+    transform: scale(0.95);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dropdown styles */
+  .member-navbar-dropdown {
+    position: relative;
+    display: none; /* Hidden by default */
+  }
+
+  .member-navbar-more-button {
+    padding: 16px 32px;
+    position: relative;
+    text-decoration: none;
+    color: #333;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    outline: none;
+    font-size: inherit;
+    font-family: inherit;
+  }
+
+  .member-navbar-more-button::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 1px;
+    width: 0%;
+    height: 1px;
+    background-color: #2563eb;
+    transition: all 0.3s ease-out;
+    transform: translateX(-50%);
+  }
+
+  .member-navbar-more-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #111;
+  }
+
+  .member-navbar-more-button:hover::after {
+    width: 60%;
+  }
+
+  .member-navbar-dropdown-content {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropdownSlideIn 0.3s ease-out;
+  }
+
+  @keyframes dropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .member-navbar-dropdown-link {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .member-navbar-dropdown-link:last-child {
+    border-bottom: none;
+  }
+
+  .member-navbar-dropdown-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Desktop: show all links, hide dropdown */
+  .member-navbar-link-visible,
+  .member-navbar-link-desktop {
+    display: block;
+  }
+
 .member-layout {
   width: 95%;
   height: 120vh;
   margin: 0 auto;
   /* padding: 32px; */
-  background-color: rgb(34, 89, 199);
+  /* background-color: rgb(34, 89, 199); */
   border-radius: 24px;
   box-sizing: border-box;
 }
@@ -66,19 +205,22 @@
 
 .member-content {
   display: grid; 
-  gap: var(--space-16); 
+  gap: 32px; 
   grid-template-areas: 
   "avatar info actions"
   "avatar details details"; 
   grid-template-columns: auto 1fr auto; 
-  grid-template-rows: repeat(2,auto);
+  grid-template-rows: auto;
 }
 
-@media (min-width: 1024px) {
-  .member-content {
-    /* flex-direction: row; */
-    gap: 32px;
-  }
+.member-online-status-icon {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  width: 24px;
+  height: 24px;
+  font-size: 40px;
+  grid-area: avatar;
 }
 
 .member-profileSection {
@@ -86,12 +228,6 @@
   flex-direction: column;
   align-items: center;
   grid-area: avatar;
-}
-
-@media (min-width: 1024px) {
-  .member-profileSection {
-    align-items: flex-start;
-  }
 }
 
 .member-profileImage {
@@ -104,6 +240,7 @@
   border-radius: 9999px;
   /* margin-bottom: 16px; */
   flex-shrink: 0;
+  position: relative;
 }
 
 .member-editProfile-Button {
@@ -120,6 +257,20 @@
   padding: 16px;
   cursor: pointer;
   grid-area: actions;
+  align-self: start;
+}
+
+.member-editProfile-Button-container {
+  grid-area: actions;
+  align-self: start;
+  width: 100%;
+}
+
+.member-editProfile-Button-container .reactive-btn {
+  height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
 }
 .member-profileImageInner {
   width: 100%;
@@ -164,6 +315,7 @@
 .member-infoSection {
   flex: 1;
   margin-bottom: 5rem;
+  grid-area: info;
 }
 
 .error-message {
@@ -360,12 +512,6 @@
   margin-bottom: 16px;
 }
 
-@media (min-width: 1024px) {
-  .member-infoSection {
-    padding-top: 0px;
-  }
-}
-
 .member-infoTitle {
   font-size: 36px;
   font-weight: 400;
@@ -439,32 +585,77 @@
   animation: modalSlideIn 0.3s ease-out;
 }
 
+
+/* Tablet and smaller devices */
+@media (max-width: 1024px) {
+  .member-content {
+    grid-template-areas:
+      "avatar info"
+      "details details"
+      "actions actions";
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+  }
+
+  .member-profileSection {
+    align-items: center;
+  }
+
+  .member-editProfile-Button {
+    width: auto;
+    min-width: 200px;
+    align-self: start;
+  }
+
+  .member-infoSection {
+    margin-bottom: 0;
+  }
+}
+
+
+/* Mobile devices */
 @media (max-width: 768px) {
   .member-page-box {
-    padding-top: 32%;
+    padding-top: 10vh;
     padding-left: 16px;
     padding-right: 16px;
     padding-bottom: 4%;
-    
   }
 
   .member-container {
     padding: 24px;
   }
 
-  .member-title {
-    font-size: 24px;
+  .member-content {
+    grid-template-areas:
+      "avatar"
+      "info"
+      "details"
+      "actions";
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 
-  .member-content {
-    flex-direction: column;
-    gap: 32px;
+  .member-profileSection,
+  .member-infoSection,
+  .member-user-details-info {
+    align-items: center;
+    text-align: center;
+  }
+
+  .member-user-details-info {
+    justify-content: center;
   }
 
   .member-profileImage {
-    width: 240px;
-    height: 240px;
-    grid-area: avatar;
+    width: 180px;
+    height: 180px;
+  }
+
+  .member-online-status-icon {
+    bottom: 20px;
+    right: 20px;
+    font-size: 32px;
   }
 
   .member-infoTitle {
@@ -472,39 +663,57 @@
     text-align: center;
   }
 
-  .member-fieldRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .member-editProfile-Button {
+    width: 100%;
+    align-self: center;
   }
 
-  .member-editButton {
-    margin-left: 0;
-    align-self: flex-end;
+  .member-editProfile-Button-container {
+    width: 100%;
+    align-self: center;
   }
 
   .member-modal-content {
     width: 90%;
   }
-}
 
-@media (max-width: 480px) {
-  .member-page-box {
-    padding-top: 20%;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 4%;
-    
+  /* Mobile navbar adjustments */
+  .member-navbar {
+    padding: 0px 8px;
+    flex-wrap: wrap;
   }
 
+  .member-navbar-link {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  /* Hide desktop-only links on mobile */
+  .member-navbar-link-desktop {
+    display: none;
+  }
+
+  /* Show dropdown button on mobile */
+  .member-navbar-dropdown {
+    display: block;
+  }
+}
+
+/* Smaller mobile devices */
+@media (max-width: 480px) {
   .member-container {
     padding: 16px;
   }
 
   .member-profileImage {
-    width: 240px;
-    height: 240px;
-    grid-area: avatar;
+    width: 150px;
+    height: 150px;
+  }
+
+  .member-online-status-icon {
+    bottom: 15px;
+    right: 15px;
+    font-size: 28px;
   }
 
   .member-infoTitle {
@@ -512,7 +721,7 @@
   }
 
   .member-modal-content {
-    width: 80%;
+    width: 95%;
     padding: 16px;
   }
 
@@ -522,5 +731,26 @@
 
   .member-modal-body {
     padding: 1rem;
+  }
+
+  /* Smaller navbar for very small screens */
+  .member-navbar-link {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .member-navbar-more-button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .member-navbar-dropdown-content {
+    min-width: 160px;
+    right: -20px;
+  }
+
+  .member-navbar-dropdown-link {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }
