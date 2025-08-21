@@ -29,7 +29,7 @@ export const LastOnlineStatus = ({ userId, lastOnline }: { userId: string, lastO
     const isOnline = onlineUsers.includes(userId);
 
     if (isLoading) {
-        return <span>...</span>; // Prevents flicker while loading live status
+        return <span>...</span>; 
     }
 
     return (

@@ -11,10 +11,15 @@ type Presence = {
 
 type PresenceContextType = {
     onlineUsers: string[];
+    onlineCount: number;
     isLoading: boolean;
 };
 
-const PresenceContext = createContext<PresenceContextType>({ onlineUsers: [], isLoading: true });
+const PresenceContext = createContext<PresenceContextType>({ 
+    onlineUsers: [], 
+    onlineCount: 0, 
+    isLoading: true 
+});
 
 const openTabsKey = 'open-tabs-counter';
 
@@ -89,7 +94,7 @@ export const PresenceProvider = ({ children }: { children: React.ReactNode}) => 
     }, [supabase]);
 
     return (
-        <PresenceContext.Provider value={{ onlineUsers, isLoading }}>
+        <PresenceContext.Provider value={{ onlineUsers, onlineCount: onlineUsers.length, isLoading }}>
             {children}
         </PresenceContext.Provider>
     );
