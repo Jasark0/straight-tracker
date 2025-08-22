@@ -30,6 +30,10 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
         window.location.href = '/settings';
     }
 
+    const memberPage = () => {
+        window.location.href = '/member/' + user.user_metadata?.username;
+    }
+
     const signinPage = () => {
         router.push('/signin');
     }
@@ -130,6 +134,10 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
                                 />
                                 {profileVisible && (
                                     <div className={`header-profile-dropdown header-slide-fade ${profileHovered ? "show" : "hide"}`}>
+                                        <button className="header-profile-dropdown-button" onClick={memberPage}>
+                                            <span className="header-profile-dropdown-icon">👤</span>
+                                            <span className="header-profile-dropdown-text">Profile</span>
+                                        </button>
                                         <button className="header-profile-dropdown-button" onClick={settingsPage}>
                                             <span className="header-profile-dropdown-icon">⚙️</span>
                                             <span className="header-profile-dropdown-text">Settings</span>

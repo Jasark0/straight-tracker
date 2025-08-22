@@ -8,6 +8,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Loading from '@/src/components/PageLoading'
+import { LastOnlineStatus } from '../components/LastOnlineStatus';
+import { OnlinePlayerCount } from '@/src/components/OnlinePlayerCount';
 
 export default function Home() {
     const router = useRouter();
@@ -161,7 +163,12 @@ export default function Home() {
                             </p>
                             <button className="home-guest-button" onClick={handleGuest}>🎯 Continue as a Guest — Start a Match</button>
                         </div>)}
+
+                        <div className="home-online-indicator">
+                        <OnlinePlayerCount />
                     </div>
+                    </div>
+                    
                 </section>
 
                 <div className="home-features-container">

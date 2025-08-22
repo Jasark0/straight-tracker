@@ -38,6 +38,7 @@ export async function GET(request: Request) {
                 .single();
 
             let username: string;
+            let avatar_url: string | undefined;
 
             if (!existingUser) {
                 let usernameIsUnique = false;
@@ -80,13 +81,15 @@ export async function GET(request: Request) {
                 }
             } else {
                 username = existingUser.username;
+                avatar_url = existingUser.avatar_url;
             }
 
             const { data: updatedUser, error} = await supabase.auth.updateUser({
                 data: {
                     display_name: username,
                     username: username, 
-                    nickname: data?.user?.user_metadata?.nickname || null
+                    nickname: data?.user?.user_metadata?.nickname || null,
+                    avatar_url: avatar_url
                 }
             })
             

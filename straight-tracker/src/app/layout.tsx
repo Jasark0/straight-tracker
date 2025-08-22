@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { createClient } from "@/utils/supabase/server";
+import { PresenceProvider } from '@/src/components/PresenceProvider';
 
 import Maintenance from '@/src/components/Maintenance';
 import ConditionalHeader from '../components/ConditionalHeader'
@@ -41,12 +42,14 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className}`}>
+                <PresenceProvider>
             <div>
                 { <ConditionalHeader user={user}/>}
                 <main>
                     {children}
                 </main>
             </div>
+                </PresenceProvider>
             </body>
         </html>
     )
