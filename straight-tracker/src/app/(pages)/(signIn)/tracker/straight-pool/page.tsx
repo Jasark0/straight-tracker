@@ -869,7 +869,7 @@ const Tracker: React.FC = () => {
                                 <button className="tracker-player1-increment help" disabled>
                                     -
                                 </button>
-                                <strong>(Increment Button)</strong>: Press this when a player fouls. 
+                                <strong>(Decrement Button)</strong>: Press this when a player fouls. 
                             </li>
                             <li>
                                 <strong>Undo</strong>: Undo the last action (miss/increment/decrement/CR).
