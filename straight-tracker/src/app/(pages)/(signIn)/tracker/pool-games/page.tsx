@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from '@mdi/react';
-import { mdiCog } from '@mdi/js';
+import { mdiHelpCircle, mdiCog } from '@mdi/js';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,8 +15,11 @@ const Tracker: React.FC = () => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
+    const [helpModal, setHelpModal] = useState(false);
+
     const matchID = searchParams.get('matchID');
     const [id, setId] = useState<number>();
+    const [gameType, setGameType] = useState<8|9|10>();
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
@@ -332,6 +335,7 @@ const Tracker: React.FC = () => {
                     return;
                 }
 
+                setGameType(json.poolMatch.game_type);
                 setGameName(json.poolMatch.game_name);
                 setPlayer1(json.poolMatch.player1);
                 setPlayer2(json.poolMatch.player2);
@@ -428,9 +432,16 @@ const Tracker: React.FC = () => {
     return (
         <div className="tracker-page-container">
             <ToastContainer className="s-toast-warning"/>
-            <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
-                <Icon path={mdiCog} size={1} />
-            </button>
+
+            <div className="tracker-help-gear-container">
+                <button className="tracker-help-button" onClick={() => {setHelpModal(true)}}>
+                    <Icon path={mdiHelpCircle} size={1} />
+                </button>
+
+                <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
+                    <Icon path={mdiCog} size={1} />
+                </button>
+            </div>
             
             <p className="tracker-game-name-text">
                 {gameName}  
@@ -488,65 +499,101 @@ const Tracker: React.FC = () => {
             <img src="/divider.png" className="tracker-divider-css"></img>
             
             <div className="tracker-score-container">
-                    <div className="tracker-player1-container">
-                        <p className="tracker-player1-name-text">
-                            {player1}
-                        </p>
-
-                        <div className="tracker-player1-score-container">
-                            <p className="tracker-player-score-text player1">
-                                {player1Score}
-                            </p>
-                            <button className="tracker-player1-increment" onClick={incrementPlayer1}>
-                                +
-                            </button>
-                        </div>
-
-                        {sets && (
-                            <div className="tracker-player1-sets-container">
-                                <p className="tracker-player-set-text player1">
-                                    {player1Set}
-                                </p>
-                                <p className="tracker-player-set-label">
-                                    Sets
-                                </p>
-                            </div>
-                        )}    
-                    </div>
-                    
-                    <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
-
-                    <div className="tracker-player2-container">
-                        <p className="tracker-player2-name-text">
-                            {player2}
-                        </p>
-
-                        <div className="tracker-player2-score-container">
-                            <p className="tracker-player-score-text player2">
-                                {player2Score}
-                            </p>
-                            <button className="tracker-player2-increment" onClick={incrementPlayer2}>
-                                +
-                            </button>
-                        </div>
-
-                        {sets && (
-                            <div className="tracker-player2-sets-container">
-                                <p className="tracker-player-set-text player2">
-                                    {player2Set}
-                                </p>
-                                <p className="tracker-player-set-label">
-                                    Sets
-                                </p>
-                            </div>
-                        )}
-                    </div>
-
-                    <p className="tracker-flip-text">
-                        Tips: flip your screen for better display!
+                <div className="tracker-player1-container">
+                    <p className="tracker-player1-name-text">
+                        {player1}
                     </p>
+
+                    <div className="tracker-player1-score-container">
+                        <p className="tracker-player-score-text player1">
+                            {player1Score}
+                        </p>
+                        <button className="tracker-player1-increment" onClick={incrementPlayer1}>
+                            +
+                        </button>
+                    </div>
+
+                    {sets && (
+                        <div className="tracker-player1-sets-container">
+                            <p className="tracker-player-set-text player1">
+                                {player1Set}
+                            </p>
+                            <p className="tracker-player-set-label">
+                                Sets
+                            </p>
+                        </div>
+                    )}    
+                </div>
+                    
+                <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
+
+                <div className="tracker-player2-container">
+                    <p className="tracker-player2-name-text">
+                        {player2}
+                    </p>
+
+                    <div className="tracker-player2-score-container">
+                        <p className="tracker-player-score-text player2">
+                            {player2Score}
+                        </p>
+                        <button className="tracker-player2-increment" onClick={incrementPlayer2}>
+                            +
+                        </button>
+                    </div>
+
+                    {sets && (
+                        <div className="tracker-player2-sets-container">
+                            <p className="tracker-player-set-text player2">
+                                {player2Set}
+                            </p>
+                            <p className="tracker-player-set-label">
+                                Sets
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                <p className="tracker-flip-text">
+                    Tips: flip your screen for better display!
+                </p>
             </div>
             
+            {helpModal && (
+                <div className="tracker-help-modal" onClick={() => setHelpModal(false)}>
+                    <div className="tracker-help-modal-content" onClick={(e) => {e.stopPropagation()}}>
+                        <p className="tracker-help-title-text">How to Use the {gameType}-Ball Tracker</p>
+
+                        <ul className="tracker-help-list">
+                            <li>
+                                <button className="tracker-player1-increment help" disabled>
+                                    +
+                                </button>
+                                <strong>(Increment Button)</strong>: Press this when a player wins the rack / pots the {gameType}-ball legally.
+                            </li>
+                            <li>
+                                <strong>Undo</strong>: Undo the last action / decrements the last player's score.
+                            </li>
+                            <li>
+                                <button className="tracker-gear-button" onClick={handleConfigureGame}>
+                                    <Icon path={mdiCog} size={1}/> 
+                                </button>
+                                <strong> Configure Match</strong>:
+                                Configure match settings such as race to, enabling/disabling sets, updating game name/player names.
+                                Click it to update match settings.
+                            </li>
+                            <li>
+                                <strong>Winner Prompt</strong>: A winner will be displayed when a player reaches the required score.
+                            </li>
+                        </ul>
+
+                        <div className="tracker-help-button-container">
+                            <button className="tracker-help-close-button" onClick={() => {setHelpModal(false)}}>
+                                Got it!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {winner && (
                 <div className="tracker-winner-modal">

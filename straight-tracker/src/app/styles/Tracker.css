@@ -10,27 +10,41 @@
 }
 
 
-/* Gear CSS */
+/* Help & Gear CSS */
 
-.tracker-gear-button{
+.tracker-help-gear-container{
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: absolute;
-    top: 7.2rem;
-    right: 1.5rem;
+    top: 7rem;
+    left: 0;
+    right: 0;
+    padding: 0 1.5rem;
+    z-index: 10;
+}
+
+.tracker-help-button, .tracker-gear-button{
     border: none;
     border-radius: 50%;
     background-color: #F0F1D3;
-    padding: 0.6rem;
+    width: 2.5rem;
+    height: 2.5rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition:
         background 0.3s ease,
         transform 0.2s ease,
         box-shadow 0.2s ease;
-    z-index: 10;
 }
 
-.tracker-gear-button:hover {
+.tracker-help-button:hover {
+    background-color: #e6e7c9;   /* slightly darker than #F0F1D3 */
+    transform: scale(1.05);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.tracker-gear-button:hover{
     transform: rotate(15deg) scale(1.1);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
@@ -150,9 +164,10 @@
     display: flex;
     justify-content: center;
     margin: 0;
-    font-size: 14rem;
+    font-size: 12rem;
     font-weight: bold;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 0;
 }
 
 .tracker-player-score-text.player1{
@@ -219,6 +234,14 @@
     box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2);
 }
 
+.tracker-player1-increment.help, .tracker-player2-increment.help{
+    display: inline-block; 
+    vertical-align: middle;
+    margin-right: 0.4rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+}
 
 /* Sets CSS */
 
@@ -321,6 +344,81 @@
 }
 
 
+/* Help Modal CSS */
+
+.tracker-help-modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.tracker-help-modal-content{
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 35rem;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: left;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.tracker-help-modal-content::-webkit-scrollbar{
+    width: 8px;
+}
+
+.tracker-help-modal-content::-webkit-scrollbar-thumb{
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.tracker-help-title-text{
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.tracker-help-list{
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.tracker-help-list li{
+    margin-bottom: 0.3rem;
+}
+
+.tracker-help-button-container{
+    display: flex;
+    justify-content: center;
+}
+
+.tracker-help-close-button{
+    background-color: #eeefc7;
+    border: none;
+    border-radius: 1rem;
+    padding: 0.9rem 1.6rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.tracker-help-close-button:hover{
+    background-color: #e2e4bc;
+    transform: scale(1.05);
+}
+
+
 /* Winner Modal CSS */
 
 .tracker-winner-modal{
@@ -380,7 +478,11 @@
         min-height: calc(100vh - 4rem);
         padding-top: 4rem;
     }
-    
+
+    .tracker-help-modal-content{
+        max-width: 30rem;
+    }
+
     .tracker-gear-button{
         top: 4.2rem;
         right: 0.5rem;
@@ -442,6 +544,10 @@
         align-items: center;
         justify-content: center;
         gap: 0;
+    }
+
+    .tracker-help-modal-content{
+        max-width: 18rem;
     }
 
     .tracker-player-score-text{

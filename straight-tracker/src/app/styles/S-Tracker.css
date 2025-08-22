@@ -114,9 +114,10 @@
 
 .s-score-container{
     display: grid;
-    grid-template-columns: 1fr 2fr auto;
+    grid-template-columns: auto max-content auto;
     align-items: center;
     justify-content: center;
+    gap: 2rem;
 }
 
 .s-increment-container{
@@ -159,59 +160,6 @@
     left: 5px;
     border: 1px solid black;
     transition: 0ms;
-}
-
-.s-CR-container{
-    display: inline-flex;
-    gap: 1rem;
-}
-
-.s-CR-icon{
-    border: none;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 12px;
-    cursor: pointer;
-    position: relative;
-    margin-top: 2.5vh;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    background-color: black;
-    color: white;
-    align-items: center;
-}
-
-.s-CR-icon:hover{
-    border: 1px solid black;
-    background-color: rgb(64, 63, 61);
-    transition: 0.15s ease;
-}
-
-.s-CR-icon:hover::after{
-    opacity: 1;
-}
-
-.s-CR-icon::after {
-    content: "CR (Clear Rack): Player clears current rack moving onto next rack.";
-    position: absolute;
-    bottom: 150%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgb(38, 38, 38);
-    color: white;
-    padding: 6px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-}
-
-.s-CR-icon:focus{
-    outline: none;
 }
 
 .s-player1-score{

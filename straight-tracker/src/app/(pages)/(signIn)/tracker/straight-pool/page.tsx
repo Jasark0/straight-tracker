@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
 import Icon from '@mdi/react';
-import { mdiCog } from '@mdi/js';
+import { mdiHelpCircle, mdiCog } from '@mdi/js';
 import { useSearchParams, usePathname } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,6 +15,8 @@ const Tracker: React.FC = () => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     
+    const [helpModal, setHelpModal] = useState(false);
+
     const matchID = searchParams.get('matchID');
     const [gameName, setGameName] = useState('');
     const [player1, setPlayer1] = useState('');
@@ -751,9 +753,15 @@ const Tracker: React.FC = () => {
     return (
         <div className="s-page-container">  
             <ToastContainer className="s-toast-warning"/>
-            <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
-                <Icon path={mdiCog} size={1} />
-            </button>
+            <div className="tracker-help-gear-container">
+                <button className="tracker-help-button" onClick={() => {setHelpModal(true)}}>
+                    <Icon path={mdiHelpCircle} size={1} />
+                </button>
+
+                <button className="tracker-gear-button" onClick={handleConfigureGame} title="Configure Match">
+                    <Icon path={mdiCog} size={1} />
+                </button>
+            </div>
 
             <p className="s-game-name-text">
                 {gameName}
@@ -772,17 +780,18 @@ const Tracker: React.FC = () => {
 
             <div className="s-player-container">
                 <div className="s-player1-container">
-                    <p id = "player1" className="s-player1-name">{player1}</p>
+                    <p id = "player1" className="tracker-player1-name-text">{player1}</p>
+
                     {player1Foul > 0 && (<p className="s-player1-foul">{player1} is on {player1Foul} foul.</p>)}
+
                     <div className="s-score-container">
-                        <button className="s-decrement-button" onClick={decrementPlayer1}>-</button>
-                        <p className="s-player1-score">{player1Score}</p>
+                        <button className="tracker-player1-increment" onClick={decrementPlayer1}>-</button>
+                        <p className="tracker-player-score-text player1">
+                            {player1Score}
+                        </p>
                         <div className="s-increment-container">
-                            <button className="s-increment-button" onClick={incrementPlayer1}>+</button>
-                            <div className="s-CR-container">
-                                <button className="s-increment-button" onClick={clearRackPlayer1}>CR</button>
-                                <button className="s-CR-icon">i</button>
-                            </div>
+                            <button className="tracker-player1-increment" onClick={incrementPlayer1}>+</button>
+                            <button className="tracker-player1-increment" onClick={clearRackPlayer1}>CR</button>
                         </div>
                     </div>
         
@@ -798,10 +807,11 @@ const Tracker: React.FC = () => {
                     <p className="s-to-shoot-text"> 
                         {toShoot === 1 ? `${player1}` : `${player2}`} to shoot!
                     </p>
+
                     <div className="arrow-container">
                         <img src={toShoot === 1 ? "/leftArrow.png" : "/rightArrow.png"} className="arrow-image-style" id="player-turn"></img>
-                        <div className="player-turn-text-style" id="player-turn-text">
-                        </div>
+                        
+                        <div className="player-turn-text-style" id="player-turn-text"></div>
                         <div className="player-swap-text-container">
                             <div className="player-swap-text-style">
                                 (Press 
@@ -814,18 +824,23 @@ const Tracker: React.FC = () => {
                             </div>
                         </div>
                     </div>
+
                     <button className="tracker-undo-button" onClick={handleUndo} disabled={actionHistory.length === 0}>Undo</button>
                 </div>
 
                 <div className="s-player2-container">
-                    <p id = "player2" className="s-player2-name">{player2}</p>
+                    <p id = "player2" className="tracker-player2-name-text">{player2}</p>
+
                     {player2Foul > 0 && (<p className="s-player2-foul">{player2} is on {player2Foul} foul.</p>)}
+
                     <div className="s-score-container">
-                        <button className="s-decrement-button" onClick={decrementPlayer2}>-</button>
-                        <p className="s-player2-score">{player2Score}</p>
+                        <button className="tracker-player2-increment" onClick={decrementPlayer2}>-</button>
+                        <p className="tracker-player-score-text player2">
+                            {player2Score}
+                        </p>
                         <div className="s-increment-container">
-                            <button className="s-increment-button" onClick={incrementPlayer2}>+</button>
-                            <button className="s-increment-button" onClick={clearRackPlayer2}>CR</button>
+                            <button className="tracker-player2-increment" onClick={incrementPlayer2}>+</button>
+                            <button className="tracker-player2-increment" onClick={clearRackPlayer2}>CR</button>
                         </div>     
                     </div>
 
@@ -837,6 +852,49 @@ const Tracker: React.FC = () => {
                     </div>
                 </div>
             </div>
+            
+            {helpModal && (
+                <div className="tracker-help-modal" onClick={() => setHelpModal(false)}>
+                    <div className="tracker-help-modal-content" onClick={(e) => {e.stopPropagation()}}>
+                        <p className="tracker-help-title-text">How to Use the Straight Pool Tracker</p>
+
+                        <ul className="tracker-help-list">
+                            <li>
+                                <button className="tracker-player1-increment help" disabled>
+                                    +
+                                </button>
+                                <strong>(Increment Button)</strong>: Press this when a player makes a shot.
+                            </li>
+                            <li>
+                                <button className="tracker-player1-increment help" disabled>
+                                    -
+                                </button>
+                                <strong>(Increment Button)</strong>: Press this when a player fouls. 
+                            </li>
+                            <li>
+                                <strong>Undo</strong>: Undo the last action (miss/increment/decrement/CR).
+                            </li>
+                            <li>
+                                <button className="tracker-gear-button" onClick={handleConfigureGame}>
+                                    <Icon path={mdiCog} size={1}/> 
+                                </button>
+                                <strong> Configure Match</strong>:
+                                Configure match settings such as race to, updating game name/player names.
+                                Click it to update match settings.
+                            </li>
+                            <li>
+                                <strong>Winner Prompt</strong>: A winner will be displayed when a player reaches the required score.
+                            </li>
+                        </ul>
+
+                        <div className="tracker-help-button-container">
+                            <button className="tracker-help-close-button" onClick={() => {setHelpModal(false)}}>
+                                Got it!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {winner && (
                 <div className="tracker-winner-modal">
