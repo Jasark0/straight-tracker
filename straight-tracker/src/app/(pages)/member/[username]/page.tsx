@@ -22,7 +22,7 @@ type Profile = {
 };
 
 export default async function MemberPage({ params }: { params: { username: string } }) {
-    const { username } = await params;
+    const { username } = params;
     const { data: profile, error } = await getPublicProfile(username);
     
     if (error || !profile) {
