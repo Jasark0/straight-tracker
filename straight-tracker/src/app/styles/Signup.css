@@ -3,8 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 6rem);
-    padding-top: 6rem;
+    min-height: calc(100vh - 6rem);
+    padding: 6rem 1rem 2rem 1rem;
 }
 
 .signup-container{
@@ -12,8 +12,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    width: 30vw;
-    padding: 2rem 4rem;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
     border: 1px solid #ccc;
     border-radius: 10px;
     background-color: #f1f1f1;
@@ -22,13 +23,14 @@
 }
 
 .signup-title-text{
-    margin: 0;
-    font-size: 2rem;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.8rem;
     text-align: center;
     color: #333;
 }
 
 .signup-form-group{
+    width: 100%;
     margin-bottom: 0.75rem;
 }
 
@@ -40,21 +42,25 @@
 }
 
 .signup-form-group input{
-    width: 25vw;
+    width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 6px;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .signup-username-taken-text{
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: red;
+    margin-top: 0.2rem;
 }
 
 .signup-email-taken-text{
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: red;
+    margin-top: 0.2rem;
 }
 
 .signup-error-message{
@@ -88,6 +94,7 @@
     color: #3531ff;
     cursor: pointer;
     transition: 0.2s ease;
+    font-size: 0.9rem;
 }
 
 .signup-already-text:hover{
@@ -102,8 +109,8 @@
 }
 
 .signup-google-icon{
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
     border: 1px solid rgb(196, 196, 196);
     border-radius: 50%;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -114,4 +121,144 @@
 .signup-google-icon:hover{
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Tablet Styles */
+@media (max-width: 768px) {
+    .signup-page-container {
+        padding: 4rem 2rem 2rem 2rem;
+    }
+    
+    .signup-container {
+        padding: 1.8rem 1.5rem;
+        max-width: 450px;
+        margin: 0 1rem;
+    }
+    
+    .signup-title-text {
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .signup-form-group input {
+        padding: 0.7rem;
+        font-size: 0.95rem;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .signup-button {
+        padding: 0.9rem;
+        font-size: 1.1rem;
+    }
+    
+    .signup-google-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 480px) {
+    .signup-page-container {
+        padding: 2rem 1rem 1rem 1rem;
+        min-height: 100vh;
+    }
+    
+    .signup-container {
+        padding: 1.5rem 1rem;
+        margin: 0 1rem;
+        max-width: none;
+        width: calc(100% - 2rem);
+        border-radius: 8px;
+    }
+    
+    .signup-title-text {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .signup-form-group {
+        margin-bottom: 0.6rem;
+    }
+    
+    .signup-form-group input {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+        border-radius: 5px;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .signup-form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .signup-username-taken-text,
+    .signup-email-taken-text {
+        font-size: 0.8rem;
+    }
+    
+    .signup-button {
+        padding: 0.8rem;
+        font-size: 1rem;
+        border-radius: 5px;
+    }
+    
+    .signup-already-text {
+        font-size: 0.8rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .signup-or-text {
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+    
+    .signup-google-icon {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 320px) {
+    .signup-page-container {
+        padding: 2rem 0.75rem 1rem 0.75rem;
+    }
+    
+    .signup-container {
+        padding: 1rem 0.8rem;
+        margin: 0 0.75rem;
+        width: calc(100% - 1.5rem);
+    }
+    
+    .signup-title-text {
+        font-size: 1.2rem;
+    }
+    
+    .signup-form-group {
+        margin-bottom: 0.5rem;
+    }
+    
+    .signup-form-group input {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .signup-form-group label {
+        font-size: 0.85rem;
+    }
+    
+    .signup-button {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+    
+    .signup-username-taken-text,
+    .signup-email-taken-text {
+        font-size: 0.75rem;
+    }
 }
