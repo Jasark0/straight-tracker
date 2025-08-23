@@ -33,6 +33,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@wixc3/react-board": "^4.6.2",
+    "code-inspector-plugin": "^1.2.2",
     "typescript": "^5"
   }
 }

@@ -22,6 +22,10 @@
     overflow-y: auto;
 }
 
+.signup-container form {
+    width: 100%; 
+}
+
 .signup-title-text{
     margin: 0 0 1.5rem 0;
     font-size: 1.8rem;
@@ -32,6 +36,8 @@
 .signup-form-group{
     width: 100%;
     margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .signup-form-group label{
@@ -39,6 +45,8 @@
     margin-bottom: 0.2rem;
     font-weight: 500;
     color: black;
+    width: 100%;
+    text-align: left;
 }
 
 .signup-form-group input{
@@ -71,21 +79,6 @@
     color: red;
 }
 
-.signup-button{
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.2rem;
-    color: white;
-    background-color: #0077ff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.signup-button:hover{
-    background-color: #005fdd;
-}
 
 .signup-already-text{
     display: flex;
@@ -179,7 +172,9 @@
     }
     
     .signup-form-group {
+        width: 100%; 
         margin-bottom: 0.6rem;
+        align-items: stretch; 
     }
     
     .signup-form-group input {
@@ -187,16 +182,8 @@
         font-size: 0.9rem;
         border-radius: 5px;
         width: 100%;
-        margin: 0;
-    }
-    
-    .signup-form-group label {
-        font-size: 0.9rem;
-    }
-    
-    .signup-username-taken-text,
-    .signup-email-taken-text {
-        font-size: 0.8rem;
+        max-width: none; 
+        margin: 0; 
     }
     
     .signup-button {

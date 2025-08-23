@@ -1,7 +1,25 @@
-import type { NextConfig } from "next";
+// next.config.js
+import type { NextConfig } from 'next';
+import { codeInspectorPlugin } from 'code-inspector-plugin';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Configure for both webpack and turbopack
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      config.plugins.push(
+        codeInspectorPlugin({
+          bundler: 'webpack',
+        })
+      );
+    }
+    return config;
+  },
+  
+  turbopack: {
+    rules: codeInspectorPlugin({
+      bundler: 'turbopack',
+    }),
+  },
 };
 
 export default nextConfig;

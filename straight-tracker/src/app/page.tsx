@@ -8,7 +8,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Loading from '@/src/components/PageLoading'
-import { LastOnlineStatus } from '../components/LastOnlineStatus';
 import { OnlinePlayerCount } from '@/src/components/OnlinePlayerCount';
 import { Probe } from '../components/Probe';
 
@@ -152,7 +151,6 @@ export default function Home() {
     return (
         <div className="home-page-container">  
             <ToastContainer className="home-toast"/>
-            <Probe />
             <div className="home-center-container">
                 <section className={user ? "home-center-section home-center-auth" : "home-center-section"}>
                     <div className="home-center-content">

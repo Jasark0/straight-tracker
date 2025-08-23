@@ -16,7 +16,7 @@
 .signin-container{
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; 
     justify-content: flex-start;
     width: 100%;
     max-width: 500px;
@@ -27,6 +27,13 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.signin-container form {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
 .signin-title-text{
     margin-bottom: 2rem;
     font-size: 1.8rem;
@@ -35,8 +42,10 @@
 }
 
 .signin-form-group{
-    width: 100%;
+    width: 100%; 
     margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .signin-form-group label{
@@ -44,6 +53,8 @@
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: black;
+    width: 100%;
+    text-align: left;
 }
 
 .signin-form-group input{
@@ -110,6 +121,7 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     object-fit: cover;
     transition: 0.15s ease;
+    align-self: center; 
 }
 
 .signin-google-icon:hover{
@@ -155,25 +167,30 @@
 /* Mobile Styles */
 @media (max-width: 480px) {
     .signin-page-container {
-        padding: 2rem 1rem 1rem 1rem;
+        padding: 2rem 0.5rem 1rem 0.5rem; 
         min-height: 100vh;
     }
     
     .signin-container {
-        padding: 1.5rem 1rem;
-        margin: 0 1rem;
+        padding: 1.5rem 0.75rem; 
+        margin: 0 0.5rem;
         max-width: none;
-        width: calc(100% - 2rem);
+        width: calc(100% - 2rem); 
         border-radius: 8px;
+        align-items: stretch; 
     }
     
     .signin-title-text {
         font-size: 1.4rem;
         margin-bottom: 1.5rem;
+        text-align: center;
     }
     
     .signin-form-group {
         margin-bottom: 1rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .signin-form-group input {
@@ -182,22 +199,26 @@
         border-radius: 5px;
         width: 100%;
         margin: 0;
+        max-width: none;
     }
     
     .signin-button {
         padding: 0.8rem;
         font-size: 1rem;
         border-radius: 5px;
+        width: 100%;
     }
     
     .signin-dont-text, .signin-forgot-text {
         font-size: 0.8rem;
         margin-bottom: 0.4rem;
+        justify-content: center;
     }
     
     .signin-or-text {
         font-size: 0.9rem;
         margin: 0.5rem 0;
+        justify-content: center;
     }
     
     .signin-google-icon {
@@ -209,13 +230,13 @@
 /* Small Mobile Styles */
 @media (max-width: 320px) {
     .signin-page-container {
-        padding: 2rem 0.75rem 1rem 0.75rem;
+        padding: 2rem 0.25rem 1rem 0.25rem; 
     }
     
     .signin-container {
-        padding: 1rem 0.8rem;
-        margin: 0 0.75rem;
-        width: calc(100% - 1.5rem);
+        padding: 1rem 0.5rem; 
+        margin: 0 0.25rem;
+        width: calc(100% - 0.5rem);
     }
     
     .signin-title-text {
@@ -232,5 +253,6 @@
     .signin-button {
         padding: 0.7rem;
         font-size: 0.9rem;
+        width: 100%;
     }
 }

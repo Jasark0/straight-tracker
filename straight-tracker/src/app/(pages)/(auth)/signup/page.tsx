@@ -260,7 +260,6 @@ const Signup: React.FC = () => {
                         width={"100%"}
                         size='large'
                         color={reactiveButtonColor}
-                        className="signup-button"
                     />
                 </form>
 
