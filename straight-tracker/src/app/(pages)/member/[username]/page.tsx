@@ -21,8 +21,8 @@ type Profile = {
     last_online: string | null;
 };
 
-export default async function MemberPage({ params }: { params: { username: string } }) {
-    const { username } = params;
+export default async function MemberPage({ params }: { params: Promise<{ username: string }> }) {
+    const { username } = await params;
     const { data: profile, error } = await getPublicProfile(username);
     
     if (error || !profile) {
