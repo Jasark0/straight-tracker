@@ -12,7 +12,6 @@ import { toast ,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReactiveButton from 'reactive-button';
 
-
 export default function SettingsPage() {
   const router = useRouter();
 
@@ -59,7 +58,6 @@ export default function SettingsPage() {
     };
     fetchUser();
   }, []);
-
 
   const resetStates = () => {
     setState('idle');
@@ -110,8 +108,6 @@ export default function SettingsPage() {
       }, 400); 
     }, 2500); 
   }
-
-
 
   const handleMouseDown = () => {
     setIsSelecting(true);
@@ -267,7 +263,6 @@ export default function SettingsPage() {
     return `${censoredLocalPart}@${domain}`;
   };
 
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -301,7 +296,6 @@ export default function SettingsPage() {
     resetStates();
   }
 
-
   const nickname = user?.user_metadata?.nickname;
   const username = user?.user_metadata?.username;
   const email = user?.email || "No Email";
@@ -318,9 +312,6 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        <div className="settings-content">
-          <div className="settings-profileSection">
-            <div className="settings-profileImage">
         {/* Navigation Tabs */}
         <div className="settings-navbar">
           <div className="settings-nav-tabs">
@@ -524,6 +515,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* Modals */}
       {showChangeUsernameModal && (
         <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, closeUsernameModal)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
@@ -551,7 +543,6 @@ export default function SettingsPage() {
                 <div className="change-display-name-feedback-container">
                   <span className="count-down">{newUsername.length}/20</span>
                 </div>
-
               </div>
               <div className="settings-modal-footer">
                 <ReactiveButton 
@@ -578,7 +569,6 @@ export default function SettingsPage() {
         </div>
       )}
 
-
       {showChangeEmailModal && (
         <div className="modal-overlay" onClick={(e) => handleOverlayClick(e, closeEmailModal)}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}
@@ -586,7 +576,7 @@ export default function SettingsPage() {
             onMouseUp={handleMouseUp}>
             <div className="settings-modal-header">
               <button type="button" className="close-button" title="Close" onClick={closeEmailModal}>
-                <span>&times;</span> {/* A simple 'x' for the close icon */}
+                <span>&times;</span>
               </button>
               <h4 className="modal-title">Change Email</h4>
             </div>
@@ -595,7 +585,6 @@ export default function SettingsPage() {
               onClickHandler(() => handleEmailChange(e));
             }}>
               <div className="settings-modal-body">
-
                 <div className="settings-form-group">
                   <input
                     type="email"
@@ -695,7 +684,6 @@ export default function SettingsPage() {
         </div>
       )}
 
-
       {showChangeNicknameModal && (
         <div className="modal-overlay" onClick={(e) => {
           handleOverlayClick(e, closeNicknameModal);
@@ -753,8 +741,6 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-
-
     </div>
   );
 }
