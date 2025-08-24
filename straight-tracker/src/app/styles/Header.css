@@ -252,6 +252,14 @@
         gap: 0.8rem;
     }
 
+    .header-learn-more-button{
+        display: none;
+    }
+
+    .header-contact-us-button{
+        display: none;
+    }
+    
     .header-my-games-button{
         padding: 0.6rem 1.2rem;
         font-size: 0.8rem;
