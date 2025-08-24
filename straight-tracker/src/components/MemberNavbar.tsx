@@ -40,7 +40,7 @@ export const MemberNavbar: React.FC<MemberNavbarProps> = ({ username, randomUser
             <a href={`/member/${username}`} className='member-navbar-link member-navbar-link-visible'>
                 Overview
             </a>
-            <a href={`/member/${username}`} className='member-navbar-link member-navbar-link-visible'>
+            <a href={`/member/${username}/stats`} className='member-navbar-link member-navbar-link-visible'>
                 Stats
             </a>
             

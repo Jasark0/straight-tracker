@@ -35,6 +35,7 @@ export default function SettingsPage() {
   const [errorAnimationClass, setErrorAnimationClass] = useState('');
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [activeTab, setActiveTab] = useState('account');
   
   let reactiveButtonColor = 'blue';
 
@@ -320,81 +321,206 @@ export default function SettingsPage() {
         <div className="settings-content">
           <div className="settings-profileSection">
             <div className="settings-profileImage">
-              {profileImage ? (
-                <img
-                  src={profileImage}
-                  alt="Profile"
-                  className="settings-profileImageInner"
-                />
-              ) : null}
-            </div>
-            <div className="settings-profileControls">
-              <Avatar
-                uid={user?.id ?? null}
-                url={avatar_url}
-                size={150}
-                onUpload={async (url: string) => {
-                  setAvatarUrl(url);
-
-                  const result = await updateAvatarInProfile({ avatar_url: url });
-
-                  if (result.status === "success") {
-                    const session = await getUserSession();
-                    setUser(session?.user);
-                    toast.success("Avatar updated successfully!");
-                  } else {
-                    toast.error("Error updating avatar: " + result.status);
-                  }
-                }}
-              />
-            </div>
+        {/* Navigation Tabs */}
+        <div className="settings-navbar">
+          <div className="settings-nav-tabs">
+            <button 
+              className={`settings-nav-tab ${activeTab === 'account' ? 'active' : ''}`}
+              onClick={() => setActiveTab('account')}
+            >
+              Account
+            </button>
+            <button 
+              className={`settings-nav-tab ${activeTab === 'privacy' ? 'active' : ''}`}
+              onClick={() => setActiveTab('privacy')}
+            >
+              Privacy
+            </button>
+            <button 
+              className={`settings-nav-tab ${activeTab === 'notifications' ? 'active' : ''}`}
+              onClick={() => setActiveTab('notifications')}
+            >
+              Notifications
+            </button>
+            <button 
+              className={`settings-nav-tab ${activeTab === 'preferences' ? 'active' : ''}`}
+              onClick={() => setActiveTab('preferences')}
+            >
+              Preferences
+            </button>
           </div>
+        </div>
 
-          <div className="settings-infoSection">
-            <h2 className="settings-infoTitle">Account Info</h2>
-
-            <div className="settings-fields">
-              <div className="settings-fieldRow">
-                <div className="settings-fieldContent">
-                  <span className="settings-fieldLabel">Nickname: </span>
-                  <span className="settings-fieldValue">{nickname}</span>
+        <div className="settings-content">
+          {/* Account Tab Content */}
+          {activeTab === 'account' && (
+            <div key="account-tab" className="settings-tab-content">
+              <div className="settings-profileSection">
+                <div className="settings-profileImage">
+                  {profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="settings-profileImageInner"
+                    />
+                  ) : null}
                 </div>
-                <button className="settings-editButton" onClick={() => {setShowChangeNicknameModal(true); resetStates();}}>
-                  <Edit className="settings-editIcon" />
-                </button>
+                <div className="settings-profileControls">
+                  <Avatar
+                    uid={user?.id ?? null}
+                    url={avatar_url}
+                    size={150}
+                    onUpload={async (url: string) => {
+                      setAvatarUrl(url);
+
+                      const result = await updateAvatarInProfile({ avatar_url: url });
+
+                      if (result.status === "success") {
+                        const session = await getUserSession();
+                        setUser(session?.user);
+                        toast.success("Avatar updated successfully!");
+                      } else {
+                        toast.error("Error updating avatar: " + result.status);
+                      }
+                    }}
+                  />
+                </div>
               </div>
 
-              <div className="settings-fieldRow">
-                <div className="settings-fieldContent">
-                  <span className="settings-fieldLabel">Username: </span>
-                  <span className="settings-fieldValue">{username}</span>
-                </div>
-                <button className="settings-editButton" onClick={() => {setShowChangeUsernameModal(true); resetStates();}}>
-                  <Edit className="settings-editIcon" />
-                </button>
-              </div>
+              <div className="settings-infoSection">
+                <h2 className="settings-infoTitle">Account Info</h2>
 
-              <div className="settings-fieldRow">
-                <div className="settings-fieldContent">
-                  <span className="settings-fieldLabel">Email: </span>
-                  <span className="settings-fieldValue">{censorEmail(email)}</span>
-                </div>
-                {/* <button className="settings-editButton" onClick={() => setShowChangeEmailModal(true)}>
-                  <Edit className="settings-editIcon" />
-                </button> */}
-              </div>
+                <div className="settings-fields">
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Nickname: </span>
+                      <span className="settings-fieldValue">{nickname}</span>
+                    </div>
+                    <button className="settings-editButton" onClick={() => {setShowChangeNicknameModal(true); resetStates();}}>
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
 
-              <div className="settings-fieldRow">
-                <div className="settings-fieldContent">
-                  <span className="settings-fieldLabel">Password: </span>
-                  <span className="settings-fieldValue">*********</span>
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Username: </span>
+                      <span className="settings-fieldValue">{username}</span>
+                    </div>
+                    <button className="settings-editButton" onClick={() => {setShowChangeUsernameModal(true); resetStates();}}>
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Email: </span>
+                      <span className="settings-fieldValue">{censorEmail(email)}</span>
+                    </div>
+                    {/* <button className="settings-editButton" onClick={() => setShowChangeEmailModal(true)}>
+                      <Edit className="settings-editIcon" />
+                    </button> */}
+                  </div>
+
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Password: </span>
+                      <span className="settings-fieldValue">*********</span>
+                    </div>
+                    <button className="settings-editButton" onClick={() => {setShowChangePasswordModal(true); resetStates();}}>
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
                 </div>
-                <button className="settings-editButton" onClick={() => {setShowChangePasswordModal(true); resetStates();}}>
-                  <Edit className="settings-editIcon" />
-                </button>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Privacy Tab Content */}
+          {activeTab === 'privacy' && (
+            <div key="privacy-tab" className="settings-tab-content">
+              <div className="settings-infoSection">
+                <h2 className="settings-infoTitle">Privacy Settings</h2>
+                <div className="settings-fields">
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Profile Visibility: </span>
+                      <span className="settings-fieldValue">Public</span>
+                    </div>
+                    <button className="settings-editButton">
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Game History: </span>
+                      <span className="settings-fieldValue">Visible to Friends</span>
+                    </div>
+                    <button className="settings-editButton">
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Notifications Tab Content */}
+          {activeTab === 'notifications' && (
+            <div key="notifications-tab" className="settings-tab-content">
+              <div className="settings-infoSection">
+                <h2 className="settings-infoTitle">Notification Settings</h2>
+                <div className="settings-fields">
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Email Notifications: </span>
+                      <span className="settings-fieldValue">Enabled</span>
+                    </div>
+                    <button className="settings-editButton">
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Game Invites: </span>
+                      <span className="settings-fieldValue">Enabled</span>
+                    </div>
+                    <button className="settings-editButton">
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Preferences Tab Content */}
+          {activeTab === 'preferences' && (
+            <div key="preferences-tab" className="settings-tab-content">
+              <div className="settings-infoSection">
+                <h2 className="settings-infoTitle">Game Preferences</h2>
+                <div className="settings-fields">
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Default Game Mode: </span>
+                      <span className="settings-fieldValue">Straight Pool</span>
+                    </div>
+                    <button className="settings-editButton">
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+                  <div className="settings-fieldRow">
+                    <div className="settings-fieldContent">
+                      <span className="settings-fieldLabel">Theme: </span>
+                      <span className="settings-fieldValue">Dark</span>
+                    </div>
+                    <button className="settings-editButton">
+                      <Edit className="settings-editIcon" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

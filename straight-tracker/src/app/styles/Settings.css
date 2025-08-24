@@ -35,17 +35,144 @@
   color: rgb(75, 85, 99);
 }
 
+/* Navigation Tabs - Updated to match Member navbar style */
+.settings-navbar {
+  background-color: rgb(229, 231, 235);
+  box-sizing: border-box;
+  border-radius: 24px;
+  margin: 0 auto;
+  max-width: 896px;
+  padding: 0px 16px;
+  margin-top: 2%;
+  margin-bottom: 1%;
+  justify-content: center;
+  display: flex;
+  position: relative;
+}
+
+.settings-nav-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: none;
+  width: 100%;
+  justify-content: center;
+}
+
+.settings-nav-tab {
+  padding: 16px 32px;
+  position: relative;
+  text-decoration: none;
+  color: #333;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, color 0.2s ease;
+  outline: none;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+}
+
+.settings-nav-tab::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  width: 0%;
+  height: 2px;
+  background-color: #2563eb;
+  transition: all 0.3s ease-out;
+  transform: translateX(-50%);
+}
+
+.settings-nav-tab:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #111;
+}
+
+.settings-nav-tab:hover::after {
+  width: 60%;
+}
+
+.settings-nav-tab:active {
+  transform: scale(0.95);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.settings-nav-tab.active {
+  color: #2563eb;
+  font-weight: 600;
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+.settings-nav-tab.active::after {
+  width: 80%;
+  height: 3px;
+  background-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .settings-nav-tab {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .settings-navbar {
+    padding: 0px 8px;
+  }
+}
+
 .settings-content {
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding-top: 10px;
+  padding: 32px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  animation: contentFadeIn 0.3s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tab content wrapper for smooth transitions */
+.settings-tab-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: contentFadeIn 0.3s ease-out;
+}
+
+@media (min-width: 1024px) {
+  .settings-tab-content {
+    flex-direction: row;
+    gap: 64px;
+  }
 }
 
 @media (min-width: 1024px) {
   .settings-content {
     flex-direction: row;
     gap: 64px;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-content {
+    padding: 20px;
+    gap: 24px;
   }
 }
 
