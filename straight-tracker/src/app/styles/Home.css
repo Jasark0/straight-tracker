@@ -30,7 +30,7 @@
 }
 
 .home-center-auth{
-    padding: 5rem 0;
+    padding: 3rem 0;
 }
 
 .home-center-content{
@@ -41,6 +41,7 @@
 
 .home-center-text{
     display: flex;
+    max-width: 40rem;
     margin-top: 2rem;
     margin-bottom: 2rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -508,5 +509,16 @@
     .home-online-count{
         font-size: 0.75rem;
         padding: 0.3rem 0.6rem;
+    }
+}
+
+@media screen and (orientation: landscape){
+    .home-pool-image, .home-snooker-image{
+        width: 70%;
+    }
+
+    .home-suggestion-form{
+        max-width: 25rem;
+        padding: 2rem 2rem;
     }
 }
