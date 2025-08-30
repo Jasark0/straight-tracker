@@ -41,9 +41,10 @@
 
 .home-center-text{
     display: flex;
+    justify-content: center;    
+    align-items: center;        
     max-width: 40rem;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin: 2rem auto;          
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 3rem;
     font-weight: 800;
@@ -51,6 +52,7 @@
     color: white;
     opacity: 0;
     animation: fadeInUp 1s ease-out forwards;
+    height: 100%;               
 }
 
 .home-get-started-button{
