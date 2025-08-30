@@ -43,3 +43,8 @@ next-env.d.ts
 # codux
 *.board.tsx
 *.board.css
+
+#supabase
+/supabase/.branches/
+/supabase/.temp/
+/supabase/.env
