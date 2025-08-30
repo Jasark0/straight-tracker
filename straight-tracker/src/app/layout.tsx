@@ -43,12 +43,10 @@ export default async function RootLayout({
         <html lang="en">
             <body className={`${inter.className}`}>
                 <PresenceProvider>
-            <div>
-                { <ConditionalHeader user={user}/>}
-                <main>
-                    {children}
-                </main>
-            </div>
+                    { <ConditionalHeader user={user}/> }
+                    <main>
+                        {children}
+                    </main>           
                 </PresenceProvider>
             </body>
         </html>

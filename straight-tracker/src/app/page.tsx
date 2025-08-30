@@ -74,6 +74,18 @@ export default function Home() {
 
     const changelog = [
         {
+        version: "v0.1.4",
+        date: "2025-08-21",
+        changes: [
+            "Fixed the profile dropdown timing issue",
+            "Fixed filter display bugs in history page",
+            "Homepage now displays online player count",
+            "Settings page enhanced for quality control",
+            "History page and pool-games tracker page can now work on mobile devices",
+            "Straight pool page is WIP",
+        ]
+        },
+        {
         version: "v0.1.3",
         date: "2025-08-16",
         changes: [

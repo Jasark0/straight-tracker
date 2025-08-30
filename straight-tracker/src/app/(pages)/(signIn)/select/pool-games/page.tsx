@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Loading from '@/src/components/PageLoading'
+
 const Select: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -28,7 +30,7 @@ const Select: React.FC = () => {
     const [error, setError] = useState('');
     const [raceToError, setRaceToError] = useState('');
     const [setsError, setSetsError] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -128,6 +130,7 @@ const Select: React.FC = () => {
     }
 
     useEffect(() => {
+        setLoading(true);
         const fetchNickname = async () => {
             try{
                 const res = await fetch('/api/getNickname');
@@ -138,7 +141,7 @@ const Select: React.FC = () => {
                 }
                 
                 setPlayer1(json.nickname);
-                setIsLoading(false);
+                setLoading(false);
             }
             catch (err){
                 setError('Network error');
@@ -148,7 +151,11 @@ const Select: React.FC = () => {
         fetchNickname();
     }, []);
 
-    return !isLoading && (
+    if (loading){
+        return <Loading/>;
+    }
+
+    return (
         <div className="select-page-box">
             <ToastContainer/>
             <div className={`select-box ${lagPopup ? "blurred" : ""}`}>
