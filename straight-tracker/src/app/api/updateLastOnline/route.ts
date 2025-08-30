@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         console.error("Error updating last_online:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
       }
-      console.log("User's last online status updated");
+      // console.log("User's last online status updated");
       return NextResponse.json({ success: true });
     } catch (e) {
         if (e instanceof Error) {

@@ -9,6 +9,7 @@ import { MemberNavbar } from '@/src/components/MemberNavbar';
 import "@/src/app/styles/General.css";
 import "@/src/app/styles/Home.css";
 import "@/src/app/styles/Member.css";
+import { getUserProfileVisibility } from '@/actions/settings';
 
 
 
@@ -36,7 +37,14 @@ export default async function MemberPage({ params }: { params: Promise<{ usernam
         const response = await getUserSession();
         return response?.user.id === profile.id;
     }
-    
+
+    const checkIfMemberNotOnPageAndTheMembersPageisPrivate = async () => {
+        const isLoggedInUser = await checkIfMemberOnThePageIsTheMemberThatIsLogin();
+        const { status, visibility } = await getUserProfileVisibility(profile.username);
+        console.log("Profile visibility status:", status, "visibility:", visibility);
+        return !isLoggedInUser && status === "success" && visibility === "Private";
+    }
+
     const getDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -77,7 +85,12 @@ export default async function MemberPage({ params }: { params: Promise<{ usernam
 
     return (
         <div className="member-page-box">
-            <div className="member-layout">
+            {await checkIfMemberNotOnPageAndTheMembersPageisPrivate() ? (
+                <div className="member-privateWarning">
+                    This profile is private.
+                </div>
+            ) : (
+                <div className="member-layout">
                 <div className="member-container">
                     <div className="member-content">
                         <div className="member-profileSection">
@@ -114,7 +127,8 @@ export default async function MemberPage({ params }: { params: Promise<{ usernam
 
                 <MemberNavbar username={profile.username} randomUsername={randomUsername} />
                 
-            </div>
+            </div>)}
+            
         </div>
     );
 }

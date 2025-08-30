@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
 import { changeNickname, changePassword, changeUsername, getUserSession, updateAvatarInProfile, updateProfile } from '@/actions/auth';
+import { getProfileVisibility, changeProfileVisibility } from '@/actions/settings';
 import "@/src/app/styles/General.css"
 import "@/src/app/styles/Home.css"
 import "@/src/app/styles/Settings.css"
@@ -35,14 +36,16 @@ export default function SettingsPage() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [activeTab, setActiveTab] = useState('account');
-  
+  const [profileVisibility, setProfileVisibility] = useState<string>('');
+  const [showVisibilityDropdown, setShowVisibilityDropdown] = useState(false);
+  const visibilityDropdownRef = useRef<HTMLDivElement>(null);
   let reactiveButtonColor = 'blue';
 
   useEffect(() => {
     const fetchUser = async () => {
       const session = await getUserSession();
       setUser(session?.user);
-
+      
       setLoading(false);
 
       if (session?.user) {
@@ -57,6 +60,18 @@ export default function SettingsPage() {
       }
     };
     fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchVisibility = async () => {
+      const result = await getProfileVisibility();
+      if (result.status === "success") {
+        setProfileVisibility(result.visibility);
+      } else {
+        console.error("Error fetching profile visibility:", result.message);
+      }
+    };
+    fetchVisibility();
   }, []);
 
   const resetStates = () => {
@@ -263,6 +278,30 @@ export default function SettingsPage() {
     return `${censoredLocalPart}@${domain}`;
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (visibilityDropdownRef.current && !visibilityDropdownRef.current.contains(event.target as Node)) {
+        setShowVisibilityDropdown(false);
+      }
+    };
+
+    if (showVisibilityDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showVisibilityDropdown]);
+
+  const handleVisibilityChange = (visibility: 'Public' | 'Private' | 'Friends Only') => {
+    setProfileVisibility(visibility);
+    getProfileVisibility();
+    changeProfileVisibility(visibility);
+    setShowVisibilityDropdown(false);
+    toast.success(`Profile visibility changed to ${visibility}`);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -435,11 +474,43 @@ export default function SettingsPage() {
                   <div className="settings-fieldRow">
                     <div className="settings-fieldContent">
                       <span className="settings-fieldLabel">Profile Visibility: </span>
-                      <span className="settings-fieldValue">Public</span>
+                      <span className="settings-fieldValue">{profileVisibility}</span>
                     </div>
-                    <button className="settings-editButton">
-                      <Edit className="settings-editIcon" />
-                    </button>
+                    <div className="settings-dropdown-container" ref={visibilityDropdownRef}>
+                      <button 
+                        className="settings-editButton"
+                        onClick={() => setShowVisibilityDropdown(!showVisibilityDropdown)}
+                        type="button"
+                      >
+                        <Edit className="settings-editIcon" />
+                      </button>
+                      
+                      {showVisibilityDropdown && (
+                        <div className="settings-dropdown-content">
+                          <button
+                            type="button"
+                            className={`settings-dropdown-item ${profileVisibility === 'Public' ? 'active' : ''}`}
+                            onClick={() => handleVisibilityChange('Public')}
+                          >
+                            Public
+                          </button>
+                          <button
+                            type="button"
+                            className={`settings-dropdown-item ${profileVisibility === 'Private' ? 'active' : ''}`}
+                            onClick={() => handleVisibilityChange('Private')}
+                          >
+                            Private
+                          </button>
+                          {/* <button
+                            type="button"
+                            className={`settings-dropdown-item ${profileVisibility === 'Friends Only' ? 'active' : ''}`}
+                            onClick={() => handleVisibilityChange('Friends Only')}
+                          >
+                            Friends Only
+                          </button> */}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="settings-fieldRow">
                     <div className="settings-fieldContent">

@@ -64,7 +64,6 @@ export default function Avatar({
             await onUpload(filePath)
             
             setButtonState('success')
-
             setTimeout(() => {
                 setButtonState('idle')
             }, 2000)

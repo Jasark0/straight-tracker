@@ -24,7 +24,7 @@ export const MemberNavbar: React.FC<MemberNavbarProps> = ({ username, randomUser
         setIsDropdownOpen(false);
     }
 
-    const isActive = (path: string) => {
+    const isActive = (path: string) => {    
         return pathname === path;
     }
 
