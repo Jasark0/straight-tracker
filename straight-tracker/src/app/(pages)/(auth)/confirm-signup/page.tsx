@@ -31,7 +31,7 @@ export default function ConfirmSignupPage() {
     }, [searchParams, router]);
 
     return (
-        <div className="signin-page-container">
+        <div className="confirm-signup-page-container">
         <div className="confirm-signup-container">
             <div className="confirm-signup-card">
                 <div className="confirm-signup-header">

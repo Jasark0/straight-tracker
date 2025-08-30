@@ -65,10 +65,11 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
         setProfileVisible(true);
     };
 
-    const scrollToView = (elementID: string) => {
+    const scrollToView = (elementID: string, offset: number) => {
         const el = document.getElementById(elementID);
+        console.log(el);
         if (el) {
-            const yOffset = -80;
+            const yOffset = offset;
             const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
@@ -119,10 +120,10 @@ const PageHeader: React.FC<HeaderProps> = ({user}) => {
                     <div className="header-info-container">
                         {isHomePage && (
                             <>
-                                <button className="header-contact-us-button" onClick={() => {scrollToView("contact-us"); }}>
+                                <button className="header-contact-us-button" onClick={() => {scrollToView("contact-us", -80); }}>
                                     Contact Us
                                 </button>
-                                <button className="header-learn-more-button" onClick={() => {scrollToView("learn-more"); }}>
+                                <button className="header-learn-more-button" onClick={() => {scrollToView("learn-more", -80); }}>
                                     Learn More
                                 </button>
                             </>

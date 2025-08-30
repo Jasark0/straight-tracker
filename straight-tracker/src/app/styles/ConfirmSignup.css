@@ -1,4 +1,13 @@
 /* Confirm Signup Page Styles */
+.confirm-signup-page-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* min-height: calc(100vh - 6rem); */
+    padding: 6rem 1rem 2rem 1rem;
+}
+
 .confirm-signup-container {
     display: flex;
     flex-direction: column;
